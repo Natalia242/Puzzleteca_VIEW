@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <!-- Permitir el tráfico HTTP hacia localhost para el emulador y dispositivos físicos -->
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">10.0.2.2</domain>
+        <!-- Para dispositivos físicos -->
+        <domain includeSubdomains="true">192.168.x.x</domain> <!-- IP local de tu máquina -->
+    </domain-config>
+</network-security-config>
