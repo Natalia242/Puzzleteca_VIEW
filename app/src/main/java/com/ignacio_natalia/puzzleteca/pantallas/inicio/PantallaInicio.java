@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.view.Gravity;
+import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -20,19 +21,28 @@ public class PantallaInicio extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Layout principal
-        LinearLayout layout = new LinearLayout(this);
-        layout.setOrientation(LinearLayout.VERTICAL);
-        layout.setGravity(Gravity.CENTER_HORIZONTAL);
-        layout.setPadding(60,120,60,60);
-
         // Fondo degradado
         GradientDrawable fondo = new GradientDrawable(
                 GradientDrawable.Orientation.TOP_BOTTOM,
                 new int[]{Color.parseColor("#DFF5C9"), Color.parseColor("#B8E6A5")}
         );
         fondo.setCornerRadius(40);
+
+        // Layout principal vertical
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+        layout.setPadding(60, 120, 60, 60);
         layout.setBackground(fondo);
+
+        // Contenedor para título y bienvenida (arriba)
+        LinearLayout contenedorArriba = new LinearLayout(this);
+        contenedorArriba.setOrientation(LinearLayout.VERTICAL);
+        contenedorArriba.setGravity(Gravity.CENTER_HORIZONTAL);
+        LinearLayout.LayoutParams arribaParams =
+                new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT);
+        contenedorArriba.setLayoutParams(arribaParams);
 
         // Título
         TextView titulo = new TextView(this);
@@ -40,13 +50,11 @@ public class PantallaInicio extends AppCompatActivity {
         titulo.setTextSize(28);
         titulo.setTextColor(Color.DKGRAY);
         titulo.setGravity(Gravity.CENTER);
-
         LinearLayout.LayoutParams tituloParams =
                 new LinearLayout.LayoutParams(
                         LinearLayout.LayoutParams.WRAP_CONTENT,
                         LinearLayout.LayoutParams.WRAP_CONTENT);
-        tituloParams.setMargins(0,0,0,80);
-
+        tituloParams.setMargins(0, 0, 0, 20);
         titulo.setLayoutParams(tituloParams);
 
         // Texto Welcome
@@ -54,67 +62,106 @@ public class PantallaInicio extends AppCompatActivity {
         welcome.setText("¡Bienvenido!");
         welcome.setTextSize(24);
         welcome.setTextColor(Color.DKGRAY);
-
+        welcome.setGravity(Gravity.CENTER);
         LinearLayout.LayoutParams welcomeParams =
                 new LinearLayout.LayoutParams(
                         LinearLayout.LayoutParams.WRAP_CONTENT,
                         LinearLayout.LayoutParams.WRAP_CONTENT);
-        welcomeParams.setMargins(0,0,0,80);
-
+        welcomeParams.setMargins(0, 0, 0, 80);
         welcome.setLayoutParams(welcomeParams);
 
-        // Parámetros botones
-        LinearLayout.LayoutParams params =
+        // Agregar título y welcome al contenedor arriba
+        contenedorArriba.addView(titulo);
+        contenedorArriba.addView(welcome);
+
+        // Spacer arriba (para empujar botones hacia el centro)
+        View spacerArriba = new View(this);
+        LinearLayout.LayoutParams spacerParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                0,
+                1f);  // peso 1 para ocupar espacio flexible
+        spacerArriba.setLayoutParams(spacerParams);
+
+        // Contenedor botones (sin peso, tamaño wrap_content)
+        LinearLayout contenedorBotones = new LinearLayout(this);
+        contenedorBotones.setOrientation(LinearLayout.VERTICAL);
+        contenedorBotones.setGravity(Gravity.CENTER);
+
+        LinearLayout.LayoutParams botonesParams =
                 new LinearLayout.LayoutParams(
                         LinearLayout.LayoutParams.MATCH_PARENT,
                         LinearLayout.LayoutParams.WRAP_CONTENT);
-        params.setMargins(0,25,0,25);
+        botonesParams.setMargins(0, 25, 0, 25);
 
-        // Botón Register
+        // Botón Registrarse
         Button btnRegister = crearBoton("Registrarse", "#F06292");
-        btnRegister.setLayoutParams(params);
+        btnRegister.setLayoutParams(botonesParams);
         btnRegister.setOnClickListener(v -> {
             Intent intent = new Intent(PantallaInicio.this, RegistroActivity.class);
             startActivity(intent);
         });
 
-        // Botón Login
+        // Botón Iniciar sesión
         Button btnLogin = crearBoton("Iniciar sesión", "#F06292");
-        btnLogin.setLayoutParams(params);
+        btnLogin.setLayoutParams(botonesParams);
         btnLogin.setOnClickListener(v -> {
             Intent intent = new Intent(PantallaInicio.this, LoginActivity.class);
             startActivity(intent);
         });
 
-        // Botón Forgot Password
+        // Botón ¿Has olvidado la contraseña? con margen superior extra para separarlo
         Button btnForgot = crearBoton("¿Has olvidado la contraseña?", "#26A69A");
-        btnForgot.setLayoutParams(params);
+        LinearLayout.LayoutParams forgotParams =
+                new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT);
+        forgotParams.setMargins(0, 25, 0, 25); // margen superior más grande para separación
+        btnForgot.setLayoutParams(forgotParams);
 
-        // Añadir elementos
-        layout.addView(titulo);
-        layout.addView(welcome);
-        layout.addView(btnRegister);
-        layout.addView(btnLogin);
-        layout.addView(btnForgot);
+        // Línea divisoria entre botones rosa y azul
+        View separador = new View(this);
+        LinearLayout.LayoutParams separadorParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                4  // un poco más gruesa para que se note
+        );
+        separadorParams.setMargins(200, 100, 200, 100); // espacio arriba y abajo
+        separador.setLayoutParams(separadorParams);
+        separador.setBackgroundColor(Color.DKGRAY); // color más oscuro para que se vea
+
+        // Añadir botones al contenedor
+        contenedorBotones.addView(btnRegister);
+        contenedorBotones.addView(btnLogin);
+        contenedorBotones.addView(separador);
+        contenedorBotones.addView(btnForgot);
+
+        // Spacer abajo (equilibrar espacio)
+        View spacerAbajo = new View(this);
+        spacerAbajo.setLayoutParams(spacerParams);
+
+        // Agregar las cosas al layout principal
+        layout.addView(contenedorArriba);
+        layout.addView(spacerArriba);
+        layout.addView(contenedorBotones);
+        layout.addView(spacerAbajo);
 
         setContentView(layout);
     }
 
-    // Método para crear botones con estilo
     private Button crearBoton(String texto, String colorHex) {
-
         Button btn = new Button(this);
         btn.setText(texto);
         btn.setTextColor(Color.WHITE);
-        btn.setTextSize(16);
+        btn.setTextSize(20);
 
         GradientDrawable shape = new GradientDrawable();
-        shape.setCornerRadius(50);
+        shape.setCornerRadius(55);
         shape.setColor(Color.parseColor(colorHex));
-
         btn.setBackground(shape);
 
-        btn.setPadding(20,30,20,30);
+        btn.setAllCaps(false);
+
+        // Padding original para botones
+        btn.setPadding(20, 30, 20, 30);
 
         return btn;
     }
