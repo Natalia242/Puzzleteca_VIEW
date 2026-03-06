@@ -5,116 +5,109 @@ import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.Gravity;
-import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.ignacio_natalia.puzzleteca.R;
 import com.ignacio_natalia.puzzleteca.modelos.Usuario;
 
 public class RegistroActivity extends AppCompatActivity {
 
     private RegistroViewModel registroViewModel;
 
+    private EditText nombreEditText, apellidoEditText, emailEditText, passwordEditText;
+    private Button botonRegistro;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Fondo degradado igual que las otras pantallas
+        // Fondo degradado
         GradientDrawable fondo = new GradientDrawable(
                 GradientDrawable.Orientation.TOP_BOTTOM,
                 new int[]{Color.parseColor("#DFF5C9"), Color.parseColor("#B8E6A5")}
         );
-        fondo.setCornerRadius(40);
 
-        LinearLayout layout = new LinearLayout(this);
-        layout.setOrientation(LinearLayout.VERTICAL);
-        layout.setPadding(60, 120, 60, 60);
+        // Layout principal
+        FrameLayout layout = new FrameLayout(this);
         layout.setBackground(fondo);
+        layout.setPadding(40, 60, 40, 40);
 
-        // Contenedor superior
-        LinearLayout contenedorArriba = new LinearLayout(this);
-        contenedorArriba.setOrientation(LinearLayout.VERTICAL);
-        contenedorArriba.setGravity(Gravity.CENTER_HORIZONTAL);
+        // ---------- TITULO ARRIBA ----------
+        ImageView titulo = new ImageView(this);
+        titulo.setImageResource(R.drawable.titulo);
+        titulo.setAdjustViewBounds(true);
 
-        // Título
-        TextView titulo = new TextView(this);
-        titulo.setText("🧩 Puzzleteca");
-        titulo.setTextSize(28);
-        titulo.setTextColor(Color.DKGRAY);
-        titulo.setGravity(Gravity.CENTER);
-
-        LinearLayout.LayoutParams tituloParams =
-                new LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.WRAP_CONTENT,
-                        LinearLayout.LayoutParams.WRAP_CONTENT);
-        tituloParams.setMargins(0, 0, 0, 20);
+        FrameLayout.LayoutParams tituloParams =
+                new FrameLayout.LayoutParams(
+                        FrameLayout.LayoutParams.WRAP_CONTENT,
+                        FrameLayout.LayoutParams.WRAP_CONTENT
+                );
+        tituloParams.gravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
         titulo.setLayoutParams(tituloParams);
 
-        // Subtítulo
-        TextView subtitulo = new TextView(this);
-        subtitulo.setText("Crear cuenta");
-        subtitulo.setTextSize(24);
-        subtitulo.setTextColor(Color.DKGRAY);
-        subtitulo.setGravity(Gravity.CENTER);
-
-        LinearLayout.LayoutParams subtituloParams =
-                new LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.WRAP_CONTENT,
-                        LinearLayout.LayoutParams.WRAP_CONTENT);
-        subtituloParams.setMargins(0, 0, 0, 80);
-        subtitulo.setLayoutParams(subtituloParams);
-
-        contenedorArriba.addView(titulo);
-        contenedorArriba.addView(subtitulo);
-
-        // Spacer superior
-        View spacerArriba = new View(this);
-        LinearLayout.LayoutParams spacerParams = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                0,
-                1f
-        );
-        spacerArriba.setLayoutParams(spacerParams);
-
-        // Contenedor formulario
+        // ---------- CONTENEDOR FORMULARIO ----------
         LinearLayout contenedorForm = new LinearLayout(this);
         contenedorForm.setOrientation(LinearLayout.VERTICAL);
         contenedorForm.setGravity(Gravity.CENTER);
 
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-        );
-        params.setMargins(0, 30, 0, 30);
+        FrameLayout.LayoutParams formParams =
+                new FrameLayout.LayoutParams(
+                        FrameLayout.LayoutParams.MATCH_PARENT,
+                        FrameLayout.LayoutParams.WRAP_CONTENT
+                );
+        formParams.gravity = Gravity.CENTER;
+        contenedorForm.setLayoutParams(formParams);
 
-        EditText nombre = new EditText(this);
-        nombre.setHint("Nombre");
-        nombre.setLayoutParams(params);
+        LinearLayout.LayoutParams campoParams =
+                new LinearLayout.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT
+                );
+        campoParams.setMargins(80, 25, 80, 25);
 
-        EditText apellido = new EditText(this);
-        apellido.setHint("Apellido");
-        apellido.setLayoutParams(params);
+        // ---------- CAMPOS DE TEXTO ----------
+        nombreEditText = crearEditText("Nombre");
+        nombreEditText.setLayoutParams(campoParams);
 
-        EditText email = new EditText(this);
-        email.setHint("Email");
-        email.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
-        email.setLayoutParams(params);
+        apellidoEditText = crearEditText("Apellido");
+        apellidoEditText.setLayoutParams(campoParams);
 
-        EditText password = new EditText(this);
-        password.setHint("Password");
-        password.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-        password.setLayoutParams(params);
+        emailEditText = crearEditText("Email");
+        emailEditText.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
+        emailEditText.setLayoutParams(campoParams);
 
-        Button botonRegistro = crearBoton("Registrarse", "#26A69A");
-        botonRegistro.setLayoutParams(params);
+        passwordEditText = crearEditText("Password");
+        passwordEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        passwordEditText.setLayoutParams(campoParams);
 
+        // ---------- BOTON REGISTRO ----------
+        botonRegistro = crearBoton();
+        botonRegistro.setLayoutParams(campoParams);
+
+        // Añadir campos al contenedor
+        contenedorForm.addView(nombreEditText);
+        contenedorForm.addView(apellidoEditText);
+        contenedorForm.addView(emailEditText);
+        contenedorForm.addView(passwordEditText);
+        contenedorForm.addView(botonRegistro);
+
+        // Añadir elementos al layout
+        layout.addView(titulo);
+        layout.addView(contenedorForm);
+
+        setContentView(layout);
+
+        // ViewModel
         registroViewModel = new ViewModelProvider(this).get(RegistroViewModel.class);
 
         registroViewModel.getUsuarioCreado().observe(this, exito -> {
@@ -129,10 +122,10 @@ public class RegistroActivity extends AppCompatActivity {
         });
 
         botonRegistro.setOnClickListener(v -> {
-            String n = nombre.getText().toString();
-            String a = apellido.getText().toString();
-            String e = email.getText().toString();
-            String p = password.getText().toString();
+            String n = nombreEditText.getText().toString().trim();
+            String a = apellidoEditText.getText().toString().trim();
+            String e = emailEditText.getText().toString().trim();
+            String p = passwordEditText.getText().toString().trim();
 
             if (n.isEmpty() || a.isEmpty() || e.isEmpty() || p.isEmpty()) {
                 Toast.makeText(this, "Completa todos los campos", Toast.LENGTH_SHORT).show();
@@ -141,39 +134,40 @@ public class RegistroActivity extends AppCompatActivity {
                 registroViewModel.crearUsuario(usuario);
             }
         });
-
-        contenedorForm.addView(nombre);
-        contenedorForm.addView(apellido);
-        contenedorForm.addView(email);
-        contenedorForm.addView(password);
-        contenedorForm.addView(botonRegistro);
-
-        // Spacer inferior
-        View spacerAbajo = new View(this);
-        spacerAbajo.setLayoutParams(spacerParams);
-
-        layout.addView(contenedorArriba);
-        layout.addView(spacerArriba);
-        layout.addView(contenedorForm);
-        layout.addView(spacerAbajo);
-
-        setContentView(layout);
     }
 
-    private Button crearBoton(String texto, String colorHex) {
+    // ---------- BOTON BONITO ----------
+    private Button crearBoton() {
         Button btn = new Button(this);
-        btn.setText(texto);
+        btn.setText("Registrarse");
         btn.setTextColor(Color.WHITE);
         btn.setTextSize(20);
-
-        GradientDrawable shape = new GradientDrawable();
-        shape.setCornerRadius(55);
-        shape.setColor(Color.parseColor(colorHex));
-        btn.setBackground(shape);
-
         btn.setAllCaps(false);
         btn.setPadding(20, 30, 20, 30);
 
+        GradientDrawable shape = new GradientDrawable();
+        shape.setCornerRadius(60);
+        shape.setColor(Color.parseColor("#26A69A"));
+
+        btn.setBackground(shape);
+
         return btn;
+    }
+
+    // ---------- EDITTEXT BONITO ----------
+    private EditText crearEditText(String hint) {
+        EditText edit = new EditText(this);
+        edit.setHint(hint);
+        edit.setTextSize(18);
+        edit.setTextColor(Color.DKGRAY);
+        edit.setHintTextColor(Color.GRAY);
+        edit.setPadding(40, 35, 40, 35);
+
+        GradientDrawable shape = new GradientDrawable();
+        shape.setCornerRadius(55);
+        shape.setColor(Color.parseColor("#EAF8E0")); // mismo color suave que botones
+        edit.setBackground(shape);
+
+        return edit;
     }
 }
