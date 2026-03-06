@@ -1,11 +1,15 @@
 package com.ignacio_natalia.puzzleteca.pantallas.registro;
 
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.Gravity;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.util.Log;
 
@@ -22,10 +26,67 @@ public class RegistroActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // Fondo degradado igual que las otras pantallas
+        GradientDrawable fondo = new GradientDrawable(
+                GradientDrawable.Orientation.TOP_BOTTOM,
+                new int[]{Color.parseColor("#DFF5C9"), Color.parseColor("#B8E6A5")}
+        );
+        fondo.setCornerRadius(40);
+
         LinearLayout layout = new LinearLayout(this);
         layout.setOrientation(LinearLayout.VERTICAL);
-        layout.setPadding(60, 60, 60, 60);
-        layout.setGravity(Gravity.CENTER);
+        layout.setPadding(60, 120, 60, 60);
+        layout.setBackground(fondo);
+
+        // Contenedor superior
+        LinearLayout contenedorArriba = new LinearLayout(this);
+        contenedorArriba.setOrientation(LinearLayout.VERTICAL);
+        contenedorArriba.setGravity(Gravity.CENTER_HORIZONTAL);
+
+        // Título
+        TextView titulo = new TextView(this);
+        titulo.setText("🧩 Puzzleteca");
+        titulo.setTextSize(28);
+        titulo.setTextColor(Color.DKGRAY);
+        titulo.setGravity(Gravity.CENTER);
+
+        LinearLayout.LayoutParams tituloParams =
+                new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.WRAP_CONTENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT);
+        tituloParams.setMargins(0, 0, 0, 20);
+        titulo.setLayoutParams(tituloParams);
+
+        // Subtítulo
+        TextView subtitulo = new TextView(this);
+        subtitulo.setText("Crear cuenta");
+        subtitulo.setTextSize(24);
+        subtitulo.setTextColor(Color.DKGRAY);
+        subtitulo.setGravity(Gravity.CENTER);
+
+        LinearLayout.LayoutParams subtituloParams =
+                new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.WRAP_CONTENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT);
+        subtituloParams.setMargins(0, 0, 0, 80);
+        subtitulo.setLayoutParams(subtituloParams);
+
+        contenedorArriba.addView(titulo);
+        contenedorArriba.addView(subtitulo);
+
+        // Spacer superior
+        View spacerArriba = new View(this);
+        LinearLayout.LayoutParams spacerParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                0,
+                1f
+        );
+        spacerArriba.setLayoutParams(spacerParams);
+
+        // Contenedor formulario
+        LinearLayout contenedorForm = new LinearLayout(this);
+        contenedorForm.setOrientation(LinearLayout.VERTICAL);
+        contenedorForm.setGravity(Gravity.CENTER);
 
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
@@ -51,8 +112,7 @@ public class RegistroActivity extends AppCompatActivity {
         password.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
         password.setLayoutParams(params);
 
-        Button botonRegistro = new Button(this);
-        botonRegistro.setText("Registrarse");
+        Button botonRegistro = crearBoton("Registrarse", "#26A69A");
         botonRegistro.setLayoutParams(params);
 
         registroViewModel = new ViewModelProvider(this).get(RegistroViewModel.class);
@@ -61,7 +121,7 @@ public class RegistroActivity extends AppCompatActivity {
             if (exito) {
                 Log.d("RegistroActivity", "Usuario registrado con éxito");
                 Toast.makeText(this, "Usuario registrado con éxito", Toast.LENGTH_SHORT).show();
-                finish(); // volver a pantalla anterior
+                finish();
             } else {
                 Log.e("RegistroActivity", "Error al registrar el usuario");
                 Toast.makeText(this, "Error al registrar el usuario", Toast.LENGTH_SHORT).show();
@@ -82,12 +142,38 @@ public class RegistroActivity extends AppCompatActivity {
             }
         });
 
-        layout.addView(nombre);
-        layout.addView(apellido);
-        layout.addView(email);
-        layout.addView(password);
-        layout.addView(botonRegistro);
+        contenedorForm.addView(nombre);
+        contenedorForm.addView(apellido);
+        contenedorForm.addView(email);
+        contenedorForm.addView(password);
+        contenedorForm.addView(botonRegistro);
+
+        // Spacer inferior
+        View spacerAbajo = new View(this);
+        spacerAbajo.setLayoutParams(spacerParams);
+
+        layout.addView(contenedorArriba);
+        layout.addView(spacerArriba);
+        layout.addView(contenedorForm);
+        layout.addView(spacerAbajo);
 
         setContentView(layout);
+    }
+
+    private Button crearBoton(String texto, String colorHex) {
+        Button btn = new Button(this);
+        btn.setText(texto);
+        btn.setTextColor(Color.WHITE);
+        btn.setTextSize(20);
+
+        GradientDrawable shape = new GradientDrawable();
+        shape.setCornerRadius(55);
+        shape.setColor(Color.parseColor(colorHex));
+        btn.setBackground(shape);
+
+        btn.setAllCaps(false);
+        btn.setPadding(20, 30, 20, 30);
+
+        return btn;
     }
 }
