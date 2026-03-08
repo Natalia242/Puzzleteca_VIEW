@@ -1,6 +1,7 @@
 package com.ignacio_natalia.puzzleteca.pantallas.login;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
@@ -18,6 +19,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.ignacio_natalia.puzzleteca.R;
+import com.ignacio_natalia.puzzleteca.pantallas.PruebaLogin;
 import com.ignacio_natalia.puzzleteca.utilidades.GestorSesion;
 
 public class LoginActivity extends AppCompatActivity {
@@ -133,8 +135,14 @@ public class LoginActivity extends AppCompatActivity {
         loginViewModel = new ViewModelProvider(this).get(LoginViewModel.class);
 
         loginViewModel.getLoginExitoso().observe(this, loginRespuesta -> {
+
             GestorSesion.guardarToken(this, loginRespuesta.getToken());
+
             Toast.makeText(this, "Login exitoso", Toast.LENGTH_SHORT).show();
+
+            Intent intent = new Intent(this, PruebaLogin.class);
+            startActivity(intent);
+            finish();
         });
 
         loginViewModel.getError().observe(this, mensaje ->

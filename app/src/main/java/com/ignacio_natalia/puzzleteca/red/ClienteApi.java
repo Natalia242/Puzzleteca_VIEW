@@ -5,7 +5,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ClienteApi {
 
-    private static final String BASE_URL = "http://10.0.2.2:8080/api/";
+    private static final String BASE_URL = "http://10.0.2.2:8080/usuarios/";
     private static Retrofit retrofit = null;
 
     // Método para obtener el cliente Retrofit singleton

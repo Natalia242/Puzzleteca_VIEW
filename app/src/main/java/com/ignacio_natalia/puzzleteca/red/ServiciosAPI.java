@@ -10,7 +10,7 @@ import retrofit2.http.POST;
 public interface ServiciosAPI {
     @POST("login")
     Call<LoginResponse> login(@Body LoginRequest request);
-    @POST("insertarUsuario")
+    @POST("registrar")
     Call<Void> crearUsuario(@Body Usuario usuario);
 
 }
