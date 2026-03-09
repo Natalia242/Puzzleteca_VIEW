@@ -19,7 +19,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.ignacio_natalia.puzzleteca.R;
-import com.ignacio_natalia.puzzleteca.pantallas.PruebaLogin;
+import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.AppPrincipal;
 import com.ignacio_natalia.puzzleteca.utilidades.GestorSesion;
 
 public class LoginActivity extends AppCompatActivity {
@@ -140,7 +140,7 @@ public class LoginActivity extends AppCompatActivity {
 
             Toast.makeText(this, "Login exitoso", Toast.LENGTH_SHORT).show();
 
-            Intent intent = new Intent(this, PruebaLogin.class);
+            Intent intent = new Intent(this, AppPrincipal.class);
             startActivity(intent);
             finish();
         });
