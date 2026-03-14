@@ -1,5 +1,6 @@
 package com.ignacio_natalia.puzzleteca.pantallas.registro;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
@@ -19,10 +20,14 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.ignacio_natalia.puzzleteca.R;
 import com.ignacio_natalia.puzzleteca.modelos.Usuario;
+import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.AppPrincipal;
+import com.ignacio_natalia.puzzleteca.pantallas.login.LoginViewModel;
+import com.ignacio_natalia.puzzleteca.utilidades.GestorSesion;
 
 public class RegistroActivity extends AppCompatActivity {
 
     private RegistroViewModel registroViewModel;
+    private LoginViewModel loginViewModel;
 
     private EditText nombreEditText, apellidoEditText, emailEditText, passwordEditText;
     private Button botonRegistro;
@@ -110,17 +115,6 @@ public class RegistroActivity extends AppCompatActivity {
         // ViewModel
         registroViewModel = new ViewModelProvider(this).get(RegistroViewModel.class);
 
-        registroViewModel.getUsuarioCreado().observe(this, exito -> {
-            if (exito) {
-                Log.d("RegistroActivity", "Usuario registrado con éxito");
-                Toast.makeText(this, "Usuario registrado con éxito", Toast.LENGTH_SHORT).show();
-                finish();
-            } else {
-                Log.e("RegistroActivity", "Error al registrar el usuario");
-                Toast.makeText(this, "Error al registrar el usuario", Toast.LENGTH_SHORT).show();
-            }
-        });
-
         botonRegistro.setOnClickListener(v -> {
             String n = nombreEditText.getText().toString().trim();
             String a = apellidoEditText.getText().toString().trim();
@@ -131,7 +125,39 @@ public class RegistroActivity extends AppCompatActivity {
                 Toast.makeText(this, "Completa todos los campos", Toast.LENGTH_SHORT).show();
             } else {
                 Usuario usuario = new Usuario(n, a, e, p, Usuario.TipoUsuario.Usuario);
+
+                // Intentamos registrar al usuario
                 registroViewModel.crearUsuario(usuario);
+
+                // Observamos el resultado del registro
+                registroViewModel.getUsuarioCreado().observe(this, exito -> {
+                    if (exito) {
+                        Log.d("RegistroActivity", "Usuario registrado con éxito");
+
+                        // Ahora hacemos login automático
+                        loginViewModel = new ViewModelProvider(this).get(LoginViewModel.class);
+                        loginViewModel.iniciarSesion(e, p); // usamos email y password ingresados
+
+                        // Observamos el resultado del login
+                        loginViewModel.getLoginExitoso().observe(this, loginRespuesta -> {
+                            GestorSesion.guardarToken(this, loginRespuesta.getToken());
+
+                            Toast.makeText(this, "Login exitoso", Toast.LENGTH_SHORT).show();
+
+                            Intent intent = new Intent(this, AppPrincipal.class);
+                            startActivity(intent);
+                            finish();
+                        });
+
+                        loginViewModel.getError().observe(this, mensaje -> {
+                            Toast.makeText(this, "Login automático fallido: " + mensaje, Toast.LENGTH_SHORT).show();
+                        });
+
+                    } else {
+                        Log.e("RegistroActivity", "Error al registrar el usuario");
+                        Toast.makeText(this, "Error al registrar el usuario", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
         });
     }
