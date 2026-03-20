@@ -4,15 +4,19 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.Gravity;
+import android.view.MotionEvent;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -30,6 +34,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText passwordEditText;
     private Button loginButton;
 
+    @SuppressLint({"ClickableViewAccessibility", "SetTextI18n"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -91,17 +96,20 @@ public class LoginActivity extends AppCompatActivity {
         emailEditText.setPadding(40, 30, 40, 30);
 
         emailEditText.setCompoundDrawablesWithIntrinsicBounds(
-                android.R.drawable.ic_dialog_email, 0, 0, 0
+                R.drawable.email, 0, 0, 0
         );
 
         emailEditText.setCompoundDrawablePadding(20);
         emailEditText.setLayoutParams(campoParams);
 
         // ---------- PASSWORD ----------
+        boolean[] passwordVisible = {false};
+
         passwordEditText = new EditText(this);
         passwordEditText.setHint("Contraseña");
         passwordEditText.setHintTextColor(Color.GRAY);
 
+        // IMPORTANTE: mantener este inputType base
         passwordEditText.setInputType(
                 InputType.TYPE_CLASS_TEXT |
                         InputType.TYPE_TEXT_VARIATION_PASSWORD
@@ -110,20 +118,104 @@ public class LoginActivity extends AppCompatActivity {
         passwordEditText.setBackground(crearFondoCampo());
         passwordEditText.setPadding(40, 30, 40, 30);
 
+        // Icono izquierda (candado) + derecha (ojo)
         passwordEditText.setCompoundDrawablesWithIntrinsicBounds(
-                android.R.drawable.ic_lock_lock, 0, 0, 0
+                android.R.drawable.ic_lock_lock, 0,
+                R.drawable.visibility_off, 0
         );
 
         passwordEditText.setCompoundDrawablePadding(20);
         passwordEditText.setLayoutParams(campoParams);
 
+        // Toggle al pulsar el icono derecho
+        passwordEditText.setOnTouchListener((v, event) -> {
+            if (event.getAction() == MotionEvent.ACTION_UP) {
+
+                if (event.getRawX() >= (passwordEditText.getRight()
+                        - passwordEditText.getCompoundDrawables()[2].getBounds().width())) {
+
+                    passwordVisible[0] = !passwordVisible[0];
+
+                    if (passwordVisible[0]) {
+                        // Mostrar contraseña
+                        passwordEditText.setTransformationMethod(
+                                android.text.method.HideReturnsTransformationMethod.getInstance()
+                        );
+
+                        passwordEditText.setCompoundDrawablesWithIntrinsicBounds(
+                                android.R.drawable.ic_lock_lock, 0,
+                                R.drawable.eye, 0
+                        );
+
+                    } else {
+                        // Ocultar contraseña
+                        passwordEditText.setTransformationMethod(
+                                android.text.method.PasswordTransformationMethod.getInstance()
+                        );
+
+                        passwordEditText.setCompoundDrawablesWithIntrinsicBounds(
+                                android.R.drawable.ic_lock_lock, 0,
+                                R.drawable.visibility_off, 0
+                        );
+                    }
+
+                    // Mantener cursor al final
+                    passwordEditText.setSelection(passwordEditText.getText().length());
+
+                    return true;
+                }
+            }
+            return false;
+        });
+
         // ---------- BOTON LOGIN ----------
         loginButton = crearBoton();
         loginButton.setLayoutParams(campoParams);
 
+        // ---------- TEXTO CONTRASEÑA OLVIDADA ----------
+        TextView txtForgot = new TextView(this);
+        txtForgot.setText("¿Has olvidado la contraseña?");
+        txtForgot.setTextColor(Color.parseColor("#00796B")); // puedes usar el mismo color de botones
+        txtForgot.setTextSize(16);
+        txtForgot.setGravity(Gravity.CENTER);
+        txtForgot.setPadding(20, 20, 20, 10);
+
+        txtForgot.setOnClickListener(v -> {
+            // Aquí lanzarías la actividad o diálogo de recuperación
+            Toast.makeText(LoginActivity.this, "Función de recuperación no implementada aún", Toast.LENGTH_SHORT).show();
+        });
+
+        // Separación
+        View separador = new View(this);
+        LinearLayout.LayoutParams separadorParams =
+                new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        3
+                );
+        separadorParams.setMargins(250, 75, 250, 75);
+        separador.setLayoutParams(separadorParams);
+        separador.setBackgroundColor(Color.DKGRAY);
+
+        // ---------- TEXTO REGISTRARSE ----------
+        TextView txtRegister = new TextView(this);
+        txtRegister.setText("¿No tienes cuenta? Crear cuenta");
+        txtRegister.setTextColor(Color.parseColor("#455A64"));
+        txtRegister.setTextSize(16);
+        txtRegister.setGravity(Gravity.CENTER);
+        txtRegister.setPadding(20, 20, 20, 10);
+
+        txtRegister.setOnClickListener(v -> {
+            Intent intent = new Intent(LoginActivity.this,
+                    com.ignacio_natalia.puzzleteca.pantallas.registro.RegistroActivity.class);
+            startActivity(intent);
+        });
+
         contenedorForm.addView(emailEditText);
         contenedorForm.addView(passwordEditText);
         contenedorForm.addView(loginButton);
+        contenedorForm.addView(txtForgot);
+        contenedorForm.addView(separador);
+        contenedorForm.addView(txtRegister);
 
         // Añadir elementos al layout
         layout.addView(titulo);

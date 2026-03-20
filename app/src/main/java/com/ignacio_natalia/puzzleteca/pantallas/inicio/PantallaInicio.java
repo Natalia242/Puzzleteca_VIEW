@@ -3,6 +3,7 @@ package com.ignacio_natalia.puzzleteca.pantallas.inicio;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
@@ -10,6 +11,7 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -22,6 +24,8 @@ public class PantallaInicio extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        getWindow().setStatusBarColor(Color.parseColor("#DFF5C9")); // color personalizado
 
         // Fondo degradado
         GradientDrawable fondo = new GradientDrawable(
@@ -69,6 +73,14 @@ public class PantallaInicio extends AppCompatActivity {
                 );
         botonesParams.setMargins(80, 25, 80, 25);
 
+        // Botón Login
+        Button btnLogin = crearBoton("Iniciar sesión", "#F06292");
+        btnLogin.setLayoutParams(botonesParams);
+        btnLogin.setOnClickListener(v -> {
+            Intent intent = new Intent(PantallaInicio.this, LoginActivity.class);
+            startActivity(intent);
+        });
+
         // Botón Registrarse
         Button btnRegister = crearBoton("Registrarse", "#F06292");
         btnRegister.setLayoutParams(botonesParams);
@@ -77,12 +89,18 @@ public class PantallaInicio extends AppCompatActivity {
             startActivity(intent);
         });
 
-        // Botón Login
-        Button btnLogin = crearBoton("Iniciar sesión", "#F06292");
-        btnLogin.setLayoutParams(botonesParams);
-        btnLogin.setOnClickListener(v -> {
-            Intent intent = new Intent(PantallaInicio.this, LoginActivity.class);
-            startActivity(intent);
+        // Botón continuar como invitado
+        TextView txtGuest = new TextView(this);
+        txtGuest.setText("Continuar como invitado");
+        txtGuest.setTextColor(Color.parseColor("#455A64"));
+        txtGuest.setTextSize(18);
+        txtGuest.setGravity(Gravity.CENTER);
+        txtGuest.setPadding(20, 30, 20, 0);
+
+        txtGuest.setOnClickListener(v -> {
+            // Navegar a la pantalla principal
+            // Intent intent = new Intent(PantallaInicio.this, MainActivity.class);
+            // startActivity(intent);
         });
 
         // Separador
@@ -100,8 +118,9 @@ public class PantallaInicio extends AppCompatActivity {
         Button btnForgot = crearBoton("¿Has olvidado la contraseña?", "#26A69A");
         btnForgot.setLayoutParams(botonesParams);
 
-        contenedorBotones.addView(btnRegister);
         contenedorBotones.addView(btnLogin);
+        contenedorBotones.addView(btnRegister);
+        contenedorBotones.addView(txtGuest);
         contenedorBotones.addView(separador);
         contenedorBotones.addView(btnForgot);
 

@@ -1,17 +1,21 @@
 package com.ignacio_natalia.puzzleteca.pantallas.registro;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.util.Log;
 
@@ -32,6 +36,7 @@ public class RegistroActivity extends AppCompatActivity {
     private EditText nombreEditText, apellidoEditText, emailEditText, passwordEditText;
     private Button botonRegistro;
 
+    @SuppressLint({"ClickableViewAccessibility", "SetTextI18n"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,23 +86,36 @@ public class RegistroActivity extends AppCompatActivity {
         campoParams.setMargins(80, 25, 80, 25);
 
         // ---------- CAMPOS DE TEXTO ----------
-        nombreEditText = crearEditText("Nombre");
+        nombreEditText = crearEditText("Nombre", R.drawable.people);
         nombreEditText.setLayoutParams(campoParams);
 
-        apellidoEditText = crearEditText("Apellido");
+        apellidoEditText = crearEditText("Apellido", R.drawable.family);
         apellidoEditText.setLayoutParams(campoParams);
 
-        emailEditText = crearEditText("Email");
+        emailEditText = crearEditText("Email", R.drawable.email);
         emailEditText.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
         emailEditText.setLayoutParams(campoParams);
 
-        passwordEditText = crearEditText("Password");
-        passwordEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        passwordEditText = crearPasswordEditText("Password");
         passwordEditText.setLayoutParams(campoParams);
 
         // ---------- BOTON REGISTRO ----------
         botonRegistro = crearBoton();
         botonRegistro.setLayoutParams(campoParams);
+
+        // ---------- TEXTO LOGIN ----------
+        TextView txtLogin = new TextView(this);
+        txtLogin.setText("¿Ya tienes cuenta? Iniciar sesión");
+        txtLogin.setTextColor(Color.parseColor("#455A64"));
+        txtLogin.setTextSize(16);
+        txtLogin.setGravity(Gravity.CENTER);
+        txtLogin.setPadding(20, 20, 20, 10);
+
+        txtLogin.setOnClickListener(v -> {
+            Intent intent = new Intent(RegistroActivity.this,
+                    com.ignacio_natalia.puzzleteca.pantallas.login.LoginActivity.class);
+            startActivity(intent);
+        });
 
         // Añadir campos al contenedor
         contenedorForm.addView(nombreEditText);
@@ -105,6 +123,7 @@ public class RegistroActivity extends AppCompatActivity {
         contenedorForm.addView(emailEditText);
         contenedorForm.addView(passwordEditText);
         contenedorForm.addView(botonRegistro);
+        contenedorForm.addView(txtLogin);
 
         // Añadir elementos al layout
         layout.addView(titulo);
@@ -163,6 +182,7 @@ public class RegistroActivity extends AppCompatActivity {
     }
 
     // ---------- BOTON BONITO ----------
+    @SuppressLint("SetTextI18n")
     private Button crearBoton() {
         Button btn = new Button(this);
         btn.setText("Registrarse");
@@ -181,7 +201,8 @@ public class RegistroActivity extends AppCompatActivity {
     }
 
     // ---------- EDITTEXT BONITO ----------
-    private EditText crearEditText(String hint) {
+    @SuppressLint("UseCompatTextViewDrawableApis")
+    private EditText crearEditText(String hint, int icono) {
         EditText edit = new EditText(this);
         edit.setHint(hint);
         edit.setTextSize(18);
@@ -189,11 +210,68 @@ public class RegistroActivity extends AppCompatActivity {
         edit.setHintTextColor(Color.GRAY);
         edit.setPadding(40, 35, 40, 35);
 
+        // 👉 ICONO IZQUIERDO
+        edit.setCompoundDrawablesWithIntrinsicBounds(icono, 0, 0, 0);
+        edit.setCompoundDrawablePadding(20);
+
         GradientDrawable shape = new GradientDrawable();
         shape.setCornerRadius(55);
-        shape.setColor(Color.parseColor("#EAF8E0")); // mismo color suave que botones
+        shape.setColor(Color.parseColor("#EAF8E0"));
         edit.setBackground(shape);
 
         return edit;
     }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private EditText crearPasswordEditText(String hint) {
+        EditText edit = crearEditText(hint, android.R.drawable.ic_lock_lock);
+
+        edit.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+
+        boolean[] visible = {false};
+
+        edit.setCompoundDrawablesWithIntrinsicBounds(
+                android.R.drawable.ic_lock_lock, 0,
+                R.drawable.visibility_off, 0
+        );
+
+        edit.setOnTouchListener((v, event) -> {
+            if (event.getAction() == MotionEvent.ACTION_UP) {
+
+                if (event.getRawX() >= (edit.getRight()
+                        - edit.getCompoundDrawables()[2].getBounds().width())) {
+
+                    visible[0] = !visible[0];
+
+                    if (visible[0]) {
+                        edit.setTransformationMethod(
+                                android.text.method.HideReturnsTransformationMethod.getInstance()
+                        );
+
+                        edit.setCompoundDrawablesWithIntrinsicBounds(
+                                android.R.drawable.ic_lock_lock, 0,
+                                R.drawable.eye, 0
+                        );
+
+                    } else {
+                        edit.setTransformationMethod(
+                                android.text.method.PasswordTransformationMethod.getInstance()
+                        );
+
+                        edit.setCompoundDrawablesWithIntrinsicBounds(
+                                android.R.drawable.ic_lock_lock, 0,
+                                R.drawable.visibility_off, 0
+                        );
+                    }
+
+                    edit.setSelection(edit.getText().length());
+                    return true;
+                }
+            }
+            return false;
+        });
+
+        return edit;
+    }
+
 }
