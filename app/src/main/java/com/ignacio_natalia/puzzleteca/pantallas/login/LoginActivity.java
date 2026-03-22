@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.Gravity;
@@ -24,6 +23,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.ignacio_natalia.puzzleteca.R;
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.AppPrincipal;
+import com.ignacio_natalia.puzzleteca.pantallas.registro.RegistroActivity;
 import com.ignacio_natalia.puzzleteca.utilidades.GestorSesion;
 
 public class LoginActivity extends AppCompatActivity {
@@ -205,8 +205,7 @@ public class LoginActivity extends AppCompatActivity {
         txtRegister.setPadding(20, 20, 20, 10);
 
         txtRegister.setOnClickListener(v -> {
-            Intent intent = new Intent(LoginActivity.this,
-                    com.ignacio_natalia.puzzleteca.pantallas.registro.RegistroActivity.class);
+            Intent intent = new Intent(LoginActivity.this, RegistroActivity.class);
             startActivity(intent);
         });
 

@@ -2,7 +2,6 @@ package com.ignacio_natalia.puzzleteca.pantallas.registro;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
