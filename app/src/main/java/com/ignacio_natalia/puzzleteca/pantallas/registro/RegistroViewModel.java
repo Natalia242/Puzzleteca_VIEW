@@ -24,7 +24,8 @@ public class RegistroViewModel extends ViewModel {
     }
 
     public void crearUsuario(Usuario usuario) {
-        usuarioRepositorio.crearUsuario(usuario, new Callback<Void>() {
+
+        usuarioRepositorio.crearUsuario(usuario, new Callback<>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
@@ -45,5 +46,6 @@ public class RegistroViewModel extends ViewModel {
                 usuarioCreado.setValue(false);
             }
         });
+
     }
 }

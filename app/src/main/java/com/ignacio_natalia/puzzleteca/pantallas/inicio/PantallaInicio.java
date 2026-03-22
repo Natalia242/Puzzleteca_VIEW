@@ -1,9 +1,9 @@
 package com.ignacio_natalia.puzzleteca.pantallas.inicio;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
@@ -21,6 +21,7 @@ import com.ignacio_natalia.puzzleteca.pantallas.registro.RegistroActivity;
 
 public class PantallaInicio extends AppCompatActivity {
 
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
