@@ -228,6 +228,7 @@ public class LoginActivity extends AppCompatActivity {
         loginViewModel.getLoginExitoso().observe(this, loginRespuesta -> {
 
             GestorSesion.guardarToken(this, loginRespuesta.getToken());
+            GestorSesion.guardarRol(this, loginRespuesta.getTipoUsuario());
 
             Toast.makeText(this, "Login exitoso", Toast.LENGTH_SHORT).show();
 

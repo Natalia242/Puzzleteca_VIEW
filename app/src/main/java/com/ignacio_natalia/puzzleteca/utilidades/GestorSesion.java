@@ -1,7 +1,6 @@
 package com.ignacio_natalia.puzzleteca.utilidades;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 
 /**
  * Clase para manejar la sesión del usuario.
@@ -11,22 +10,32 @@ public class GestorSesion {
 
     private static final String PREFS_NAME = "app_prefs";
     private static final String KEY_TOKEN = "JWT_TOKEN";
+    private static final String KEY_ROL = "TIPO_USUARIO";
 
-    // Guardar el token
     public static void guardarToken(Context context, String token) {
-        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        prefs.edit().putString(KEY_TOKEN, token).apply();
+        context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+                .edit().putString(KEY_TOKEN, token).apply();
     }
 
-    // Obtener el token
     public static String obtenerToken(Context context) {
-        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        return prefs.getString(KEY_TOKEN, null);
+        return context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+                .getString(KEY_TOKEN, null);
+    }
+    public static void guardarRol(Context context, String rol) {
+        context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+                .edit().putString(KEY_ROL, rol).apply();
+    }
+    public static String obtenerRol(Context context) {
+        return context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+                .getString(KEY_ROL, "Usuario");
     }
 
-    // Cerrar sesión
+    public static boolean esAdmin(Context context) {
+        return "Admin".equals(obtenerRol(context));
+    }
+
     public static void cerrarSesion(Context context) {
-        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        prefs.edit().remove(KEY_TOKEN).apply();
+        context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+                .edit().remove(KEY_TOKEN).remove(KEY_ROL).apply();
     }
 }
