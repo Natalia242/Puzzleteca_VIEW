@@ -28,6 +28,7 @@
         <activity android:name=".pantallas.inicio.PantallaInicio" />
         <activity android:name=".pantallas.registro.RegistroActivity" />
         <activity android:name=".pantallas.login.LoginActivity" />
+        <activity android:name=".pantallas.registro.RecuperarContrasenna" />
         <activity android:name=".pantallas.aplicacion_principal.AppPrincipal" />
 
     </application>

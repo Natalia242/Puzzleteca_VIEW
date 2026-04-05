@@ -9,29 +9,45 @@ import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.widget.*;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.ignacio_natalia.puzzleteca.modelos.Puzzle;
+import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos.Foro;
+import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos.PanelAdmin;
+import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos.PanelUsuario;
+import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos.Ranking;
 import com.ignacio_natalia.puzzleteca.utilidades.GestorSesion;
 
 import java.util.List;
 
 public class AppPrincipal extends AppCompatActivity {
+
+    private static final int FRAGMENTO_ID = 0xF4A001;
+
     private LinearLayout contenedorPuzzles;
+    private ScrollView scrollPuzzles;
+    private FrameLayout contenedorFragmento;
     private PuzzleViewModel puzzleViewModel;
+    private TextView btnInicio, btnPuzzles, btnRanking, btnPerfil;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().setStatusBarColor(Color.parseColor("#DFF5C9"));
 
-        // ── Fondo degradado igual que el resto de la app ──
+        // ── Bloqueo ──
+        if ("Bloqueado".equals(GestorSesion.obtenerRol(this))) {
+            mostrarPantallaBloqueo();
+            return;
+        }
+
         GradientDrawable fondo = new GradientDrawable(
                 GradientDrawable.Orientation.TOP_BOTTOM,
                 new int[]{Color.parseColor("#DFF5C9"), Color.parseColor("#B8E6A5")}
         );
 
-        // ── Layout raíz vertical ──
         LinearLayout root = new LinearLayout(this);
         root.setOrientation(LinearLayout.VERTICAL);
         root.setBackground(fondo);
@@ -46,21 +62,32 @@ public class AppPrincipal extends AppCompatActivity {
         titulo.setPadding(40, 60, 40, 30);
         root.addView(titulo);
 
-        // ── ScrollView con la lista de tarjetas ──
-        ScrollView scroll = new ScrollView(this);
+        // ── ScrollView con la lista de tarjetas (Inicio) ──
+        scrollPuzzles = new ScrollView(this);
         LinearLayout.LayoutParams scrollParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, 0, 1f);
-        scroll.setLayoutParams(scrollParams);
+        scrollPuzzles.setLayoutParams(scrollParams);
 
         contenedorPuzzles = new LinearLayout(this);
         contenedorPuzzles.setOrientation(LinearLayout.VERTICAL);
         contenedorPuzzles.setPadding(30, 10, 30, 30);
-        scroll.addView(contenedorPuzzles);
-        root.addView(scroll);
+        scrollPuzzles.addView(contenedorPuzzles);
+        root.addView(scrollPuzzles);
+
+        // ── Contenedor de fragmentos (oculto al inicio) ──
+        contenedorFragmento = new FrameLayout(this);
+        contenedorFragmento.setId(FRAGMENTO_ID);
+        contenedorFragmento.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, 0, 1f));
+        contenedorFragmento.setVisibility(FrameLayout.GONE);
+        root.addView(contenedorFragmento);
+
+        // ── Nav inferior ──
+        root.addView(construirNavBar());
 
         setContentView(root);
 
-        // ── ViewModel + carga de datos ──
+        // ── ViewModel + carga ──
         puzzleViewModel = new ViewModelProvider(this).get(PuzzleViewModel.class);
         String token = GestorSesion.obtenerToken(this);
 
@@ -69,8 +96,127 @@ public class AppPrincipal extends AppCompatActivity {
                 Toast.makeText(this, msg, Toast.LENGTH_LONG).show());
 
         puzzleViewModel.cargarPuzzles(token);
+
+        marcarTab(btnInicio);
     }
 
+    // ── Mostrar contenido de Inicio vs Fragmento ──
+    private void mostrarInicio() {
+        scrollPuzzles.setVisibility(ScrollView.VISIBLE);
+        contenedorFragmento.setVisibility(FrameLayout.GONE);
+    }
+
+    private void mostrarFragmento(Fragment fragmento) {
+        scrollPuzzles.setVisibility(ScrollView.GONE);
+        contenedorFragmento.setVisibility(FrameLayout.VISIBLE);
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(FRAGMENTO_ID, fragmento);
+        ft.commit();
+    }
+
+    // ── Nav bar ──
+    private LinearLayout construirNavBar() {
+        LinearLayout nav = new LinearLayout(this);
+        nav.setOrientation(LinearLayout.HORIZONTAL);
+        nav.setGravity(Gravity.CENTER_VERTICAL);
+        nav.setBackgroundColor(Color.WHITE);
+        nav.setElevation(16f);
+        nav.setPadding(0, 14, 0, 14);
+
+        btnInicio  = crearTab("🏠", "Inicio");
+        btnPuzzles = crearTab("🧩", "Puzzles");
+        btnRanking = crearTab("🏆", "Ranking");
+        btnPerfil  = crearTab("👤", "Perfil");
+
+        LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(
+                0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f);
+        btnInicio.setLayoutParams(p);
+        btnPuzzles.setLayoutParams(p);
+        btnRanking.setLayoutParams(p);
+        btnPerfil.setLayoutParams(p);
+
+        btnInicio.setOnClickListener(v -> {
+            mostrarInicio();
+            marcarTab(btnInicio);
+        });
+        btnPuzzles.setOnClickListener(v -> {
+            mostrarFragmento(new Foro());
+            marcarTab(btnPuzzles);
+        });
+        btnRanking.setOnClickListener(v -> {
+            mostrarFragmento(new Ranking());
+            marcarTab(btnRanking);
+        });
+        btnPerfil.setOnClickListener(v -> {
+            String rol = GestorSesion.obtenerRol(this);
+            mostrarFragmento("Admin".equals(rol) ? new PanelAdmin() : new PanelUsuario());
+            marcarTab(btnPerfil);
+        });
+
+        nav.addView(btnInicio);
+        nav.addView(btnPuzzles);
+        nav.addView(btnRanking);
+        nav.addView(btnPerfil);
+        return nav;
+    }
+
+    private TextView crearTab(String emoji, String etiqueta) {
+        TextView tv = new TextView(this);
+        tv.setText(emoji + "\n" + etiqueta);
+        tv.setTextSize(11);
+        tv.setGravity(Gravity.CENTER);
+        tv.setTextColor(Color.parseColor("#90A4AE"));
+        tv.setPadding(8, 8, 8, 8);
+        return tv;
+    }
+
+    private void marcarTab(TextView seleccionado) {
+        for (TextView t : new TextView[]{btnInicio, btnPuzzles, btnRanking, btnPerfil}) {
+            t.setTextColor(Color.parseColor("#90A4AE"));
+            t.setTypeface(null, Typeface.NORMAL);
+        }
+        seleccionado.setTextColor(Color.parseColor("#F06292"));
+        seleccionado.setTypeface(null, Typeface.BOLD);
+    }
+
+    // ── Pantalla de bloqueo ──
+    private void mostrarPantallaBloqueo() {
+        GradientDrawable fondo = new GradientDrawable(
+                GradientDrawable.Orientation.TOP_BOTTOM,
+                new int[]{Color.parseColor("#DFF5C9"), Color.parseColor("#B8E6A5")}
+        );
+        FrameLayout layout = new FrameLayout(this);
+        layout.setBackground(fondo);
+
+        LinearLayout centro = new LinearLayout(this);
+        centro.setOrientation(LinearLayout.VERTICAL);
+        centro.setGravity(Gravity.CENTER);
+        centro.setLayoutParams(new FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.MATCH_PARENT,
+                FrameLayout.LayoutParams.MATCH_PARENT));
+
+        TextView tvIcono = new TextView(this);
+        tvIcono.setText("🚫");
+        tvIcono.setTextSize(64);
+        tvIcono.setGravity(Gravity.CENTER);
+
+        TextView tvMensaje = new TextView(this);
+        tvMensaje.setText("Usuario bloqueado");
+        tvMensaje.setTextSize(22);
+        tvMensaje.setTypeface(null, Typeface.BOLD);
+        tvMensaje.setTextColor(Color.parseColor("#C62828"));
+        tvMensaje.setGravity(Gravity.CENTER);
+        LinearLayout.LayoutParams mp = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT);
+        mp.setMargins(0, 24, 0, 0);
+        tvMensaje.setLayoutParams(mp);
+
+        centro.addView(tvIcono);
+        centro.addView(tvMensaje);
+        layout.addView(centro);
+        setContentView(layout);
+    }
     private void mostrarPuzzles(List<Puzzle> lista) {
         contenedorPuzzles.removeAllViews();
         for (Puzzle p : lista) {
@@ -82,8 +228,6 @@ public class AppPrincipal extends AppCompatActivity {
 
     @SuppressLint("SetTextI18n")
     private LinearLayout crearTarjeta(Puzzle puzzle) {
-
-        // Tarjeta blanca redondeada con borde verde
         LinearLayout tarjeta = new LinearLayout(this);
         tarjeta.setOrientation(LinearLayout.VERTICAL);
         tarjeta.setPadding(40, 35, 40, 35);
@@ -100,7 +244,6 @@ public class AppPrincipal extends AppCompatActivity {
         fondoTarjeta.setStroke(3, Color.parseColor("#A5D6A7"));
         tarjeta.setBackground(fondoTarjeta);
 
-        // Título del puzzle
         TextView tvTitulo = new TextView(this);
         tvTitulo.setText("🧩 " + puzzle.getAutor());
         tvTitulo.setTextSize(17);
@@ -108,7 +251,6 @@ public class AppPrincipal extends AppCompatActivity {
         tvTitulo.setTextColor(Color.parseColor("#37474F"));
         tarjeta.addView(tvTitulo);
 
-        // Descripción
         TextView tvDesc = new TextView(this);
         tvDesc.setText(puzzle.getDescripcion());
         tvDesc.setTextSize(14);
@@ -120,7 +262,6 @@ public class AppPrincipal extends AppCompatActivity {
         tvDesc.setLayoutParams(descParams);
         tarjeta.addView(tvDesc);
 
-        // Fila inferior: dificultad + botón Jugar
         LinearLayout fila = new LinearLayout(this);
         fila.setOrientation(LinearLayout.HORIZONTAL);
         fila.setGravity(Gravity.CENTER_VERTICAL);
@@ -129,23 +270,10 @@ public class AppPrincipal extends AppCompatActivity {
         tvDificultad.setText("⭐ " + (puzzle.getDificultad() != null ? puzzle.getDificultad() : "Normal"));
         tvDificultad.setTextSize(13);
         tvDificultad.setTextColor(Color.parseColor("#26A69A"));
-        LinearLayout.LayoutParams difParams = new LinearLayout.LayoutParams(
-                0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f);
-        tvDificultad.setLayoutParams(difParams);
-
-        Button btnJugar = new Button(this);
-        btnJugar.setText("Jugar");
-        btnJugar.setTextColor(Color.WHITE);
-        btnJugar.setTextSize(14);
-        btnJugar.setAllCaps(false);
-        btnJugar.setPadding(50, 15, 50, 15);
-        GradientDrawable btnShape = new GradientDrawable();
-        btnShape.setColor(Color.parseColor("#F06292"));
-        btnShape.setCornerRadius(50);
-        btnJugar.setBackground(btnShape);
+        tvDificultad.setLayoutParams(new LinearLayout.LayoutParams(
+                0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
 
         fila.addView(tvDificultad);
-        fila.addView(btnJugar);
         tarjeta.addView(fila);
 
         return tarjeta;

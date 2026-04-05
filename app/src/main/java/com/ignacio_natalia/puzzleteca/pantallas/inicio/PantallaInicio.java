@@ -17,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.ignacio_natalia.puzzleteca.R;
 import com.ignacio_natalia.puzzleteca.pantallas.login.LoginActivity;
+import com.ignacio_natalia.puzzleteca.pantallas.registro.RecuperarContrasenna;
 import com.ignacio_natalia.puzzleteca.pantallas.registro.RegistroActivity;
 
 public class PantallaInicio extends AppCompatActivity {
@@ -118,6 +119,10 @@ public class PantallaInicio extends AppCompatActivity {
         // Botón recuperar contraseña
         Button btnForgot = crearBoton("¿Has olvidado la contraseña?", "#26A69A");
         btnForgot.setLayoutParams(botonesParams);
+        btnForgot.setOnClickListener(view -> {
+            Intent intent = new Intent(PantallaInicio.this, RecuperarContrasenna.class);
+            startActivity(intent);
+        });
 
         contenedorBotones.addView(btnLogin);
         contenedorBotones.addView(btnRegister);

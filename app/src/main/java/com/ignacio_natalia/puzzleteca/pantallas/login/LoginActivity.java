@@ -23,6 +23,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.ignacio_natalia.puzzleteca.R;
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.AppPrincipal;
+import com.ignacio_natalia.puzzleteca.pantallas.registro.RecuperarContrasenna;
 import com.ignacio_natalia.puzzleteca.pantallas.registro.RegistroActivity;
 import com.ignacio_natalia.puzzleteca.utilidades.GestorSesion;
 
@@ -181,8 +182,8 @@ public class LoginActivity extends AppCompatActivity {
         txtForgot.setPadding(20, 20, 20, 10);
 
         txtForgot.setOnClickListener(v -> {
-            // Aquí lanzarías la actividad o diálogo de recuperación
-            Toast.makeText(LoginActivity.this, "Función de recuperación no implementada aún", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(LoginActivity.this, RecuperarContrasenna.class);
+            startActivity(intent);
         });
 
         // Separación
