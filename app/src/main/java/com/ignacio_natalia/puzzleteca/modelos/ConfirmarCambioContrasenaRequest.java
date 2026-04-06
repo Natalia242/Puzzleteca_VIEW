@@ -1,11 +1,11 @@
 package com.ignacio_natalia.puzzleteca.modelos;
 
-public class ConfirmarCambioPasswordRequest {
+public class ConfirmarCambioContrasenaRequest {
     private String email;
     private String codigo;
     private String nuevaPassword;
 
-    public ConfirmarCambioPasswordRequest(String email, String codigo, String nuevaPassword) {
+    public ConfirmarCambioContrasenaRequest(String email, String codigo, String nuevaPassword) {
         this.email = email;
         this.codigo = codigo;
         this.nuevaPassword = nuevaPassword;

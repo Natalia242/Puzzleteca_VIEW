@@ -65,8 +65,6 @@ public class PanelAdmin extends Fragment {
 
         // ── Opciones ──
         layout.addView(crearOpcion("✏️", "Editar Perfil"));
-        layout.addView(crearOpcion("🧩", "Mis Puzzles"));
-        layout.addView(crearOpcion("💬", "Mis Chats Privados"));
         espacio(layout, 10);
 
         // ── Tarjeta Mejor Puzzle ──
@@ -125,8 +123,6 @@ public class PanelAdmin extends Fragment {
         // ── Opciones de gestión ──
         layout.addView(crearOpcion("🧩", "Gestionar Puzzles"));
         layout.addView(crearOpcion("👥", "Gestionar Usuarios"));
-        layout.addView(crearOpcion("🏆", "Ranking Diario"));
-        layout.addView(crearOpcion("🔒", "Bloquear / Desbloquear"));
 
         scroll.addView(layout);
         return scroll;

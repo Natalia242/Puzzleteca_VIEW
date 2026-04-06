@@ -1,5 +1,6 @@
 package com.ignacio_natalia.puzzleteca.pantallas.registro;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -13,14 +14,14 @@ public class RecuperarContrasennaViewModel extends ViewModel {
     private final UsuarioRepositorio repositorio = new UsuarioRepositorio();
 
     public final MutableLiveData<Boolean> codigoEnviado = new MutableLiveData<>();
-    public final MutableLiveData<Boolean> passwordCambiada = new MutableLiveData<>();
+    public final MutableLiveData<Boolean> contrasenaCambiada = new MutableLiveData<>();
     public final MutableLiveData<String> error = new MutableLiveData<>();
     public void solicitarCodigo(String email) {
 
         codigoEnviado.postValue(true);
-        repositorio.solicitarCodigo(email, new Callback<Void>() {
+        repositorio.solicitarCodigo(email, new Callback<>() {
             @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
+            public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
 
                 if (response.isSuccessful()) {
                     codigoEnviado.postValue(true);
@@ -32,19 +33,19 @@ public class RecuperarContrasennaViewModel extends ViewModel {
             }
 
             @Override
-            public void onFailure(Call<Void> call, Throwable t) {
-                error.postValue("Error de conexión: " + t.getMessage());
+            public void onFailure(@NonNull Call<Void> call, @NonNull Throwable exepcion) {
+                error.postValue("Error de conexión: " + exepcion.getMessage());
             }
         });
     }
     public void confirmarCambioPassword(String email, String codigo, String nuevaPassword) {
 
-        repositorio.confirmarCambioPassword(email, codigo, nuevaPassword, new Callback<Void>() {
+        repositorio.confirmarCambioPassword(email, codigo, nuevaPassword, new Callback<>() {
             @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
+            public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
 
                 if (response.isSuccessful()) {
-                    passwordCambiada.postValue(true);
+                    contrasenaCambiada.postValue(true);
 
                 } else if (response.code() == 401) {
                     error.postValue("Código incorrecto o expirado.");
@@ -56,8 +57,8 @@ public class RecuperarContrasennaViewModel extends ViewModel {
             }
 
             @Override
-            public void onFailure(Call<Void> call, Throwable t) {
-                error.postValue("Error de conexión: " + t.getMessage());
+            public void onFailure(@NonNull Call<Void> call,@NonNull  Throwable excepcion) {
+                error.postValue("Error de conexión: " + excepcion.getMessage());
 
             }
         });

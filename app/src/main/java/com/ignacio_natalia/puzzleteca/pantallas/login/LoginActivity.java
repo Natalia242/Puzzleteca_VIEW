@@ -32,8 +32,7 @@ public class LoginActivity extends AppCompatActivity {
     private LoginViewModel loginViewModel;
 
     private EditText emailEditText;
-    private EditText passwordEditText;
-    private Button loginButton;
+    private EditText contrasenaEditText;
 
     @SuppressLint({"ClickableViewAccessibility", "SetTextI18n"})
     @Override
@@ -56,38 +55,38 @@ public class LoginActivity extends AppCompatActivity {
         titulo.setImageResource(R.drawable.titulo);
         titulo.setAdjustViewBounds(true);
 
-        FrameLayout.LayoutParams tituloParams =
+        FrameLayout.LayoutParams parametrosTitulo =
                 new FrameLayout.LayoutParams(
                         FrameLayout.LayoutParams.WRAP_CONTENT,
                         FrameLayout.LayoutParams.WRAP_CONTENT
                 );
 
-        tituloParams.gravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
+        parametrosTitulo.gravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
 
-        titulo.setLayoutParams(tituloParams);
+        titulo.setLayoutParams(parametrosTitulo);
 
         // ---------- CONTENEDOR FORMULARIO ----------
-        LinearLayout contenedorForm = new LinearLayout(this);
-        contenedorForm.setOrientation(LinearLayout.VERTICAL);
-        contenedorForm.setGravity(Gravity.CENTER);
+        LinearLayout contenedorFormulario = new LinearLayout(this);
+        contenedorFormulario.setOrientation(LinearLayout.VERTICAL);
+        contenedorFormulario.setGravity(Gravity.CENTER);
 
-        FrameLayout.LayoutParams formParams =
+        FrameLayout.LayoutParams parametrosFormulario =
                 new FrameLayout.LayoutParams(
                         FrameLayout.LayoutParams.MATCH_PARENT,
                         FrameLayout.LayoutParams.WRAP_CONTENT
                 );
 
-        formParams.gravity = Gravity.CENTER;
+        parametrosFormulario.gravity = Gravity.CENTER;
 
-        contenedorForm.setLayoutParams(formParams);
+        contenedorFormulario.setLayoutParams(parametrosFormulario);
 
-        LinearLayout.LayoutParams campoParams =
+        LinearLayout.LayoutParams parametrosCampos =
                 new LinearLayout.LayoutParams(
                         ViewGroup.LayoutParams.MATCH_PARENT,
                         ViewGroup.LayoutParams.WRAP_CONTENT
                 );
 
-        campoParams.setMargins(80, 25, 80, 25);
+        parametrosCampos.setMargins(80, 25, 80, 25);
 
         // ---------- EMAIL ----------
         emailEditText = new EditText(this);
@@ -101,67 +100,67 @@ public class LoginActivity extends AppCompatActivity {
         );
 
         emailEditText.setCompoundDrawablePadding(20);
-        emailEditText.setLayoutParams(campoParams);
+        emailEditText.setLayoutParams(parametrosCampos);
 
         // ---------- PASSWORD ----------
-        boolean[] passwordVisible = {false};
+        boolean[] contrasenaVisible = {false};
 
-        passwordEditText = new EditText(this);
-        passwordEditText.setHint("Contraseña");
-        passwordEditText.setHintTextColor(Color.GRAY);
+        contrasenaEditText = new EditText(this);
+        contrasenaEditText.setHint("Contraseña");
+        contrasenaEditText.setHintTextColor(Color.GRAY);
 
         // IMPORTANTE: mantener este inputType base
-        passwordEditText.setInputType(
+        contrasenaEditText.setInputType(
                 InputType.TYPE_CLASS_TEXT |
                         InputType.TYPE_TEXT_VARIATION_PASSWORD
         );
 
-        passwordEditText.setBackground(crearFondoCampo());
-        passwordEditText.setPadding(40, 30, 40, 30);
+        contrasenaEditText.setBackground(crearFondoCampo());
+        contrasenaEditText.setPadding(40, 30, 40, 30);
 
         // Icono izquierda (candado) + derecha (ojo)
-        passwordEditText.setCompoundDrawablesWithIntrinsicBounds(
+        contrasenaEditText.setCompoundDrawablesWithIntrinsicBounds(
                 android.R.drawable.ic_lock_lock, 0,
                 R.drawable.visibility_off, 0
         );
 
-        passwordEditText.setCompoundDrawablePadding(20);
-        passwordEditText.setLayoutParams(campoParams);
+        contrasenaEditText.setCompoundDrawablePadding(20);
+        contrasenaEditText.setLayoutParams(parametrosCampos);
 
         // Toggle al pulsar el icono derecho
-        passwordEditText.setOnTouchListener((v, event) -> {
+        contrasenaEditText.setOnTouchListener((vista, event) -> {
             if (event.getAction() == MotionEvent.ACTION_UP) {
 
-                if (event.getRawX() >= (passwordEditText.getRight()
-                        - passwordEditText.getCompoundDrawables()[2].getBounds().width())) {
+                if (event.getRawX() >= (contrasenaEditText.getRight()
+                        - contrasenaEditText.getCompoundDrawables()[2].getBounds().width())) {
 
-                    passwordVisible[0] = !passwordVisible[0];
+                    contrasenaVisible[0] = !contrasenaVisible[0];
 
-                    if (passwordVisible[0]) {
+                    if (contrasenaVisible[0]) {
                         // Mostrar contraseña
-                        passwordEditText.setTransformationMethod(
+                        contrasenaEditText.setTransformationMethod(
                                 android.text.method.HideReturnsTransformationMethod.getInstance()
                         );
 
-                        passwordEditText.setCompoundDrawablesWithIntrinsicBounds(
+                        contrasenaEditText.setCompoundDrawablesWithIntrinsicBounds(
                                 android.R.drawable.ic_lock_lock, 0,
                                 R.drawable.eye, 0
                         );
 
                     } else {
                         // Ocultar contraseña
-                        passwordEditText.setTransformationMethod(
+                        contrasenaEditText.setTransformationMethod(
                                 android.text.method.PasswordTransformationMethod.getInstance()
                         );
 
-                        passwordEditText.setCompoundDrawablesWithIntrinsicBounds(
+                        contrasenaEditText.setCompoundDrawablesWithIntrinsicBounds(
                                 android.R.drawable.ic_lock_lock, 0,
                                 R.drawable.visibility_off, 0
                         );
                     }
 
                     // Mantener cursor al final
-                    passwordEditText.setSelection(passwordEditText.getText().length());
+                    contrasenaEditText.setSelection(contrasenaEditText.getText().length());
 
                     return true;
                 }
@@ -170,18 +169,18 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         // ---------- BOTON LOGIN ----------
-        loginButton = crearBoton();
-        loginButton.setLayoutParams(campoParams);
+        Button botonLogin = crearBoton();
+        botonLogin.setLayoutParams(parametrosCampos);
 
         // ---------- TEXTO CONTRASEÑA OLVIDADA ----------
-        TextView txtForgot = new TextView(this);
-        txtForgot.setText("¿Has olvidado la contraseña?");
-        txtForgot.setTextColor(Color.parseColor("#00796B")); // puedes usar el mismo color de botones
-        txtForgot.setTextSize(16);
-        txtForgot.setGravity(Gravity.CENTER);
-        txtForgot.setPadding(20, 20, 20, 10);
+        TextView textoOlvidada = new TextView(this);
+        textoOlvidada.setText("¿Has olvidado la contraseña?");
+        textoOlvidada.setTextColor(Color.parseColor("#00796B")); // puedes usar el mismo color de botones
+        textoOlvidada.setTextSize(16);
+        textoOlvidada.setGravity(Gravity.CENTER);
+        textoOlvidada.setPadding(20, 20, 20, 10);
 
-        txtForgot.setOnClickListener(v -> {
+        textoOlvidada.setOnClickListener(v -> {
             Intent intent = new Intent(LoginActivity.this, RecuperarContrasenna.class);
             startActivity(intent);
         });
@@ -198,28 +197,28 @@ public class LoginActivity extends AppCompatActivity {
         separador.setBackgroundColor(Color.DKGRAY);
 
         // ---------- TEXTO REGISTRARSE ----------
-        TextView txtRegister = new TextView(this);
-        txtRegister.setText("¿No tienes cuenta? Crear cuenta");
-        txtRegister.setTextColor(Color.parseColor("#455A64"));
-        txtRegister.setTextSize(16);
-        txtRegister.setGravity(Gravity.CENTER);
-        txtRegister.setPadding(20, 20, 20, 10);
+        TextView textoRegistro = new TextView(this);
+        textoRegistro.setText("¿No tienes cuenta? Crear cuenta");
+        textoRegistro.setTextColor(Color.parseColor("#455A64"));
+        textoRegistro.setTextSize(16);
+        textoRegistro.setGravity(Gravity.CENTER);
+        textoRegistro.setPadding(20, 20, 20, 10);
 
-        txtRegister.setOnClickListener(v -> {
+        textoRegistro.setOnClickListener(v -> {
             Intent intent = new Intent(LoginActivity.this, RegistroActivity.class);
             startActivity(intent);
         });
 
-        contenedorForm.addView(emailEditText);
-        contenedorForm.addView(passwordEditText);
-        contenedorForm.addView(loginButton);
-        contenedorForm.addView(txtForgot);
-        contenedorForm.addView(separador);
-        contenedorForm.addView(txtRegister);
+        contenedorFormulario.addView(emailEditText);
+        contenedorFormulario.addView(contrasenaEditText);
+        contenedorFormulario.addView(botonLogin);
+        contenedorFormulario.addView(textoOlvidada);
+        contenedorFormulario.addView(separador);
+        contenedorFormulario.addView(textoRegistro);
 
         // Añadir elementos al layout
         layout.addView(titulo);
-        layout.addView(contenedorForm);
+        layout.addView(contenedorFormulario);
 
         setContentView(layout);
 
@@ -231,8 +230,6 @@ public class LoginActivity extends AppCompatActivity {
             GestorSesion.guardarToken(this, loginRespuesta.getToken());
             GestorSesion.guardarRol(this, loginRespuesta.getTipoUsuario());
 
-            Toast.makeText(this, "Login exitoso", Toast.LENGTH_SHORT).show();
-
             Intent intent = new Intent(this, AppPrincipal.class);
             startActivity(intent);
             finish();
@@ -243,17 +240,17 @@ public class LoginActivity extends AppCompatActivity {
         );
 
         // Acción botón login
-        loginButton.setOnClickListener(v -> {
+        botonLogin.setOnClickListener(v -> {
 
             String email = emailEditText.getText().toString().trim();
-            String password = passwordEditText.getText().toString().trim();
+            String contrasena = contrasenaEditText.getText().toString().trim();
 
-            if (email.isEmpty() || password.isEmpty()) {
+            if (email.isEmpty() || contrasena.isEmpty()) {
                 Toast.makeText(this, "Completa todos los campos", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            loginViewModel.iniciarSesion(email, password);
+            loginViewModel.iniciarSesion(email, contrasena);
         });
     }
 
@@ -261,31 +258,31 @@ public class LoginActivity extends AppCompatActivity {
     @SuppressLint("SetTextI18n")
     private Button crearBoton() {
 
-        Button btn = new Button(this);
-        btn.setText("Entrar");
-        btn.setTextColor(Color.WHITE);
-        btn.setTextSize(20);
-        btn.setAllCaps(false);
-        btn.setPadding(20, 30, 20, 30);
+        Button boton = new Button(this);
+        boton.setText("Entrar");
+        boton.setTextColor(Color.WHITE);
+        boton.setTextSize(20);
+        boton.setAllCaps(false);
+        boton.setPadding(20, 30, 20, 30);
 
-        GradientDrawable shape = new GradientDrawable();
-        shape.setCornerRadius(60);
-        shape.setColor(Color.parseColor("#F06292"));
+        GradientDrawable forma = new GradientDrawable();
+        forma.setCornerRadius(60);
+        forma.setColor(Color.parseColor("#F06292"));
 
-        btn.setBackground(shape);
+        boton.setBackground(forma);
 
-        return btn;
+        return boton;
     }
 
     // ---------- FONDO EDITTEXT ----------
     private GradientDrawable crearFondoCampo() {
 
-        GradientDrawable shape = new GradientDrawable();
-        shape.setColor(Color.WHITE);
-        shape.setCornerRadius(50);
-        shape.setStroke(3, Color.parseColor("#A5D6A7"));
+        GradientDrawable forma = new GradientDrawable();
+        forma.setColor(Color.WHITE);
+        forma.setCornerRadius(50);
+        forma.setStroke(3, Color.parseColor("#A5D6A7"));
 
-        return shape;
+        return forma;
     }
 
 }

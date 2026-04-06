@@ -1,6 +1,8 @@
 package com.ignacio_natalia.puzzleteca.pantallas.registro;
 
 import android.util.Log;
+
+import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.MutableLiveData;
 import com.ignacio_natalia.puzzleteca.modelos.Usuario;
@@ -11,8 +13,8 @@ import retrofit2.Response;
 
 public class RegistroViewModel extends ViewModel {
 
-    private UsuarioRepositorio usuarioRepositorio;
-    private MutableLiveData<Boolean> usuarioCreado;
+    private final UsuarioRepositorio usuarioRepositorio;
+    private final MutableLiveData<Boolean> usuarioCreado;
 
     public RegistroViewModel() {
         usuarioRepositorio = new UsuarioRepositorio();
@@ -27,7 +29,7 @@ public class RegistroViewModel extends ViewModel {
 
         usuarioRepositorio.crearUsuario(usuario, new Callback<>() {
             @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
+            public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
                 if (response.isSuccessful()) {
                     // Log de éxito
                     Log.d("RegistroViewModel", "Usuario creado exitosamente.");
@@ -40,9 +42,9 @@ public class RegistroViewModel extends ViewModel {
             }
 
             @Override
-            public void onFailure(Call<Void> call, Throwable t) {
+            public void onFailure(@NonNull Call<Void> call, @NonNull Throwable excepcion) {
                 // Log de error en caso de fallo en la petición
-                Log.e("RegistroViewModel", "Error en la conexión: " + t.getMessage(), t);
+                Log.e("RegistroViewModel", "Error en la conexión: " + excepcion.getMessage());
                 usuarioCreado.setValue(false);
             }
         });

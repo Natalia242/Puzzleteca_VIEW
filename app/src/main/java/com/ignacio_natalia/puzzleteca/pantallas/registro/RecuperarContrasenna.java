@@ -29,15 +29,15 @@ public class RecuperarContrasenna extends AppCompatActivity {
 
     // Paso 1
     private EditText emailEditText;
-    private Button btnSolicitarCodigo;
-    private LinearLayout paso1Layout;
+    private Button botonSolicitarCodigo;
+    private LinearLayout pasoUnoLayout;
 
     // Paso 2
     private EditText codigoEditText;
-    private EditText nuevaPasswordEditText;
-    private EditText confirmarPasswordEditText;
-    private Button btnConfirmar;
-    private LinearLayout paso2Layout;
+    private EditText nuevaContrasenaEditText;
+    private EditText confirmarContrasenaEditText;
+    private Button botonConfirmar;
+    private LinearLayout pasoDosLayout;
 
     private String emailGuardado;
 
@@ -61,48 +61,48 @@ public class RecuperarContrasenna extends AppCompatActivity {
         ImageView titulo = new ImageView(this);
         titulo.setImageResource(R.drawable.titulo);
         titulo.setAdjustViewBounds(true);
-        FrameLayout.LayoutParams tituloParams = new FrameLayout.LayoutParams(
+        FrameLayout.LayoutParams parametrosTitulo = new FrameLayout.LayoutParams(
                 FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
-        tituloParams.gravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
-        titulo.setLayoutParams(tituloParams);
+        parametrosTitulo.gravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
+        titulo.setLayoutParams(parametrosTitulo);
 
         // CONTENEDOR PRINCIPAL
         LinearLayout contenedor = new LinearLayout(this);
         contenedor.setOrientation(LinearLayout.VERTICAL);
         contenedor.setGravity(Gravity.CENTER);
-        FrameLayout.LayoutParams contenedorParams = new FrameLayout.LayoutParams(
+        FrameLayout.LayoutParams parametrosContenedor = new FrameLayout.LayoutParams(
                 FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT);
-        contenedorParams.gravity = Gravity.CENTER;
-        contenedor.setLayoutParams(contenedorParams);
+        parametrosContenedor.gravity = Gravity.CENTER;
+        contenedor.setLayoutParams(parametrosContenedor);
 
-        LinearLayout.LayoutParams campoParams = new LinearLayout.LayoutParams(
+        LinearLayout.LayoutParams parametrosCampos = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        campoParams.setMargins(80, 25, 80, 25);
+        parametrosCampos.setMargins(80, 25, 80, 25);
 
         // ========== PASO 1 ==========
-        paso1Layout = new LinearLayout(this);
-        paso1Layout.setOrientation(LinearLayout.VERTICAL);
-        paso1Layout.setGravity(Gravity.CENTER);
+        pasoUnoLayout = new LinearLayout(this);
+        pasoUnoLayout.setOrientation(LinearLayout.VERTICAL);
+        pasoUnoLayout.setGravity(Gravity.CENTER);
 
-        TextView txtTitulo1 = new TextView(this);
-        txtTitulo1.setText("Recuperar contraseña");
-        txtTitulo1.setTextColor(Color.parseColor("#37474F"));
-        txtTitulo1.setTextSize(22);
-        txtTitulo1.setGravity(Gravity.CENTER);
-        LinearLayout.LayoutParams titulo1Params = new LinearLayout.LayoutParams(
+        TextView textoTituloUno = new TextView(this);
+        textoTituloUno.setText("Recuperar contraseña");
+        textoTituloUno.setTextColor(Color.parseColor("#37474F"));
+        textoTituloUno.setTextSize(22);
+        textoTituloUno.setGravity(Gravity.CENTER);
+        LinearLayout.LayoutParams parametrosTituloUno = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        titulo1Params.setMargins(80, 0, 80, 10);
-        txtTitulo1.setLayoutParams(titulo1Params);
+        parametrosTituloUno.setMargins(80, 0, 80, 10);
+        textoTituloUno.setLayoutParams(parametrosTituloUno);
 
-        TextView txtDesc1 = new TextView(this);
-        txtDesc1.setText("Introduce tu email y te enviaremos un código");
-        txtDesc1.setTextColor(Color.parseColor("#78909C"));
-        txtDesc1.setTextSize(14);
-        txtDesc1.setGravity(Gravity.CENTER);
-        LinearLayout.LayoutParams desc1Params = new LinearLayout.LayoutParams(
+        TextView pasoUno = new TextView(this);
+        pasoUno.setText("Introduce tu email y te enviaremos un código");
+        pasoUno.setTextColor(Color.parseColor("#78909C"));
+        pasoUno.setTextSize(14);
+        pasoUno.setGravity(Gravity.CENTER);
+        LinearLayout.LayoutParams parametrosPasoUno = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        desc1Params.setMargins(80, 0, 80, 20);
-        txtDesc1.setLayoutParams(desc1Params);
+        parametrosPasoUno.setMargins(80, 0, 80, 20);
+        pasoUno.setLayoutParams(parametrosPasoUno);
 
         emailEditText = new EditText(this);
         emailEditText.setHint("Email");
@@ -112,41 +112,41 @@ public class RecuperarContrasenna extends AppCompatActivity {
         emailEditText.setPadding(40, 30, 40, 30);
         emailEditText.setCompoundDrawablesWithIntrinsicBounds(R.drawable.email, 0, 0, 0);
         emailEditText.setCompoundDrawablePadding(20);
-        emailEditText.setLayoutParams(campoParams);
+        emailEditText.setLayoutParams(parametrosCampos);
 
-        btnSolicitarCodigo = crearBoton("Enviar código");
-        btnSolicitarCodigo.setLayoutParams(campoParams);
+        botonSolicitarCodigo = crearBoton("Enviar código");
+        botonSolicitarCodigo.setLayoutParams(parametrosCampos);
 
-        paso1Layout.addView(txtTitulo1);
-        paso1Layout.addView(txtDesc1);
-        paso1Layout.addView(emailEditText);
-        paso1Layout.addView(btnSolicitarCodigo);
+        pasoUnoLayout.addView(textoTituloUno);
+        pasoUnoLayout.addView(pasoUno);
+        pasoUnoLayout.addView(emailEditText);
+        pasoUnoLayout.addView(botonSolicitarCodigo);
 
         // ========== PASO 2 ==========
-        paso2Layout = new LinearLayout(this);
-        paso2Layout.setOrientation(LinearLayout.VERTICAL);
-        paso2Layout.setGravity(Gravity.CENTER);
-        paso2Layout.setVisibility(android.view.View.GONE);
+        pasoDosLayout = new LinearLayout(this);
+        pasoDosLayout.setOrientation(LinearLayout.VERTICAL);
+        pasoDosLayout.setGravity(Gravity.CENTER);
+        pasoDosLayout.setVisibility(android.view.View.GONE);
 
-        TextView txtTitulo2 = new TextView(this);
-        txtTitulo2.setText("Introduce el código");
-        txtTitulo2.setTextColor(Color.parseColor("#37474F"));
-        txtTitulo2.setTextSize(22);
-        txtTitulo2.setGravity(Gravity.CENTER);
-        LinearLayout.LayoutParams titulo2Params = new LinearLayout.LayoutParams(
+        TextView textoTituloDos = new TextView(this);
+        textoTituloDos.setText("Introduce el código");
+        textoTituloDos.setTextColor(Color.parseColor("#37474F"));
+        textoTituloDos.setTextSize(22);
+        textoTituloDos.setGravity(Gravity.CENTER);
+        LinearLayout.LayoutParams parametrosTituloDos = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        titulo2Params.setMargins(80, 0, 80, 10);
-        txtTitulo2.setLayoutParams(titulo2Params);
+        parametrosTituloDos.setMargins(80, 0, 80, 10);
+        textoTituloDos.setLayoutParams(parametrosTituloDos);
 
-        TextView txtDesc2 = new TextView(this);
-        txtDesc2.setText("Revisa tu correo e introduce el código de 6 dígitos");
-        txtDesc2.setTextColor(Color.parseColor("#78909C"));
-        txtDesc2.setTextSize(14);
-        txtDesc2.setGravity(Gravity.CENTER);
-        LinearLayout.LayoutParams desc2Params = new LinearLayout.LayoutParams(
+        TextView pasoDos = new TextView(this);
+        pasoDos.setText("Revisa tu correo e introduce el código de 6 dígitos");
+        pasoDos.setTextColor(Color.parseColor("#78909C"));
+        pasoDos.setTextSize(14);
+        pasoDos.setGravity(Gravity.CENTER);
+        LinearLayout.LayoutParams parametrosPasoDos = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        desc2Params.setMargins(80, 0, 80, 20);
-        txtDesc2.setLayoutParams(desc2Params);
+        parametrosPasoDos.setMargins(80, 0, 80, 20);
+        pasoDos.setLayoutParams(parametrosPasoDos);
 
         codigoEditText = new EditText(this);
         codigoEditText.setHint("Código de verificación");
@@ -155,91 +155,92 @@ public class RecuperarContrasenna extends AppCompatActivity {
         codigoEditText.setBackground(crearFondoCampo());
         codigoEditText.setPadding(40, 30, 40, 30);
         codigoEditText.setGravity(Gravity.CENTER);
-        codigoEditText.setLayoutParams(campoParams);
+        codigoEditText.setLayoutParams(parametrosCampos);
 
-        boolean[] pass1Visible = {false};
-        nuevaPasswordEditText = new EditText(this);
-        nuevaPasswordEditText.setHint("Nueva contraseña");
-        nuevaPasswordEditText.setHintTextColor(Color.GRAY);
-        nuevaPasswordEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-        nuevaPasswordEditText.setBackground(crearFondoCampo());
-        nuevaPasswordEditText.setPadding(40, 30, 40, 30);
-        nuevaPasswordEditText.setCompoundDrawablesWithIntrinsicBounds(android.R.drawable.ic_lock_lock, 0, R.drawable.visibility_off, 0);
-        nuevaPasswordEditText.setCompoundDrawablePadding(20);
-        nuevaPasswordEditText.setLayoutParams(campoParams);
-        nuevaPasswordEditText.setOnTouchListener((v, event) -> {
+        boolean[] contrasenaUnoVisible = {false};
+        nuevaContrasenaEditText = new EditText(this);
+        nuevaContrasenaEditText.setHint("Nueva contraseña");
+        nuevaContrasenaEditText.setHintTextColor(Color.GRAY);
+        nuevaContrasenaEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        nuevaContrasenaEditText.setBackground(crearFondoCampo());
+        nuevaContrasenaEditText.setPadding(40, 30, 40, 30);
+        nuevaContrasenaEditText.setCompoundDrawablesWithIntrinsicBounds(android.R.drawable.ic_lock_lock, 0, R.drawable.visibility_off, 0);
+        nuevaContrasenaEditText.setCompoundDrawablePadding(20);
+        nuevaContrasenaEditText.setLayoutParams(parametrosCampos);
+        nuevaContrasenaEditText.setOnTouchListener((vista, event) -> {
             if (event.getAction() == MotionEvent.ACTION_UP) {
-                if (event.getRawX() >= (nuevaPasswordEditText.getRight() - nuevaPasswordEditText.getCompoundDrawables()[2].getBounds().width())) {
-                    pass1Visible[0] = !pass1Visible[0];
-                    nuevaPasswordEditText.setTransformationMethod(pass1Visible[0]
+                if (event.getRawX() >= (nuevaContrasenaEditText.getRight() - nuevaContrasenaEditText.getCompoundDrawables()[2].getBounds().width())) {
+                    contrasenaUnoVisible[0] = !contrasenaUnoVisible[0];
+                    nuevaContrasenaEditText.setTransformationMethod(contrasenaUnoVisible[0]
                             ? android.text.method.HideReturnsTransformationMethod.getInstance()
                             : android.text.method.PasswordTransformationMethod.getInstance());
-                    nuevaPasswordEditText.setCompoundDrawablesWithIntrinsicBounds(android.R.drawable.ic_lock_lock, 0, pass1Visible[0] ? R.drawable.eye : R.drawable.visibility_off, 0);
-                    nuevaPasswordEditText.setSelection(nuevaPasswordEditText.getText().length());
+                    nuevaContrasenaEditText.setCompoundDrawablesWithIntrinsicBounds(android.R.drawable.ic_lock_lock, 0, contrasenaUnoVisible[0] ? R.drawable.eye : R.drawable.visibility_off, 0);
+                    nuevaContrasenaEditText.setSelection(nuevaContrasenaEditText.getText().length());
                     return true;
                 }
             }
             return false;
         });
 
-        boolean[] pass2Visible = {false};
-        confirmarPasswordEditText = new EditText(this);
-        confirmarPasswordEditText.setHint("Confirmar nueva contraseña");
-        confirmarPasswordEditText.setHintTextColor(Color.GRAY);
-        confirmarPasswordEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-        confirmarPasswordEditText.setBackground(crearFondoCampo());
-        confirmarPasswordEditText.setPadding(40, 30, 40, 30);
-        confirmarPasswordEditText.setCompoundDrawablesWithIntrinsicBounds(android.R.drawable.ic_lock_lock, 0, R.drawable.visibility_off, 0);
-        confirmarPasswordEditText.setCompoundDrawablePadding(20);
-        confirmarPasswordEditText.setLayoutParams(campoParams);
-        confirmarPasswordEditText.setOnTouchListener((v, event) -> {
+        boolean[] contrasenaDosVisible = {false};
+        confirmarContrasenaEditText = new EditText(this);
+        confirmarContrasenaEditText.setHint("Confirmar nueva contraseña");
+        confirmarContrasenaEditText.setHintTextColor(Color.GRAY);
+        confirmarContrasenaEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        confirmarContrasenaEditText.setBackground(crearFondoCampo());
+        confirmarContrasenaEditText.setPadding(40, 30, 40, 30);
+        confirmarContrasenaEditText.setCompoundDrawablesWithIntrinsicBounds(android.R.drawable.ic_lock_lock, 0, R.drawable.visibility_off, 0);
+        confirmarContrasenaEditText.setCompoundDrawablePadding(20);
+        confirmarContrasenaEditText.setLayoutParams(parametrosCampos);
+        confirmarContrasenaEditText.setOnTouchListener((vista, event) -> {
+
             if (event.getAction() == MotionEvent.ACTION_UP) {
-                if (event.getRawX() >= (confirmarPasswordEditText.getRight() - confirmarPasswordEditText.getCompoundDrawables()[2].getBounds().width())) {
-                    pass2Visible[0] = !pass2Visible[0];
-                    confirmarPasswordEditText.setTransformationMethod(pass2Visible[0]
+                if (event.getRawX() >= (confirmarContrasenaEditText.getRight() - confirmarContrasenaEditText.getCompoundDrawables()[2].getBounds().width())) {
+                    contrasenaDosVisible[0] = !contrasenaDosVisible[0];
+                    confirmarContrasenaEditText.setTransformationMethod(contrasenaDosVisible[0]
                             ? android.text.method.HideReturnsTransformationMethod.getInstance()
                             : android.text.method.PasswordTransformationMethod.getInstance());
-                    confirmarPasswordEditText.setCompoundDrawablesWithIntrinsicBounds(android.R.drawable.ic_lock_lock, 0, pass2Visible[0] ? R.drawable.eye : R.drawable.visibility_off, 0);
-                    confirmarPasswordEditText.setSelection(confirmarPasswordEditText.getText().length());
+                    confirmarContrasenaEditText.setCompoundDrawablesWithIntrinsicBounds(android.R.drawable.ic_lock_lock, 0, contrasenaDosVisible[0] ? R.drawable.eye : R.drawable.visibility_off, 0);
+                    confirmarContrasenaEditText.setSelection(confirmarContrasenaEditText.getText().length());
                     return true;
                 }
             }
             return false;
         });
 
-        btnConfirmar = crearBoton("Cambiar contraseña");
-        btnConfirmar.setLayoutParams(campoParams);
+        botonConfirmar = crearBoton("Cambiar contraseña");
+        botonConfirmar.setLayoutParams(parametrosCampos);
 
-        paso2Layout.addView(txtTitulo2);
-        paso2Layout.addView(txtDesc2);
-        paso2Layout.addView(codigoEditText);
-        paso2Layout.addView(nuevaPasswordEditText);
-        paso2Layout.addView(confirmarPasswordEditText);
-        paso2Layout.addView(btnConfirmar);
+        pasoDosLayout.addView(textoTituloDos);
+        pasoDosLayout.addView(pasoDos);
+        pasoDosLayout.addView(codigoEditText);
+        pasoDosLayout.addView(nuevaContrasenaEditText);
+        pasoDosLayout.addView(confirmarContrasenaEditText);
+        pasoDosLayout.addView(botonConfirmar);
 
         // VOLVER AL LOGIN
-        TextView txtVolver = new TextView(this);
-        txtVolver.setText("¿Recuerdas tu contraseña? Iniciar sesión");
-        txtVolver.setTextColor(Color.parseColor("#455A64"));
-        txtVolver.setTextSize(16);
-        txtVolver.setGravity(Gravity.CENTER);
-        txtVolver.setPadding(20, 30, 20, 10);
-        LinearLayout.LayoutParams volverParams = new LinearLayout.LayoutParams(
+        TextView textoVolver = new TextView(this);
+        textoVolver.setText("¿Recuerdas tu contraseña? Iniciar sesión");
+        textoVolver.setTextColor(Color.parseColor("#455A64"));
+        textoVolver.setTextSize(16);
+        textoVolver.setGravity(Gravity.CENTER);
+        textoVolver.setPadding(20, 30, 20, 10);
+        LinearLayout.LayoutParams parametrosVolver = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        volverParams.setMargins(80, 20, 80, 10);
-        txtVolver.setLayoutParams(volverParams);
-        txtVolver.setOnClickListener(v -> finish());
+        parametrosVolver.setMargins(80, 20, 80, 10);
+        textoVolver.setLayoutParams(parametrosVolver);
+        textoVolver.setOnClickListener(v -> finish());
 
-        contenedor.addView(paso1Layout);
-        contenedor.addView(paso2Layout);
-        contenedor.addView(txtVolver);
+        contenedor.addView(pasoUnoLayout);
+        contenedor.addView(pasoDosLayout);
+        contenedor.addView(textoVolver);
 
         layout.addView(titulo);
         layout.addView(contenedor);
         setContentView(layout);
 
         // ========== LÓGICA BOTONES ==========
-        btnSolicitarCodigo.setOnClickListener(v -> {
+        botonSolicitarCodigo.setOnClickListener(vista -> {
             String email = emailEditText.getText().toString().trim();
             if (email.isEmpty()) {
                 Toast.makeText(this, "Introduce tu email", Toast.LENGTH_SHORT).show();
@@ -249,36 +250,36 @@ public class RecuperarContrasenna extends AppCompatActivity {
             viewModel.solicitarCodigo(email);
         });
 
-        btnConfirmar.setOnClickListener(v -> {
+        botonConfirmar.setOnClickListener(vista -> {
             String codigo = codigoEditText.getText().toString().trim();
-            String nuevaPassword = nuevaPasswordEditText.getText().toString().trim();
-            String confirmarPassword = confirmarPasswordEditText.getText().toString().trim();
+            String nuevaContrasena = nuevaContrasenaEditText.getText().toString().trim();
+            String confirmarContrasena = confirmarContrasenaEditText.getText().toString().trim();
 
-            if (codigo.isEmpty() || nuevaPassword.isEmpty() || confirmarPassword.isEmpty()) {
+            if (codigo.isEmpty() || nuevaContrasena.isEmpty() || confirmarContrasena.isEmpty()) {
                 Toast.makeText(this, "Completa todos los campos", Toast.LENGTH_SHORT).show();
                 return;
             }
-            if (!nuevaPassword.equals(confirmarPassword)) {
+            if (!nuevaContrasena.equals(confirmarContrasena)) {
                 Toast.makeText(this, "Las contraseñas no coinciden", Toast.LENGTH_SHORT).show();
                 return;
             }
-            if (nuevaPassword.length() < 6) {
+            if (nuevaContrasena.length() < 6) {
                 Toast.makeText(this, "La contraseña debe tener al menos 6 caracteres", Toast.LENGTH_SHORT).show();
                 return;
             }
-            viewModel.confirmarCambioPassword(emailGuardado, codigo, nuevaPassword);
+            viewModel.confirmarCambioPassword(emailGuardado, codigo, nuevaContrasena);
         });
 
         // ========== OBSERVERS ==========
         viewModel.codigoEnviado.observe(this, enviado -> {
             if (enviado) {
-                paso1Layout.setVisibility(android.view.View.GONE);
-                paso2Layout.setVisibility(android.view.View.VISIBLE);
+                pasoUnoLayout.setVisibility(android.view.View.GONE);
+                pasoDosLayout.setVisibility(android.view.View.VISIBLE);
                 Toast.makeText(this, "Código enviado a tu correo", Toast.LENGTH_LONG).show();
             }
         });
 
-        viewModel.passwordCambiada.observe(this, cambiada -> {
+        viewModel.contrasenaCambiada.observe(this, cambiada -> {
             if (cambiada) {
                 Toast.makeText(this, "Contraseña cambiada correctamente", Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(this, LoginActivity.class);
@@ -294,24 +295,25 @@ public class RecuperarContrasenna extends AppCompatActivity {
     }
 
     private Button crearBoton(String texto) {
-        Button btn = new Button(this);
-        btn.setText(texto);
-        btn.setTextColor(Color.WHITE);
-        btn.setTextSize(18);
-        btn.setAllCaps(false);
-        btn.setPadding(20, 30, 20, 30);
-        GradientDrawable shape = new GradientDrawable();
-        shape.setCornerRadius(60);
-        shape.setColor(Color.parseColor("#F06292"));
-        btn.setBackground(shape);
-        return btn;
+        Button boton = new Button(this);
+        boton.setText(texto);
+        boton.setTextColor(Color.WHITE);
+        boton.setTextSize(18);
+        boton.setAllCaps(false);
+        boton.setPadding(20, 30, 20, 30);
+
+        GradientDrawable forma = new GradientDrawable();
+        forma.setCornerRadius(60);
+        forma.setColor(Color.parseColor("#F06292"));
+        boton.setBackground(forma);
+        return boton;
     }
 
     private GradientDrawable crearFondoCampo() {
-        GradientDrawable shape = new GradientDrawable();
-        shape.setColor(Color.WHITE);
-        shape.setCornerRadius(50);
-        shape.setStroke(3, Color.parseColor("#A5D6A7"));
-        return shape;
+        GradientDrawable forma = new GradientDrawable();
+        forma.setColor(Color.WHITE);
+        forma.setCornerRadius(50);
+        forma.setStroke(3, Color.parseColor("#A5D6A7"));
+        return forma;
     }
 }

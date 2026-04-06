@@ -1,6 +1,7 @@
 package com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal;
 import android.view.VerifiedInputEvent;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -23,10 +24,10 @@ public class PuzzleViewModel extends ViewModel {
     public LiveData<String> getError() { return error; }
 
     public void cargarPuzzles(String token) {
-        repositorio.obtenerPuzzles(token, new Callback<List<Puzzle>>() {
+        repositorio.obtenerPuzzles(token, new Callback<>() {
 
             @Override
-            public void onResponse(Call<List<Puzzle>> call, Response<List<Puzzle>> response) {
+            public void onResponse(@NonNull Call<List<Puzzle>> call, @NonNull Response<List<Puzzle>> response) {
 
                 if (response.isSuccessful() && response.body() != null) {
                     puzzles.setValue(response.body());
@@ -37,8 +38,8 @@ public class PuzzleViewModel extends ViewModel {
             }
 
             @Override
-            public void onFailure(Call<List<Puzzle>> call, Throwable t) {
-                error.setValue("Fallo de red: " + t.getMessage());
+            public void onFailure(@NonNull Call<List<Puzzle>> call, @NonNull Throwable excepcion) {
+                error.setValue("Fallo de red: " + excepcion.getMessage());
 
             }
         });

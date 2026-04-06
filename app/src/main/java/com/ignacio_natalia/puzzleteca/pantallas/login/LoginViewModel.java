@@ -1,10 +1,11 @@
 package com.ignacio_natalia.puzzleteca.pantallas.login;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.ignacio_natalia.puzzleteca.modelos.LoginResponse;
+import com.ignacio_natalia.puzzleteca.modelos.LoginRespuesta;
 import com.ignacio_natalia.puzzleteca.repositorios.UsuarioRepositorio;
 
 import retrofit2.Call;
@@ -15,19 +16,19 @@ public class LoginViewModel extends ViewModel {
 
     private final UsuarioRepositorio repositorio;
     private final MutableLiveData<String> error = new MutableLiveData<>();
-    private final MutableLiveData<LoginResponse> loginExitoso = new MutableLiveData<>();
+    private final MutableLiveData<LoginRespuesta> loginExitoso = new MutableLiveData<>();
 
     public LoginViewModel() {
         repositorio = new UsuarioRepositorio();
     }
 
     public LiveData<String> getError() { return error; }
-    public LiveData<LoginResponse> getLoginExitoso() { return loginExitoso; }
+    public LiveData<LoginRespuesta> getLoginExitoso() { return loginExitoso; }
 
-    public void iniciarSesion(String email, String password) {
-        repositorio.login(email, password, new Callback<LoginResponse>() {
+    public void iniciarSesion(String email, String contrasena) {
+        repositorio.login(email, contrasena, new Callback<>() {
             @Override
-            public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
+            public void onResponse(@NonNull Call<LoginRespuesta> call, @NonNull Response<LoginRespuesta> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     loginExitoso.postValue(response.body());
                 } else {
@@ -36,7 +37,7 @@ public class LoginViewModel extends ViewModel {
             }
 
             @Override
-            public void onFailure(Call<LoginResponse> call, Throwable t) {
+            public void onFailure(@NonNull Call<LoginRespuesta> call, @NonNull Throwable excepcion) {
                 error.postValue("Error de conexión");
             }
         });

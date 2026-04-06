@@ -1,6 +1,6 @@
 package com.ignacio_natalia.puzzleteca.modelos;
 
-public class LoginResponse {
+public class LoginRespuesta {
     private String token;
     private String tipoUsuario;
 
