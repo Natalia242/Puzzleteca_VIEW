@@ -34,16 +34,17 @@ public class AppPrincipal extends AppCompatActivity {
     private LinearLayout contenedorPuzzles;
     private ScrollView scrollPuzzles;
     private FrameLayout contenedorFragmento;
-    private PuzzleViewModel puzzleViewModel;
 
     // Tabs (ahora LinearLayout en lugar de TextView)
-    private LinearLayout btnInicio, btnPuzzles, btnForo, btnRanking, btnPerfil;
+    private LinearLayout botonInicio, botonPuzzles, botonRanking, botonForo, botonPerfil;
     // Indicador deslizante
-    private View activeIndicator;
+    private View indicadorActivo;
 
+    @SuppressLint("SetTextI18n")
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected void onCreate(Bundle instanciaEstadoGuardado) {
+        super.onCreate(instanciaEstadoGuardado);
+
         getWindow().setStatusBarColor(Color.parseColor("#DFF5C9"));
 
         if ("Bloqueado".equals(GestorSesion.obtenerRol(this))) {
@@ -90,12 +91,12 @@ public class AppPrincipal extends AppCompatActivity {
         root.addView(contenedorFragmento);
 
         // ── Nav inferior ──
-        root.addView(construirNavBar());
+        root.addView(construirBarraNavegacion());
 
         setContentView(root);
 
         // ── ViewModel + carga ──
-        puzzleViewModel = new ViewModelProvider(this).get(PuzzleViewModel.class);
+        PuzzleViewModel puzzleViewModel = new ViewModelProvider(this).get(PuzzleViewModel.class);
         String token = GestorSesion.obtenerToken(this);
         puzzleViewModel.getPuzzles().observe(this, this::mostrarPuzzles);
         puzzleViewModel.getError().observe(this, msg ->
@@ -103,7 +104,7 @@ public class AppPrincipal extends AppCompatActivity {
         puzzleViewModel.cargarPuzzles(token);
 
         // Seleccionar Inicio por defecto tras layout
-        root.post(() -> seleccionarTab(btnInicio, null));
+        root.post(() -> seleccionarTab(botonInicio, null));
     }
 
     // ── Navegación ────────────────────────────────────────────────────────────
@@ -114,16 +115,19 @@ public class AppPrincipal extends AppCompatActivity {
     }
 
     private void mostrarFragmento(Fragment fragmento) {
+
         scrollPuzzles.setVisibility(ScrollView.GONE);
         contenedorFragmento.setVisibility(FrameLayout.VISIBLE);
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(FRAGMENTO_ID, fragmento);
-        ft.commit();
+
+        FragmentTransaction transaccion = getSupportFragmentManager().beginTransaction();
+        transaccion.replace(FRAGMENTO_ID, fragmento);
+        transaccion.commit();
+
     }
 
     // ── Nav bar ───────────────────────────────────────────────────────────────
-
-    private LinearLayout construirNavBar() {
+    private LinearLayout construirBarraNavegacion() {
+        
         // Contenedor raíz vertical (indicador + barra)
         LinearLayout root = new LinearLayout(this);
         root.setOrientation(LinearLayout.VERTICAL);
@@ -131,53 +135,55 @@ public class AppPrincipal extends AppCompatActivity {
         root.setElevation(16f);
 
         // Indicador deslizante superior
-        activeIndicator = new View(this);
-        activeIndicator.setBackgroundColor(Color.parseColor("#F06292"));
-        LinearLayout.LayoutParams indParams = new LinearLayout.LayoutParams(dpToPx(32), dpToPx(3));
-        indParams.gravity = Gravity.START;
-        activeIndicator.setLayoutParams(indParams);
-        root.addView(activeIndicator);
+        indicadorActivo = new View(this);
+        indicadorActivo.setBackgroundColor(Color.parseColor("#F06292"));
+        LinearLayout.LayoutParams parametrosIndicador = new LinearLayout.LayoutParams(dpToPx(32), dpToPx(3));
+        parametrosIndicador.gravity = Gravity.START;
+        indicadorActivo.setLayoutParams(parametrosIndicador);
+        root.addView(indicadorActivo);
 
         // Barra horizontal de tabs
-        LinearLayout nav = new LinearLayout(this);
-        nav.setOrientation(LinearLayout.HORIZONTAL);
-        nav.setGravity(Gravity.CENTER_VERTICAL);
-        nav.setPadding(0, dpToPx(6), 0, dpToPx(6));
+        LinearLayout barraNavegacion = new LinearLayout(this);
+        barraNavegacion.setOrientation(LinearLayout.HORIZONTAL);
+        barraNavegacion.setGravity(Gravity.CENTER_VERTICAL);
+        barraNavegacion.setPadding(0, dpToPx(6), 0, dpToPx(6));
 
-        btnInicio  = crearTab(ContextCompat.getDrawable(this, R.drawable.ic_home),   "Inicio");
-        btnPuzzles = crearTab(ContextCompat.getDrawable(this, R.drawable.ic_puzzle),  "Puzzles");
-        btnRanking = crearTab(ContextCompat.getDrawable(this, R.drawable.ic_trophy),  "Ranking");
-        btnForo    = crearTab(ContextCompat.getDrawable(this, R.drawable.ic_forum),   "Foro");
-        btnPerfil  = crearTab(ContextCompat.getDrawable(this, R.drawable.ic_person),  "Perfil");
+        botonInicio = crearTab(ContextCompat.getDrawable(this, R.drawable.ic_home),   "Inicio");
+        botonPuzzles = crearTab(ContextCompat.getDrawable(this, R.drawable.ic_puzzle),  "Puzzles");
+        botonRanking = crearTab(ContextCompat.getDrawable(this, R.drawable.ic_trophy),  "Ranking");
+        botonForo = crearTab(ContextCompat.getDrawable(this, R.drawable.ic_forum),   "Foro");
+        botonPerfil = crearTab(ContextCompat.getDrawable(this, R.drawable.ic_person),  "Perfil");
 
-        LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f);
-        btnInicio.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
-        btnPuzzles.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
-        btnForo.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
-        btnRanking.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
-        btnPerfil.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
+        //LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f);
+        botonInicio.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
+        botonPuzzles.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
+        botonForo.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
+        botonRanking.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
+        botonPerfil.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
 
-        btnInicio.setOnClickListener(v  -> seleccionarTab(btnInicio,  () -> mostrarInicio()));
-        btnPuzzles.setOnClickListener(v -> seleccionarTab(btnPuzzles, () -> mostrarFragmento(new Foro())));
-        btnForo.setOnClickListener(v    -> seleccionarTab(btnForo,    () -> mostrarFragmento(new Foro())));
-        btnRanking.setOnClickListener(v -> seleccionarTab(btnRanking, () -> mostrarFragmento(new Ranking())));
-        btnPerfil.setOnClickListener(v  -> {
+        botonInicio.setOnClickListener(vista  -> seleccionarTab(botonInicio, this::mostrarInicio));
+        botonPuzzles.setOnClickListener(vista -> seleccionarTab(botonPuzzles, () -> mostrarFragmento(new Foro())));
+        botonForo.setOnClickListener(vista    -> seleccionarTab(botonForo,    () -> mostrarFragmento(new Foro())));
+        botonRanking.setOnClickListener(vista -> seleccionarTab(botonRanking, () -> mostrarFragmento(new Ranking())));
+        botonPerfil.setOnClickListener(vista  -> {
             String rol = GestorSesion.obtenerRol(this);
-            seleccionarTab(btnPerfil, () -> mostrarFragmento(
+            seleccionarTab(botonPerfil, () -> mostrarFragmento(
                     "Admin".equals(rol) ? new PanelAdmin() : new PanelUsuario()));
         });
 
-        nav.addView(btnInicio);
-        nav.addView(btnPuzzles);
-        nav.addView(btnRanking);
-        nav.addView(btnForo);
-        nav.addView(btnPerfil);
-        root.addView(nav);
+        barraNavegacion.addView(botonInicio);
+        barraNavegacion.addView(botonPuzzles);
+        barraNavegacion.addView(botonRanking);
+        barraNavegacion.addView(botonForo);
+        barraNavegacion.addView(botonPerfil);
+        root.addView(barraNavegacion);
 
         return root;
+        
     }
 
     private LinearLayout crearTab(Drawable icono, String etiqueta) {
+        
         LinearLayout tab = new LinearLayout(this);
         tab.setOrientation(LinearLayout.VERTICAL);
         tab.setGravity(Gravity.CENTER);
@@ -188,25 +194,29 @@ public class AppPrincipal extends AppCompatActivity {
         getTheme().resolveAttribute(android.R.attr.selectableItemBackgroundBorderless, ripple, true);
         tab.setBackgroundResource(ripple.resourceId);
 
-        ImageView iv = new ImageView(this);
-        iv.setImageDrawable(icono);
-        iv.setColorFilter(Color.parseColor("#90A4AE"));
-        LinearLayout.LayoutParams ivParams = new LinearLayout.LayoutParams(dpToPx(22), dpToPx(22));
-        iv.setLayoutParams(ivParams);
+        ImageView imagen = new ImageView(this);
+        imagen.setImageDrawable(icono);
+        imagen.setColorFilter(Color.parseColor("#90A4AE"));
+        LinearLayout.LayoutParams parametrosImagen = new LinearLayout.LayoutParams(dpToPx(22), dpToPx(22));
+        imagen.setLayoutParams(parametrosImagen);
 
-        TextView tv = new TextView(this);
-        tv.setText(etiqueta);
-        tv.setTextSize(10f);
-        tv.setTextColor(Color.parseColor("#90A4AE"));
-        tv.setGravity(Gravity.CENTER);
-        LinearLayout.LayoutParams tvParams = new LinearLayout.LayoutParams(
+        TextView texto = new TextView(this);
+        texto.setText(etiqueta);
+        texto.setTextSize(10f);
+        texto.setTextColor(Color.parseColor("#90A4AE"));
+        texto.setGravity(Gravity.CENTER);
+        
+        LinearLayout.LayoutParams parametrosTexto = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        tvParams.topMargin = dpToPx(3);
-        tv.setLayoutParams(tvParams);
+        
+        parametrosTexto.topMargin = dpToPx(3);
+        texto.setLayoutParams(parametrosTexto);
 
-        tab.addView(iv);
-        tab.addView(tv);
+        tab.addView(imagen);
+        tab.addView(texto);
+        
         return tab;
+        
     }
 
     // ── Lógica de selección de tab ────────────────────────────────────────────
@@ -218,69 +228,82 @@ public class AppPrincipal extends AppCompatActivity {
     }
 
     private void marcarTab(LinearLayout tab) {
+        
         int colorActivo   = Color.parseColor("#F06292");
         int colorInactivo = Color.parseColor("#90A4AE");
 
-        for (LinearLayout t : new LinearLayout[]{btnInicio, btnPuzzles, btnForo, btnRanking, btnPerfil}) {
-            boolean activo = t == tab;
+        for (LinearLayout boton : new LinearLayout[] {botonInicio, botonPuzzles, botonForo, botonRanking, botonPerfil}) {
+            
+            boolean activo = boton == tab;
 
-            if (t.getChildAt(0) instanceof ImageView) {
-                ImageView iv = (ImageView) t.getChildAt(0);
-                if (t == btnRanking) {
+            if (boton.getChildAt(0) instanceof ImageView) {
+                
+                ImageView imagen = (ImageView) boton.getChildAt(0);
+                
+                if (boton == botonRanking) {
+                    
                     if (activo) {
-                        iv.clearColorFilter();
+                        imagen.clearColorFilter();
                     } else {
-                        iv.setColorFilter(Color.parseColor("#90A4AE"));
+                        imagen.setColorFilter(Color.parseColor("#90A4AE"));
                     }
+                    
                 } else {
-                    iv.setColorFilter(activo ? colorActivo : colorInactivo);
+                    imagen.setColorFilter(activo ? colorActivo : colorInactivo);
                 }
-                iv.animate()
+                
+                imagen.animate()
                         .scaleX(activo ? 1.15f : 1f)
                         .scaleY(activo ? 1.15f : 1f)
                         .setDuration(180)
                         .start();
+                
             }
 
-            if (t.getChildAt(1) instanceof TextView) {
-                TextView tv = (TextView) t.getChildAt(1);
-                tv.setTextColor(activo ? colorActivo : colorInactivo);
-                tv.setTypeface(null, activo ? Typeface.BOLD : Typeface.NORMAL);
+            if (boton.getChildAt(1) instanceof TextView) {
+                TextView texto = (TextView) boton.getChildAt(1);
+                texto.setTextColor(activo ? colorActivo : colorInactivo);
+                texto.setTypeface(null, activo ? Typeface.BOLD : Typeface.NORMAL);
             }
         }
     }
 
     private void animarIndicador(LinearLayout tab) {
+        
         tab.post(() -> {
-            int[] tabs = {0, 1, 2, 3, 4};  // 5 tabs
-            int idx = getTabIndex(tab);
-            int screenWidth = getResources().getDisplayMetrics().widthPixels;
-            float tabWidth = screenWidth / 5f;
-            float targetX  = idx * tabWidth + (tabWidth / 2f) - dpToPx(16);
+            //int[] tabs = {0, 1, 2, 3, 4};  // 5 tabs
+            int indiceTab = getTabIndex(tab);
+            int anchoPantalla = getResources().getDisplayMetrics().widthPixels;
+            float anchoTab = anchoPantalla / 5f;
+            float posicion  = indiceTab * anchoTab + (anchoTab / 2f) - dpToPx(16);
 
-            activeIndicator.animate()
-                    .translationX(targetX)
+            indicadorActivo.animate()
+                    .translationX(posicion)
                     .setDuration(250)
                     .setInterpolator(new DecelerateInterpolator())
                     .start();
         });
+        
     }
 
     private int getTabIndex(LinearLayout tab) {
-        if (tab == btnInicio)  return 0;
-        if (tab == btnPuzzles) return 1;
-        if (tab == btnRanking) return 2;
-        if (tab == btnForo)    return 3;
+        if (tab == botonInicio)  return 0;
+        if (tab == botonPuzzles) return 1;
+        if (tab == botonRanking) return 2;
+        if (tab == botonForo)    return 3;
         return 4;
     }
 
     // ── Pantalla de bloqueo ───────────────────────────────────────────────────
 
+    @SuppressLint("SetTextI18n")
     private void mostrarPantallaBloqueo() {
+
         GradientDrawable fondo = new GradientDrawable(
                 GradientDrawable.Orientation.TOP_BOTTOM,
-                new int[]{Color.parseColor("#DFF5C9"), Color.parseColor("#B8E6A5")}
+                new int[] {Color.parseColor("#DFF5C9"), Color.parseColor("#B8E6A5")}
         );
+
         FrameLayout layout = new FrameLayout(this);
         layout.setBackground(fondo);
 
@@ -290,49 +313,54 @@ public class AppPrincipal extends AppCompatActivity {
         centro.setLayoutParams(new FrameLayout.LayoutParams(
                 FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
 
-        TextView tvIcono = new TextView(this);
-        tvIcono.setText("🚫");
-        tvIcono.setTextSize(64);
-        tvIcono.setGravity(Gravity.CENTER);
+        TextView textoIcono = new TextView(this);
+        textoIcono.setText("🚫");
+        textoIcono.setTextSize(64);
+        textoIcono.setGravity(Gravity.CENTER);
 
-        TextView tvMensaje = new TextView(this);
-        tvMensaje.setText("Usuario bloqueado");
-        tvMensaje.setTextSize(22);
-        tvMensaje.setTypeface(null, Typeface.BOLD);
-        tvMensaje.setTextColor(Color.parseColor("#C62828"));
-        tvMensaje.setGravity(Gravity.CENTER);
-        LinearLayout.LayoutParams mp = new LinearLayout.LayoutParams(
+        TextView textoMensaje = new TextView(this);
+        textoMensaje.setText("Usuario bloqueado");
+        textoMensaje.setTextSize(22);
+        textoMensaje.setTypeface(null, Typeface.BOLD);
+        textoMensaje.setTextColor(Color.parseColor("#C62828"));
+        textoMensaje.setGravity(Gravity.CENTER);
+        LinearLayout.LayoutParams parametrosMensaje = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        mp.setMargins(0, 24, 0, 0);
-        tvMensaje.setLayoutParams(mp);
+        parametrosMensaje.setMargins(0, 24, 0, 0);
+        textoMensaje.setLayoutParams(parametrosMensaje);
 
-        centro.addView(tvIcono);
-        centro.addView(tvMensaje);
+        centro.addView(textoIcono);
+        centro.addView(textoMensaje);
         layout.addView(centro);
         setContentView(layout);
+
     }
 
     // ── Puzzles ───────────────────────────────────────────────────────────────
 
     private void mostrarPuzzles(List<Puzzle> lista) {
+
         contenedorPuzzles.removeAllViews();
+
         for (Puzzle p : lista) {
             if (p.isPublico()) {
                 contenedorPuzzles.addView(crearTarjeta(p));
             }
         }
+
     }
 
     @SuppressLint("SetTextI18n")
     private LinearLayout crearTarjeta(Puzzle puzzle) {
+
         LinearLayout tarjeta = new LinearLayout(this);
         tarjeta.setOrientation(LinearLayout.VERTICAL);
         tarjeta.setPadding(40, 35, 40, 35);
 
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+        LinearLayout.LayoutParams parametrosTarjeta = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        params.setMargins(0, 0, 0, 28);
-        tarjeta.setLayoutParams(params);
+        parametrosTarjeta.setMargins(0, 0, 0, 28);
+        tarjeta.setLayoutParams(parametrosTarjeta);
 
         GradientDrawable fondoTarjeta = new GradientDrawable();
         fondoTarjeta.setColor(Color.WHITE);
@@ -340,38 +368,39 @@ public class AppPrincipal extends AppCompatActivity {
         fondoTarjeta.setStroke(3, Color.parseColor("#A5D6A7"));
         tarjeta.setBackground(fondoTarjeta);
 
-        TextView tvTitulo = new TextView(this);
-        tvTitulo.setText(puzzle.getAutor());
-        tvTitulo.setTextSize(17);
-        tvTitulo.setTypeface(null, Typeface.BOLD);
-        tvTitulo.setTextColor(Color.parseColor("#37474F"));
-        tarjeta.addView(tvTitulo);
+        TextView textoTitulo = new TextView(this);
+        textoTitulo.setText(puzzle.getAutor());
+        textoTitulo.setTextSize(17);
+        textoTitulo.setTypeface(null, Typeface.BOLD);
+        textoTitulo.setTextColor(Color.parseColor("#37474F"));
+        tarjeta.addView(textoTitulo);
 
-        TextView tvDesc = new TextView(this);
-        tvDesc.setText(puzzle.getDescripcion());
-        tvDesc.setTextSize(14);
-        tvDesc.setTextColor(Color.parseColor("#78909C"));
-        LinearLayout.LayoutParams descParams = new LinearLayout.LayoutParams(
+        TextView textoDescripcion = new TextView(this);
+        textoDescripcion.setText(puzzle.getDescripcion());
+        textoDescripcion.setTextSize(14);
+        textoDescripcion.setTextColor(Color.parseColor("#78909C"));
+        LinearLayout.LayoutParams parametrosDescripcion = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        descParams.setMargins(0, 8, 0, 16);
-        tvDesc.setLayoutParams(descParams);
-        tarjeta.addView(tvDesc);
+        parametrosDescripcion.setMargins(0, 8, 0, 16);
+        textoDescripcion.setLayoutParams(parametrosDescripcion);
+        tarjeta.addView(textoDescripcion);
 
         LinearLayout fila = new LinearLayout(this);
         fila.setOrientation(LinearLayout.HORIZONTAL);
         fila.setGravity(Gravity.CENTER_VERTICAL);
 
-        TextView tvDificultad = new TextView(this);
-        tvDificultad.setText("⭐ " + (puzzle.getDificultad() != null ? puzzle.getDificultad() : "Normal"));
-        tvDificultad.setTextSize(13);
-        tvDificultad.setTextColor(Color.parseColor("#26A69A"));
-        tvDificultad.setLayoutParams(new LinearLayout.LayoutParams(
+        TextView textoDificultad = new TextView(this);
+        textoDificultad.setText("⭐ " + (puzzle.getDificultad() != null ? puzzle.getDificultad() : "Normal"));
+        textoDificultad.setTextSize(13);
+        textoDificultad.setTextColor(Color.parseColor("#26A69A"));
+        textoDificultad.setLayoutParams(new LinearLayout.LayoutParams(
                 0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
 
-        fila.addView(tvDificultad);
+        fila.addView(textoDificultad);
         tarjeta.addView(fila);
 
         return tarjeta;
+
     }
 
     // ── Utilidades ────────────────────────────────────────────────────────────
@@ -379,4 +408,5 @@ public class AppPrincipal extends AppCompatActivity {
     private int dpToPx(int dp) {
         return Math.round(dp * getResources().getDisplayMetrics().density);
     }
+
 }

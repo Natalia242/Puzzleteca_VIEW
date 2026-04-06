@@ -1,17 +1,13 @@
 package com.ignacio_natalia.puzzleteca.modelos;
 
 public class Puzzle {
+
     public enum Estados {
-        Publico,
-        Privado,
-        Bloqueado
+        Publico, Privado, Bloqueado
     }
 
     public enum Dificultades {
-        Facil,
-        Media,
-        Dificil,
-        Extremo
+        Facil, Media, Dificil, Extremo
     }
 
     private Integer id;
@@ -23,7 +19,7 @@ public class Puzzle {
     private Boolean color;
     private Integer valoracion;
     private Integer idUsuario;
-    private Estados estado;   // ✅ en vez de boolean publico
+    private Estados estado;
 
     public Integer getId() { return id; }
     public String getAutor() { return autor; }
@@ -39,4 +35,5 @@ public class Puzzle {
      public boolean isPublico() {
         return estado == Estados.Publico;
     }
+
 }

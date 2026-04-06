@@ -50,6 +50,7 @@ public class PantallaInicio extends AppCompatActivity {
                         FrameLayout.LayoutParams.WRAP_CONTENT,
                         FrameLayout.LayoutParams.WRAP_CONTENT
                 );
+
         parametrosTitulo.gravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
 
         titulo.setLayoutParams(parametrosTitulo);
@@ -100,9 +101,9 @@ public class PantallaInicio extends AppCompatActivity {
         textoInvitado.setPadding(20, 30, 20, 0);
 
         textoInvitado.setOnClickListener(vista -> {
-            // Navegar a la pantalla principal
-            // Intent intent = new Intent(PantallaInicio.this, MainActivity.class);
-            // startActivity(intent);
+//             Navegar a la pantalla principal
+//             Intent intent = new Intent(PantallaInicio.this, MainActivity.class);
+//             startActivity(intent);
         });
 
         // Separador
@@ -154,4 +155,5 @@ public class PantallaInicio extends AppCompatActivity {
 
         return boton;
     }
+
 }

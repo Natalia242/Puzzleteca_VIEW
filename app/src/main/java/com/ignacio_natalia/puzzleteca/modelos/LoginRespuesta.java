@@ -1,6 +1,7 @@
 package com.ignacio_natalia.puzzleteca.modelos;
 
 public class LoginRespuesta {
+
     private String token;
     private String tipoUsuario;
 
@@ -8,4 +9,5 @@ public class LoginRespuesta {
         return token;
     }
     public String getTipoUsuario(){return tipoUsuario;}
+
 }

@@ -20,10 +20,15 @@ public class PuzzleViewModel extends ViewModel {
     private final MutableLiveData<String> error = new MutableLiveData<>();
 
     private final PuzzleRepositorio repositorio = new PuzzleRepositorio();
-    public LiveData<List<Puzzle>> getPuzzles() { return puzzles; }
-    public LiveData<String> getError() { return error; }
+    public LiveData<List<Puzzle>> getPuzzles() {
+        return puzzles;
+    }
+    public LiveData<String> getError() {
+        return error;
+    }
 
     public void cargarPuzzles(String token) {
+
         repositorio.obtenerPuzzles(token, new Callback<>() {
 
             @Override
@@ -31,10 +36,10 @@ public class PuzzleViewModel extends ViewModel {
 
                 if (response.isSuccessful() && response.body() != null) {
                     puzzles.setValue(response.body());
-
                 } else {
                     error.setValue("Error " + response.code() + " al cargar los puzzles");
                 }
+
             }
 
             @Override
@@ -42,6 +47,9 @@ public class PuzzleViewModel extends ViewModel {
                 error.setValue("Fallo de red: " + excepcion.getMessage());
 
             }
+
         });
+
     }
+
 }

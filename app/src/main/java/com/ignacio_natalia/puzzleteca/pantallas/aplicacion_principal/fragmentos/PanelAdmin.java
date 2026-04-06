@@ -20,8 +20,8 @@ public class PanelAdmin extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
-                             @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
+                             @Nullable ViewGroup contenedor,
+                             @Nullable Bundle instanciaEstadoGuardado) {
 
         ScrollView scroll = new ScrollView(requireContext());
         scroll.setFillViewport(true);
@@ -31,36 +31,36 @@ public class PanelAdmin extends Fragment {
         layout.setPadding(50, 50, 50, 50);
 
         // ── Tarjeta Admin ──
-        LinearLayout tarjetaAdmin = crearTarjeta();
-        tarjetaAdmin.setOrientation(LinearLayout.HORIZONTAL);
-        tarjetaAdmin.setGravity(Gravity.CENTER_VERTICAL);
-        tarjetaAdmin.setPadding(40, 30, 40, 30);
+        LinearLayout tarjetaAdministrador = crearTarjeta();
+        tarjetaAdministrador.setOrientation(LinearLayout.HORIZONTAL);
+        tarjetaAdministrador.setGravity(Gravity.CENTER_VERTICAL);
+        tarjetaAdministrador.setPadding(40, 30, 40, 30);
 
-        TextView tvIcono = new TextView(requireContext());
-        tvIcono.setText("🛡️");
-        tvIcono.setTextSize(36);
-        tvIcono.setPadding(0, 0, 24, 0);
+        TextView iconoAdministrador = new TextView(requireContext());
+        iconoAdministrador.setText("🛡️");
+        iconoAdministrador.setTextSize(36);
+        iconoAdministrador.setPadding(0, 0, 24, 0);
 
-        LinearLayout infoAdmin = new LinearLayout(requireContext());
-        infoAdmin.setOrientation(LinearLayout.VERTICAL);
+        LinearLayout infoAdministrador = new LinearLayout(requireContext());
+        infoAdministrador.setOrientation(LinearLayout.VERTICAL);
 
-        TextView tvNombre = new TextView(requireContext());
-        tvNombre.setText("Admin Panel");
-        tvNombre.setTextSize(18);
-        tvNombre.setTypeface(null, Typeface.BOLD);
-        tvNombre.setTextColor(Color.parseColor("#37474F"));
+        TextView textoNombre = new TextView(requireContext());
+        textoNombre.setText("Panel Admin");
+        textoNombre.setTextSize(18);
+        textoNombre.setTypeface(null, Typeface.BOLD);
+        textoNombre.setTextColor(Color.parseColor("#37474F"));
 
-        TextView tvId = new TextView(requireContext());
-        tvId.setText("Admin to: 00001");
-        tvId.setTextSize(13);
-        tvId.setTextColor(Color.parseColor("#78909C"));
+        TextView textoId = new TextView(requireContext());
+        textoId.setText("Admin to: 00001");
+        textoId.setTextSize(13);
+        textoId.setTextColor(Color.parseColor("#78909C"));
 
-        infoAdmin.addView(tvNombre);
-        infoAdmin.addView(tvId);
+        infoAdministrador.addView(textoNombre);
+        infoAdministrador.addView(textoId);
 
-        tarjetaAdmin.addView(tvIcono);
-        tarjetaAdmin.addView(infoAdmin);
-        layout.addView(tarjetaAdmin);
+        tarjetaAdministrador.addView(iconoAdministrador);
+        tarjetaAdministrador.addView(infoAdministrador);
+        layout.addView(tarjetaAdministrador);
         espacio(layout, 20);
 
         // ── Opciones ──
@@ -68,56 +68,57 @@ public class PanelAdmin extends Fragment {
         espacio(layout, 10);
 
         // ── Tarjeta Mejor Puzzle ──
-        LinearLayout tarjetaMejor = crearTarjeta();
-        tarjetaMejor.setOrientation(LinearLayout.VERTICAL);
-        tarjetaMejor.setPadding(40, 30, 40, 30);
+        LinearLayout tarjetaMejorPuzzle = crearTarjeta();
+        tarjetaMejorPuzzle.setOrientation(LinearLayout.VERTICAL);
+        tarjetaMejorPuzzle.setPadding(40, 30, 40, 30);
 
-        TextView tvMejorLabel = new TextView(requireContext());
-        tvMejorLabel.setText("⭐ Mejor Puzzle");
-        tvMejorLabel.setTextSize(15);
-        tvMejorLabel.setTypeface(null, Typeface.BOLD);
-        tvMejorLabel.setTextColor(Color.parseColor("#37474F"));
-        tarjetaMejor.addView(tvMejorLabel);
-        espacio(tarjetaMejor, 10);
+        TextView textoMejorPuzzle = new TextView(requireContext());
+        textoMejorPuzzle.setText("⭐ Mejor Puzzle");
+        textoMejorPuzzle.setTextSize(15);
+        textoMejorPuzzle.setTypeface(null, Typeface.BOLD);
+        textoMejorPuzzle.setTextColor(Color.parseColor("#37474F"));
+        tarjetaMejorPuzzle.addView(textoMejorPuzzle);
+        espacio(tarjetaMejorPuzzle, 10);
 
-        LinearLayout filaMejor = new LinearLayout(requireContext());
-        filaMejor.setOrientation(LinearLayout.HORIZONTAL);
-        filaMejor.setGravity(Gravity.CENTER_VERTICAL);
+        LinearLayout filaMejorPuzzle = new LinearLayout(requireContext());
+        filaMejorPuzzle.setOrientation(LinearLayout.HORIZONTAL);
+        filaMejorPuzzle.setGravity(Gravity.CENTER_VERTICAL);
 
-        TextView tvPuzzleNombre = new TextView(requireContext());
-        tvPuzzleNombre.setText("🌸 Flor Amarilla");
-        tvPuzzleNombre.setTextSize(14);
-        tvPuzzleNombre.setTextColor(Color.parseColor("#37474F"));
-        tvPuzzleNombre.setLayoutParams(new LinearLayout.LayoutParams(
+        TextView textoNombrePuzzle = new TextView(requireContext());
+        textoNombrePuzzle.setText("🌸 Flor Amarilla");
+        textoNombrePuzzle.setTextSize(14);
+        textoNombrePuzzle.setTextColor(Color.parseColor("#37474F"));
+        textoNombrePuzzle.setLayoutParams(new LinearLayout.LayoutParams(
                 0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
 
-        LinearLayout colDerecha = new LinearLayout(requireContext());
-        colDerecha.setOrientation(LinearLayout.VERTICAL);
-        colDerecha.setGravity(Gravity.END);
+        LinearLayout columnaDerecha = new LinearLayout(requireContext());
+        columnaDerecha.setOrientation(LinearLayout.VERTICAL);
+        columnaDerecha.setGravity(Gravity.END);
 
-        TextView tvValoracion = new TextView(requireContext());
-        tvValoracion.setText("4.5");
-        tvValoracion.setTextSize(13);
-        tvValoracion.setTextColor(Color.parseColor("#78909C"));
+        TextView textoValoracion = new TextView(requireContext());
+        textoValoracion.setText("4.5");
+        textoValoracion.setTextSize(13);
+        textoValoracion.setTextColor(Color.parseColor("#78909C"));
 
-        TextView tvBadge = new TextView(requireContext());
-        tvBadge.setText("02:10");
-        tvBadge.setTextSize(13);
-        tvBadge.setTypeface(null, Typeface.BOLD);
-        tvBadge.setTextColor(Color.WHITE);
-        tvBadge.setPadding(20, 10, 20, 10);
-        GradientDrawable badgeShape = new GradientDrawable();
-        badgeShape.setColor(Color.parseColor("#26A69A"));
-        badgeShape.setCornerRadius(60);
-        tvBadge.setBackground(badgeShape);
+        TextView textoTiempo = new TextView(requireContext());
+        textoTiempo.setText("02:10");
+        textoTiempo.setTextSize(13);
+        textoTiempo.setTypeface(null, Typeface.BOLD);
+        textoTiempo.setTextColor(Color.WHITE);
+        textoTiempo.setPadding(20, 10, 20, 10);
 
-        colDerecha.addView(tvValoracion);
-        colDerecha.addView(tvBadge);
+        GradientDrawable formaTiempo = new GradientDrawable();
+        formaTiempo.setColor(Color.parseColor("#26A69A"));
+        formaTiempo.setCornerRadius(60);
+        textoTiempo.setBackground(formaTiempo);
 
-        filaMejor.addView(tvPuzzleNombre);
-        filaMejor.addView(colDerecha);
-        tarjetaMejor.addView(filaMejor);
-        layout.addView(tarjetaMejor);
+        columnaDerecha.addView(textoValoracion);
+        columnaDerecha.addView(textoTiempo);
+
+        filaMejorPuzzle.addView(textoNombrePuzzle);
+        filaMejorPuzzle.addView(columnaDerecha);
+        tarjetaMejorPuzzle.addView(filaMejorPuzzle);
+        layout.addView(tarjetaMejorPuzzle);
         espacio(layout, 10);
 
         // ── Opciones de gestión ──
@@ -126,64 +127,79 @@ public class PanelAdmin extends Fragment {
 
         scroll.addView(layout);
         return scroll;
+
     }
 
     private LinearLayout crearTarjeta() {
-        LinearLayout t = new LinearLayout(requireContext());
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+
+        LinearLayout tarjeta = new LinearLayout(requireContext());
+        LinearLayout.LayoutParams parametrosTarjeta = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        lp.setMargins(0, 0, 0, 14);
-        t.setLayoutParams(lp);
-        GradientDrawable fondo = new GradientDrawable();
-        fondo.setColor(Color.WHITE);
-        fondo.setCornerRadius(40);
-        fondo.setStroke(2, Color.parseColor("#A5D6A7"));
-        t.setBackground(fondo);
-        return t;
+
+        parametrosTarjeta.setMargins(0, 0, 0, 14);
+        tarjeta.setLayoutParams(parametrosTarjeta);
+
+        GradientDrawable forma = new GradientDrawable();
+        forma.setColor(Color.WHITE);
+        forma.setCornerRadius(40);
+        forma.setStroke(2, Color.parseColor("#A5D6A7"));
+        tarjeta.setBackground(forma);
+
+        return tarjeta;
+
     }
 
-    private LinearLayout crearOpcion(String emoji, String texto) {
+    private LinearLayout crearOpcion(String emoji, String opcion) {
+
         LinearLayout fila = new LinearLayout(requireContext());
+
         fila.setOrientation(LinearLayout.HORIZONTAL);
         fila.setGravity(Gravity.CENTER_VERTICAL);
         fila.setPadding(40, 28, 40, 28);
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+
+        LinearLayout.LayoutParams parametrosFila = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        lp.setMargins(0, 0, 0, 10);
-        fila.setLayoutParams(lp);
-        GradientDrawable fondo = new GradientDrawable();
-        fondo.setColor(Color.WHITE);
-        fondo.setCornerRadius(40);
-        fondo.setStroke(2, Color.parseColor("#A5D6A7"));
-        fila.setBackground(fondo);
 
-        TextView tvEmoji = new TextView(requireContext());
-        tvEmoji.setText(emoji);
-        tvEmoji.setTextSize(20);
-        tvEmoji.setPadding(0, 0, 20, 0);
+        parametrosFila.setMargins(0, 0, 0, 10);
+        fila.setLayoutParams(parametrosFila);
 
-        TextView tvTexto = new TextView(requireContext());
-        tvTexto.setText(texto);
-        tvTexto.setTextSize(15);
-        tvTexto.setTextColor(Color.parseColor("#37474F"));
-        tvTexto.setLayoutParams(new LinearLayout.LayoutParams(
+        GradientDrawable forma = new GradientDrawable();
+        forma.setColor(Color.WHITE);
+        forma.setCornerRadius(40);
+        forma.setStroke(2, Color.parseColor("#A5D6A7"));
+        fila.setBackground(forma);
+
+        TextView textoEmoji = new TextView(requireContext());
+        textoEmoji.setText(emoji);
+        textoEmoji.setTextSize(20);
+        textoEmoji.setPadding(0, 0, 20, 0);
+
+        TextView textoOpcion = new TextView(requireContext());
+        textoOpcion.setText(opcion);
+        textoOpcion.setTextSize(15);
+        textoOpcion.setTextColor(Color.parseColor("#37474F"));
+        textoOpcion.setLayoutParams(new LinearLayout.LayoutParams(
                 0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
 
-        TextView tvFlecha = new TextView(requireContext());
-        tvFlecha.setText("›");
-        tvFlecha.setTextSize(20);
-        tvFlecha.setTextColor(Color.parseColor("#90A4AE"));
+        TextView textoFlecha = new TextView(requireContext());
+        textoFlecha.setText("›");
+        textoFlecha.setTextSize(20);
+        textoFlecha.setTextColor(Color.parseColor("#90A4AE"));
 
-        fila.addView(tvEmoji);
-        fila.addView(tvTexto);
-        fila.addView(tvFlecha);
+        fila.addView(textoEmoji);
+        fila.addView(textoOpcion);
+        fila.addView(textoFlecha);
+
         return fila;
+
     }
 
-    private void espacio(LinearLayout parent, int dp) {
-        View v = new View(requireContext());
-        v.setLayoutParams(new LinearLayout.LayoutParams(
+    private void espacio(LinearLayout layout, int dp) {
+        View vista = new View(requireContext());
+
+        vista.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, dp));
-        parent.addView(v);
+        layout.addView(vista);
     }
+
 }

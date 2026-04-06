@@ -9,14 +9,14 @@ public class Usuario {
     private String nombre;
     private String apellido;
     private String email;
-    private String passwd;
+    private String contrasena;
     private TipoUsuario tipousuario;
 
-    public Usuario(String nombre, String apellido, String email, String passwd, TipoUsuario tipousuario) {
+    public Usuario(String nombre, String apellido, String email, String contrasena, TipoUsuario tipousuario) {
         this.nombre = nombre;
         this.apellido = apellido;
         this.email = email;
-        this.passwd = passwd;
+        this.contrasena = contrasena;
         this.tipousuario = tipousuario;
     }
 
@@ -45,12 +45,12 @@ public class Usuario {
         this.email = email;
     }
 
-    public String getPasswd() {
-        return passwd;
+    public String getContrasena() {
+        return contrasena;
     }
 
-    public void setPasswd(String passwd) {
-        this.passwd = passwd;
+    public void setContrasena(String contrasena) {
+        this.contrasena = contrasena;
     }
 
     public TipoUsuario getTipousuario() {
@@ -60,4 +60,5 @@ public class Usuario {
     public void setTipousuario(TipoUsuario tipousuario) {
         this.tipousuario = tipousuario;
     }
+
 }

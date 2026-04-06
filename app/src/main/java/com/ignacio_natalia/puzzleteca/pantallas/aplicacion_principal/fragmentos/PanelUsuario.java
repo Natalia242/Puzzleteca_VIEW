@@ -21,8 +21,8 @@ public class PanelUsuario extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
-                             @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
+                             @Nullable ViewGroup contenedor,
+                             @Nullable Bundle instanciaEstadoGuardado) {
 
         ScrollView scroll = new ScrollView(requireContext());
         scroll.setFillViewport(true);
@@ -32,13 +32,13 @@ public class PanelUsuario extends Fragment {
         layout.setPadding(50, 50, 50, 50);
 
         // ── Título ──
-        TextView tvTitulo = new TextView(requireContext());
-        tvTitulo.setText("User Dashboard");
-        tvTitulo.setTextSize(20);
-        tvTitulo.setTypeface(null, Typeface.BOLD);
-        tvTitulo.setTextColor(Color.parseColor("#37474F"));
-        tvTitulo.setGravity(Gravity.CENTER);
-        layout.addView(tvTitulo);
+        TextView textoTitulo = new TextView(requireContext());
+        textoTitulo.setText("Panel Usuario");
+        textoTitulo.setTextSize(20);
+        textoTitulo.setTypeface(null, Typeface.BOLD);
+        textoTitulo.setTextColor(Color.parseColor("#37474F"));
+        textoTitulo.setGravity(Gravity.CENTER);
+        layout.addView(textoTitulo);
         espacio(layout, 30);
 
         // ── Tarjeta bienvenida ──
@@ -46,23 +46,23 @@ public class PanelUsuario extends Fragment {
         tarjeta.setPadding(50, 40, 50, 40);
         tarjeta.setOrientation(LinearLayout.VERTICAL);
 
-        TextView tvHola = new TextView(requireContext());
-        tvHola.setText("👤 Hola, " + GestorSesion.obtenerRol(requireContext()));
-        tvHola.setTextSize(17);
-        tvHola.setTypeface(null, Typeface.BOLD);
-        tvHola.setTextColor(Color.parseColor("#37474F"));
-        tarjeta.addView(tvHola);
+        TextView textoSaludo = new TextView(requireContext());
+        textoSaludo.setText("👤 Hola, " + GestorSesion.obtenerRol(requireContext()));
+        textoSaludo.setTextSize(17);
+        textoSaludo.setTypeface(null, Typeface.BOLD);
+        textoSaludo.setTextColor(Color.parseColor("#37474F"));
+        tarjeta.addView(textoSaludo);
         layout.addView(tarjeta);
         espacio(layout, 20);
 
         // ── Fila: Mis Puzzles + Editar Perfil ──
-        LinearLayout fila1 = new LinearLayout(requireContext());
-        fila1.setOrientation(LinearLayout.HORIZONTAL);
-        fila1.setLayoutParams(new LinearLayout.LayoutParams(
+        LinearLayout fila = new LinearLayout(requireContext());
+        fila.setOrientation(LinearLayout.HORIZONTAL);
+        fila.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-        fila1.addView(crearBotonAccion("🧩", "Mis Puzzles", "#F48FB1"));
-        fila1.addView(crearBotonAccion("✏️", "Editar Perfil", "#A5D6A7"));
-        layout.addView(fila1);
+        fila.addView(crearBotonAccion("🧩", "Mis Puzzles"));
+        fila.addView(crearBotonAccion("✏️", "Editar Perfil"));
+        layout.addView(fila);
         espacio(layout, 16);
 
         // ── Tarjeta Ranking ──
@@ -71,130 +71,152 @@ public class PanelUsuario extends Fragment {
         tarjetaRanking.setGravity(Gravity.CENTER_VERTICAL);
         tarjetaRanking.setPadding(50, 30, 50, 30);
 
-        LinearLayout infoRanking = new LinearLayout(requireContext());
-        infoRanking.setOrientation(LinearLayout.VERTICAL);
-        infoRanking.setLayoutParams(new LinearLayout.LayoutParams(
+        LinearLayout informacionRanking = new LinearLayout(requireContext());
+        informacionRanking.setOrientation(LinearLayout.VERTICAL);
+        informacionRanking.setLayoutParams(new LinearLayout.LayoutParams(
                 0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
 
-        TextView tvRankLabel = new TextView(requireContext());
-        tvRankLabel.setText("🏆 Ranking");
-        tvRankLabel.setTextSize(15);
-        tvRankLabel.setTypeface(null, Typeface.BOLD);
-        tvRankLabel.setTextColor(Color.parseColor("#37474F"));
+        TextView textoRanking = new TextView(requireContext());
+        textoRanking.setText("🏆 Ranking");
+        textoRanking.setTextSize(15);
+        textoRanking.setTypeface(null, Typeface.BOLD);
+        textoRanking.setTextColor(Color.parseColor("#37474F"));
 
-        TextView tvMejorTiempo = new TextView(requireContext());
-        tvMejorTiempo.setText("Mejor tiempo:");
-        tvMejorTiempo.setTextSize(12);
-        tvMejorTiempo.setTextColor(Color.parseColor("#78909C"));
+        TextView textoMejorTiempo = new TextView(requireContext());
+        textoMejorTiempo.setText("Mejor tiempo:");
+        textoMejorTiempo.setTextSize(12);
+        textoMejorTiempo.setTextColor(Color.parseColor("#78909C"));
 
-        infoRanking.addView(tvRankLabel);
-        infoRanking.addView(tvMejorTiempo);
+        informacionRanking.addView(textoRanking);
+        informacionRanking.addView(textoMejorTiempo);
 
-        TextView tvBadge = new TextView(requireContext());
-        tvBadge.setText("02:15");
-        tvBadge.setTextSize(14);
-        tvBadge.setTypeface(null, Typeface.BOLD);
-        tvBadge.setTextColor(Color.WHITE);
-        tvBadge.setPadding(30, 14, 30, 14);
-        GradientDrawable badgeShape = new GradientDrawable();
-        badgeShape.setColor(Color.parseColor("#26A69A"));
-        badgeShape.setCornerRadius(60);
-        tvBadge.setBackground(badgeShape);
+        TextView textoTiempo = new TextView(requireContext());
+        textoTiempo.setText("02:15");
+        textoTiempo.setTextSize(14);
+        textoTiempo.setTypeface(null, Typeface.BOLD);
+        textoTiempo.setTextColor(Color.WHITE);
+        textoTiempo.setPadding(30, 14, 30, 14);
+        GradientDrawable formaTiempo = new GradientDrawable();
+        formaTiempo.setColor(Color.parseColor("#26A69A"));
+        formaTiempo.setCornerRadius(60);
+        textoTiempo.setBackground(formaTiempo);
 
-        tarjetaRanking.addView(infoRanking);
-        tarjetaRanking.addView(tvBadge);
+        tarjetaRanking.addView(informacionRanking);
+        tarjetaRanking.addView(textoTiempo);
         layout.addView(tarjetaRanking);
         espacio(layout, 24);
 
         // ── Botón Crear Nuevo Puzzle ──
-        layout.addView(crearBotonPrimario("➕  Crear Nuevo Puzzle", "#F06292"));
+        layout.addView(crearBotonPrimario("➕ Crear Nuevo Puzzle", "#F06292"));
         espacio(layout, 14);
 
         // ── Botón Eliminar Cuenta ──
-        layout.addView(crearBotonSecundario("Eliminar Cuenta  ›"));
+        layout.addView(crearBotonSecundario("Eliminar Cuenta   ›"));
 
         scroll.addView(layout);
         return scroll;
+
     }
 
     private LinearLayout crearTarjeta() {
-        LinearLayout t = new LinearLayout(requireContext());
-        t.setLayoutParams(new LinearLayout.LayoutParams(
+
+        LinearLayout tarjeta = new LinearLayout(requireContext());
+        tarjeta.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-        GradientDrawable fondo = new GradientDrawable();
-        fondo.setColor(Color.WHITE);
-        fondo.setCornerRadius(40);
-        fondo.setStroke(2, Color.parseColor("#A5D6A7"));
-        t.setBackground(fondo);
-        return t;
+
+        GradientDrawable forma = new GradientDrawable();
+        forma.setColor(Color.WHITE);
+        forma.setCornerRadius(40);
+        forma.setStroke(2, Color.parseColor("#A5D6A7"));
+        tarjeta.setBackground(forma);
+
+        return tarjeta;
+
     }
 
-    private LinearLayout crearBotonAccion(String emoji, String texto, String colorBorde) {
-        LinearLayout card = new LinearLayout(requireContext());
-        card.setOrientation(LinearLayout.VERTICAL);
-        card.setGravity(Gravity.CENTER);
-        card.setPadding(30, 40, 30, 40);
-        LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(
+    private LinearLayout crearBotonAccion(String emoji, String opcion) {
+
+        LinearLayout boton = new LinearLayout(requireContext());
+        boton.setOrientation(LinearLayout.VERTICAL);
+        boton.setGravity(Gravity.CENTER);
+        boton.setPadding(30, 40, 30, 40);
+
+        LinearLayout.LayoutParams parametrosBoton = new LinearLayout.LayoutParams(
                 0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f);
-        p.setMargins(0, 0, 10, 0);
-        card.setLayoutParams(p);
-        GradientDrawable fondo = new GradientDrawable();
-        fondo.setColor(Color.WHITE);
-        fondo.setCornerRadius(40);
-        fondo.setStroke(2, Color.parseColor(colorBorde));
-        card.setBackground(fondo);
 
-        TextView tvEmoji = new TextView(requireContext());
-        tvEmoji.setText(emoji);
-        tvEmoji.setTextSize(26);
-        tvEmoji.setGravity(Gravity.CENTER);
+        parametrosBoton.setMargins(0, 0, 10, 0);
+        boton.setLayoutParams(parametrosBoton);
 
-        TextView tvLabel = new TextView(requireContext());
-        tvLabel.setText(texto);
-        tvLabel.setTextSize(13);
-        tvLabel.setGravity(Gravity.CENTER);
-        tvLabel.setTextColor(Color.parseColor("#37474F"));
+        GradientDrawable forma = new GradientDrawable();
+        forma.setColor(Color.WHITE);
+        forma.setCornerRadius(40);
+        forma.setStroke(2, Color.parseColor("#A5D6A7"));
+        boton.setBackground(forma);
 
-        card.addView(tvEmoji);
-        card.addView(tvLabel);
-        return card;
+        TextView textoEmoji = new TextView(requireContext());
+        textoEmoji.setText(emoji);
+        textoEmoji.setTextSize(26);
+        textoEmoji.setGravity(Gravity.CENTER);
+
+        TextView textoOpcion = new TextView(requireContext());
+        textoOpcion.setText(opcion);
+        textoOpcion.setTextSize(13);
+        textoOpcion.setGravity(Gravity.CENTER);
+        textoOpcion.setTextColor(Color.parseColor("#37474F"));
+
+        boton.addView(textoEmoji);
+        boton.addView(textoOpcion);
+
+        return boton;
+
     }
 
     private Button crearBotonPrimario(String texto, String color) {
-        Button btn = new Button(requireContext());
-        btn.setText(texto);
-        btn.setTextColor(Color.WHITE);
-        btn.setTextSize(16);
-        btn.setAllCaps(false);
-        btn.setPadding(30, 30, 30, 30);
-        btn.setLayoutParams(new LinearLayout.LayoutParams(
+
+        Button boton = new Button(requireContext());
+        boton.setText(texto);
+        boton.setTextColor(Color.WHITE);
+        boton.setTextSize(16);
+        boton.setAllCaps(false);
+        boton.setPadding(30, 30, 30, 30);
+        boton.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-        GradientDrawable shape = new GradientDrawable();
-        shape.setColor(Color.parseColor(color));
-        shape.setCornerRadius(60);
-        btn.setBackground(shape);
-        return btn;
+
+        GradientDrawable forma = new GradientDrawable();
+        forma.setColor(Color.parseColor(color));
+        forma.setCornerRadius(60);
+        boton.setBackground(forma);
+
+        return boton;
+
     }
     private Button crearBotonSecundario(String texto) {
-        Button btn = new Button(requireContext());
-        btn.setText(texto);
-        btn.setTextColor(Color.parseColor("#78909C"));
-        btn.setTextSize(14);
-        btn.setAllCaps(false);
-        btn.setPadding(30, 20, 30, 20);
-        btn.setLayoutParams(new LinearLayout.LayoutParams(
+
+        Button boton = new Button(requireContext());
+        boton.setText(texto);
+        boton.setTextColor(Color.parseColor("#78909C"));
+        boton.setTextSize(14);
+        boton.setAllCaps(false);
+        boton.setPadding(30, 20, 30, 20);
+        boton.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-        GradientDrawable shape = new GradientDrawable();
-        shape.setColor(Color.parseColor("#FFF9C4"));
-        shape.setCornerRadius(60);
-        shape.setStroke(2, Color.parseColor("#F0CC50"));
-        btn.setBackground(shape);
-        return btn;
+
+        GradientDrawable forma = new GradientDrawable();
+        forma.setColor(Color.parseColor("#FFF9C4"));
+        forma.setCornerRadius(60);
+        forma.setStroke(2, Color.parseColor("#F0CC50"));
+        boton.setBackground(forma);
+
+        return boton;
+
     }
-    private void espacio(LinearLayout parent, int dp) {
-        View v = new View(requireContext());
-        v.setLayoutParams(new LinearLayout.LayoutParams(
+    private void espacio(LinearLayout layout, int dp) {
+
+        View vista = new View(requireContext());
+        vista.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, dp));
-        parent.addView(v);
+        layout.addView(vista);
+
     }
+
 }

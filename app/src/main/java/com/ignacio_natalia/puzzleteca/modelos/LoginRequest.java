@@ -1,12 +1,13 @@
 package com.ignacio_natalia.puzzleteca.modelos;
 
 public class LoginRequest {
+
     private String email;
-    private String password;
+    private String contrasena;
 
     public LoginRequest(String email, String password) {
         this.email = email;
-        this.password = password;
+        this.contrasena = password;
     }
 
     public String getEmail() {
@@ -17,11 +18,12 @@ public class LoginRequest {
         this.email = email;
     }
 
-    public String getPassword() {
-        return password;
+    public String getContrasena() {
+        return contrasena;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setContrasena(String contrasena) {
+        this.contrasena = contrasena;
     }
+
 }
