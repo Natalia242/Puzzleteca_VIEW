@@ -23,6 +23,7 @@ import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos.
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos.PanelAdmin;
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos.PanelUsuario;
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos.Ranking;
+import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.puzzles.PuzzleViewModel;
 import com.ignacio_natalia.puzzleteca.utilidades.GestorSesion;
 
 import java.util.List;

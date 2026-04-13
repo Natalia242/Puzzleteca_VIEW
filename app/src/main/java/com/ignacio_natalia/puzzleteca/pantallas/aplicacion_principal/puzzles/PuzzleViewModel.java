@@ -1,5 +1,4 @@
-package com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal;
-import android.view.VerifiedInputEvent;
+package com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.puzzles;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;

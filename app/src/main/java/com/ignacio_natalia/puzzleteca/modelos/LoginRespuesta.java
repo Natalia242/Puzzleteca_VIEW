@@ -8,6 +8,9 @@ public class LoginRespuesta {
     public String getToken() {
         return token;
     }
-    public String getTipoUsuario(){return tipoUsuario;}
+
+    public String getTipoUsuario() {
+        return tipoUsuario;
+    }
 
 }

@@ -10,8 +10,10 @@ import retrofit2.http.Body;
 import retrofit2.http.POST;
 
 public interface ServiciosAPI {
+
     @POST("login")
     Call<LoginRespuesta> login(@Body LoginRequest request);
+
     @POST("registrar")
     Call<Void> crearUsuario(@Body Usuario usuario);
 
@@ -19,6 +21,6 @@ public interface ServiciosAPI {
     Call<Void> solicitarCodigo(@Body SolicitarCodigoRequest request);
 
     @POST("recuperarPassword/confirmar")
-    Call<Void> confirmarCambioPassword(@Body ConfirmarCambioContrasenaRequest request);
+    Call<Void> confirmarCambioContrasena(@Body ConfirmarCambioContrasenaRequest request);
 
 }

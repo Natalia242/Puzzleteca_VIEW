@@ -23,9 +23,11 @@ import androidx.lifecycle.ViewModelProvider;
 import com.ignacio_natalia.puzzleteca.R;
 import com.ignacio_natalia.puzzleteca.pantallas.login.LoginActivity;
 
-public class RecuperarContrasenna extends AppCompatActivity {
+public class RecuperarContrasennaActivity extends AppCompatActivity {
 
     private RecuperarContrasennaViewModel viewModel;
+
+    private String emailGuardado;
 
     // Paso 1
     private EditText emailEditText;
@@ -38,8 +40,6 @@ public class RecuperarContrasenna extends AppCompatActivity {
     private EditText confirmarContrasenaEditText;
     private Button botonConfirmar;
     private LinearLayout pasoDosLayout;
-
-    private String emailGuardado;
 
     @SuppressLint({"ClickableViewAccessibility", "SetTextI18n"})
     @Override
@@ -316,4 +316,5 @@ public class RecuperarContrasenna extends AppCompatActivity {
         forma.setStroke(3, Color.parseColor("#A5D6A7"));
         return forma;
     }
+
 }

@@ -11,7 +11,7 @@ import retrofit2.Callback;
 
 public class UsuarioRepositorio {
 
-    private ServiciosAPI servicioApi;
+    private final ServiciosAPI servicioApi;
 
     public UsuarioRepositorio() {
         servicioApi = ClienteApi.getCliente().create(ServiciosAPI.class);
@@ -34,9 +34,9 @@ public class UsuarioRepositorio {
         call.enqueue(callback);
     }
 
-    public void confirmarCambioPassword(String email, String codigo, String nuevaContrasena, Callback<Void> callback) {
+    public void confirmarCambioContrasena(String email, String codigo, String nuevaContrasena, Callback<Void> callback) {
         ConfirmarCambioContrasenaRequest request = new ConfirmarCambioContrasenaRequest(email, codigo, nuevaContrasena);
-        Call<Void> call = servicioApi.confirmarCambioPassword(request);
+        Call<Void> call = servicioApi.confirmarCambioContrasena(request);
         call.enqueue(callback);
     }
 

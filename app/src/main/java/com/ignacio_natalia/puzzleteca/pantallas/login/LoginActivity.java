@@ -23,7 +23,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.ignacio_natalia.puzzleteca.R;
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.AppPrincipal;
-import com.ignacio_natalia.puzzleteca.pantallas.registro.RecuperarContrasenna;
+import com.ignacio_natalia.puzzleteca.pantallas.registro.RecuperarContrasennaActivity;
 import com.ignacio_natalia.puzzleteca.pantallas.registro.RegistroActivity;
 import com.ignacio_natalia.puzzleteca.utilidades.GestorSesion;
 
@@ -181,7 +181,7 @@ public class LoginActivity extends AppCompatActivity {
         textoOlvidada.setPadding(20, 20, 20, 10);
 
         textoOlvidada.setOnClickListener(v -> {
-            Intent intent = new Intent(LoginActivity.this, RecuperarContrasenna.class);
+            Intent intent = new Intent(LoginActivity.this, RecuperarContrasennaActivity.class);
             startActivity(intent);
         });
 

@@ -38,4 +38,5 @@ public class GestorSesion {
         context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
                 .edit().remove(KEY_TOKEN).remove(KEY_ROL).apply();
     }
+
 }

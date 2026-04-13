@@ -10,14 +10,14 @@ public class Usuario {
     private String apellido;
     private String email;
     private String contrasena;
-    private TipoUsuario tipousuario;
+    private TipoUsuario tipoUsuario;
 
-    public Usuario(String nombre, String apellido, String email, String contrasena, TipoUsuario tipousuario) {
+    public Usuario(String nombre, String apellido, String email, String contrasena, TipoUsuario tipoUsuario) {
         this.nombre = nombre;
         this.apellido = apellido;
         this.email = email;
         this.contrasena = contrasena;
-        this.tipousuario = tipousuario;
+        this.tipoUsuario = tipoUsuario;
     }
 
     // Getters y Setters
@@ -53,12 +53,12 @@ public class Usuario {
         this.contrasena = contrasena;
     }
 
-    public TipoUsuario getTipousuario() {
-        return tipousuario;
+    public TipoUsuario getTipoUsuario() {
+        return tipoUsuario;
     }
 
-    public void setTipousuario(TipoUsuario tipousuario) {
-        this.tipousuario = tipousuario;
+    public void setTipoUsuario(TipoUsuario tipoUsuario) {
+        this.tipoUsuario = tipoUsuario;
     }
 
 }

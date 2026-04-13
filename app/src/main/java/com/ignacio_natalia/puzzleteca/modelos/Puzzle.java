@@ -10,7 +10,7 @@ public class Puzzle {
         Facil, Media, Dificil, Extremo
     }
 
-    private Integer id;
+    private String titulo;
     private String autor;
     private Integer tiempo;
     private Integer piezas;
@@ -21,7 +21,7 @@ public class Puzzle {
     private Integer idUsuario;
     private Estados estado;
 
-    public Integer getId() { return id; }
+    public String getTitulo() { return titulo; }
     public String getAutor() { return autor; }
     public Integer getTiempo() { return tiempo; }
     public Integer getPiezas() { return piezas; }
@@ -31,9 +31,6 @@ public class Puzzle {
     public Integer getValoracion() { return valoracion; }
     public Integer getIdUsuario() { return idUsuario; }
     public Estados getEstado() { return estado; }
-
-     public boolean isPublico() {
-        return estado == Estados.Publico;
-    }
+    public boolean isPublico() { return estado == Estados.Publico; }
 
 }

@@ -20,6 +20,7 @@ public class RecuperarContrasennaViewModel extends ViewModel {
 
         codigoEnviado.postValue(true);
         repositorio.solicitarCodigo(email, new Callback<>() {
+
             @Override
             public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
 
@@ -38,9 +39,11 @@ public class RecuperarContrasennaViewModel extends ViewModel {
             }
         });
     }
+
     public void confirmarCambioPassword(String email, String codigo, String nuevaPassword) {
 
-        repositorio.confirmarCambioPassword(email, codigo, nuevaPassword, new Callback<>() {
+        repositorio.confirmarCambioContrasena(email, codigo, nuevaPassword, new Callback<>() {
+
             @Override
             public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
 
