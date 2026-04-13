@@ -13,6 +13,10 @@ import android.widget.*;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+
+import com.ignacio_natalia.puzzleteca.R;
+import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.AppPrincipal;
+import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.puzzles.RegistrarPuzzle;
 import com.ignacio_natalia.puzzleteca.utilidades.GestorSesion;
 
 public class PanelUsuario extends Fragment {
@@ -107,7 +111,20 @@ public class PanelUsuario extends Fragment {
         espacio(layout, 24);
 
         // ── Botón Crear Nuevo Puzzle ──
-        layout.addView(crearBotonPrimario("➕ Crear Nuevo Puzzle", "#F06292"));
+        Button btnCrearPuzzle = crearBotonPrimario("➕ Crear Nuevo Puzzle", "#F06292");
+
+        btnCrearPuzzle.setOnClickListener(v -> {
+
+            Fragment fragment = new RegistrarPuzzle();
+
+            requireActivity()
+                    .getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(AppPrincipal.FRAGMENTO_ID, fragment)
+                    .addToBackStack(null)
+                    .commit();
+        });
+        layout.addView(btnCrearPuzzle);
         espacio(layout, 14);
 
         // ── Botón Eliminar Cuenta ──

@@ -20,4 +20,9 @@ public class PuzzleRepositorio {
         Call<List<Puzzle>> call = serviciosApiPuzzles.obtenerPuzzles("Bearer " + token);
         call.enqueue(callback);
     }
+
+    public void crearPuzzle(Puzzle puzzle, Callback<Void> callback) {
+        Call<Void> call = serviciosApiPuzzles.crearPuzzle(puzzle);
+        call.enqueue(callback);
+    }
 }

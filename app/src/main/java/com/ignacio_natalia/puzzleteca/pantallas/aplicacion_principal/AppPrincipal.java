@@ -30,7 +30,7 @@ import java.util.List;
 
 public class AppPrincipal extends AppCompatActivity {
 
-    private static final int FRAGMENTO_ID = 0xF4A001;
+    public static final int FRAGMENTO_ID = 0xF4A001;
 
     private LinearLayout contenedorPuzzles;
     private ScrollView scrollPuzzles;
