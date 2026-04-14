@@ -9,14 +9,14 @@ public class Usuario {
     private String nombre;
     private String apellido;
     private String email;
-    private String contrasena;
+    private String contrasenna;
     private TipoUsuario tipoUsuario;
 
-    public Usuario(String nombre, String apellido, String email, String contrasena, TipoUsuario tipoUsuario) {
+    public Usuario(String nombre, String apellido, String email, String contrasenna, TipoUsuario tipoUsuario) {
         this.nombre = nombre;
         this.apellido = apellido;
         this.email = email;
-        this.contrasena = contrasena;
+        this.contrasenna = contrasenna;
         this.tipoUsuario = tipoUsuario;
     }
 
@@ -45,12 +45,12 @@ public class Usuario {
         this.email = email;
     }
 
-    public String getContrasena() {
-        return contrasena;
+    public String getContrasenna() {
+        return contrasenna;
     }
 
-    public void setContrasena(String contrasena) {
-        this.contrasena = contrasena;
+    public void setContrasenna(String contrasenna) {
+        this.contrasenna = contrasenna;
     }
 
     public TipoUsuario getTipoUsuario() {

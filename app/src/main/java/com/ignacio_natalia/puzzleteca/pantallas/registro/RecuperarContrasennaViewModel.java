@@ -40,9 +40,9 @@ public class RecuperarContrasennaViewModel extends ViewModel {
         });
     }
 
-    public void confirmarCambioPassword(String email, String codigo, String nuevaPassword) {
+    public void confirmarCambioPassword(String email, String codigo, String contrasenna) {
 
-        repositorio.confirmarCambioContrasena(email, codigo, nuevaPassword, new Callback<>() {
+        repositorio.confirmarCambioContrasena(email, codigo, contrasenna, new Callback<>() {
 
             @Override
             public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {

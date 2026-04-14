@@ -5,9 +5,9 @@ public class LoginRequest {
     private String email;
     private String contrasena;
 
-    public LoginRequest(String email, String password) {
+    public LoginRequest(String email, String contrasenna) {
         this.email = email;
-        this.contrasena = password;
+        this.contrasena = contrasenna;
     }
 
     public String getEmail() {

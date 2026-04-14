@@ -230,6 +230,10 @@ public class LoginActivity extends AppCompatActivity {
             GestorSesion.guardarToken(this, loginRespuesta.getToken());
             GestorSesion.guardarRol(this, loginRespuesta.getTipoUsuario());
 
+            if (loginRespuesta.getId_usuario() != null) {
+                GestorSesion.guardarId_usuario(this, loginRespuesta.getId_usuario());
+            }
+
             Intent intent = new Intent(this, AppPrincipal.class);
             startActivity(intent);
             finish();

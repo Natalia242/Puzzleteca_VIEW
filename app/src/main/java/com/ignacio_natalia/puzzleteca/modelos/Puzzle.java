@@ -21,8 +21,7 @@ public class Puzzle {
     private Integer idUsuario;
     private Estados estado;
 
-    // 🔥 NUEVO
-    private String imagenBase64;
+        private String imagenBase64;
 
     // ---------- GETTERS ----------
     public String getTitulo() { return titulo; }
