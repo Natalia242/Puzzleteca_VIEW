@@ -3,9 +3,13 @@ package com.ignacio_natalia.puzzleteca.repositorios;
 import com.ignacio_natalia.puzzleteca.modelos.ConfirmarCambioContrasenaRequest;
 import com.ignacio_natalia.puzzleteca.modelos.LoginRequest;
 import com.ignacio_natalia.puzzleteca.modelos.LoginRespuesta;
+import com.ignacio_natalia.puzzleteca.modelos.Puzzle;
 import com.ignacio_natalia.puzzleteca.modelos.SolicitarCodigoRequest;
 import com.ignacio_natalia.puzzleteca.modelos.Usuario;
 import com.ignacio_natalia.puzzleteca.red.*;
+
+import java.util.List;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 
@@ -15,6 +19,11 @@ public class UsuarioRepositorio {
 
     public UsuarioRepositorio() {
         servicioApi = ClienteApi.getCliente().create(ServiciosAPI.class);
+    }
+
+    public void listarUsuarios(String token, Callback<List<Usuario>> callback) {
+        Call<List<Usuario>> call = servicioApi.obtenerUsuarios("Bearer" + token);
+        call.enqueue(callback);
     }
 
     public void login(String email, String contrasena, Callback<LoginRespuesta> callback) {

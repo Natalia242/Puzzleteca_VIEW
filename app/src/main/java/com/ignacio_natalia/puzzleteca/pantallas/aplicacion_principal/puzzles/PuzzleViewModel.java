@@ -41,6 +41,7 @@ public class PuzzleViewModel extends ViewModel {
 
                 if (response.isSuccessful() && response.body() != null) {
                     puzzles.setValue(response.body());
+
                 } else {
                     error.setValue("Error " + response.code() + " al cargar los puzzles");
                 }

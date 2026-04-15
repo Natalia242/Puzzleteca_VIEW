@@ -17,6 +17,9 @@ import androidx.fragment.app.Fragment;
 
 import androidx.appcompat.app.AlertDialog;
 
+import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.AppPrincipal;
+import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos.gestionesAdministrador.puzzles.GestionPuzzles;
+import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos.gestionesAdministrador.usuarios.GestionUsuarios;
 import com.ignacio_natalia.puzzleteca.utilidades.UtilidadesSesion;
 
 public class PanelAdmin extends Fragment {
@@ -69,11 +72,14 @@ public class PanelAdmin extends Fragment {
 
         espacio(layout, 20);
 
-        // ── Opciones ──
-        layout.addView(crearOpcion("✏️", "Editar Perfil"));
+        LinearLayout opEditarPerfil = crearOpcion("✏️", "Editar Perfil");
+        opEditarPerfil.setOnClickListener(v -> {
+            // HACER: Editar perfil
+        });
+        layout.addView(opEditarPerfil);
+
         espacio(layout, 10);
 
-        // ── Mejor Puzzle ──
         LinearLayout tarjetaMejorPuzzle = crearTarjeta();
         tarjetaMejorPuzzle.setOrientation(LinearLayout.VERTICAL);
         tarjetaMejorPuzzle.setPadding(40, 30, 40, 30);
@@ -130,14 +136,36 @@ public class PanelAdmin extends Fragment {
 
         espacio(layout, 10);
 
-        // ── Gestión ──
-        layout.addView(crearOpcion("🧩", "Gestionar Puzzles"));
-        layout.addView(crearOpcion("👥", "Gestionar Usuarios"));
+        LinearLayout opGestionarPuzzles = crearOpcion("🧩", "Gestionar Puzzles");
+
+        opGestionarPuzzles.setOnClickListener(vista -> {
+            Fragment fragment = new GestionPuzzles();
+            requireActivity()
+                    .getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(AppPrincipal.FRAGMENTO_ID, fragment)
+                    .addToBackStack(null)
+                    .commit();
+        });
+        layout.addView(opGestionarPuzzles);
+
+        LinearLayout opGestionarUsuarios = crearOpcion("👥", "Gestionar Usuarios");
+
+        opGestionarUsuarios.setOnClickListener(vista -> {
+            Fragment fragment = new GestionUsuarios();
+            requireActivity()
+                    .getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(AppPrincipal.FRAGMENTO_ID, fragment)
+                    .addToBackStack(null)
+                    .commit();
+        });
+        layout.addView(opGestionarUsuarios);
 
         // ── CERRAR SESIÓN (BOTÓN SECUNDARIO) ──
         Button btnCerrarSesion = crearBotonSecundario("Cerrar sesión");
 
-        btnCerrarSesion.setOnClickListener(v -> {
+        btnCerrarSesion.setOnClickListener(vista -> {
 
             new AlertDialog.Builder(requireContext())
                     .setTitle("Cerrar sesión")
@@ -158,7 +186,7 @@ public class PanelAdmin extends Fragment {
         // ── ELIMINAR CUENTA (BOTÓN SECUNDARIO) ──
         Button btnEliminarCuenta = crearBotonSecundario("Eliminar cuenta");
 
-        btnEliminarCuenta.setOnClickListener(v -> {
+        btnEliminarCuenta.setOnClickListener(vista -> {
 
             new AlertDialog.Builder(requireContext())
                     .setTitle("Eliminar cuenta")

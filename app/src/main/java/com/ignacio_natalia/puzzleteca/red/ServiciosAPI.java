@@ -3,15 +3,24 @@ package com.ignacio_natalia.puzzleteca.red;
 import com.ignacio_natalia.puzzleteca.modelos.ConfirmarCambioContrasenaRequest;
 import com.ignacio_natalia.puzzleteca.modelos.LoginRequest;
 import com.ignacio_natalia.puzzleteca.modelos.LoginRespuesta;
+import com.ignacio_natalia.puzzleteca.modelos.Puzzle;
 import com.ignacio_natalia.puzzleteca.modelos.SolicitarCodigoRequest;
 import com.ignacio_natalia.puzzleteca.modelos.Usuario;
+
+import java.util.List;
+
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
+import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.POST;
 import retrofit2.http.Query;
 
 public interface ServiciosAPI {
+
+    @GET("listarUsuarios")
+    Call<List<Usuario>> obtenerUsuarios(@Header("Authorization") String token);
 
     @POST("login")
     Call<LoginRespuesta> login(@Body LoginRequest request);
