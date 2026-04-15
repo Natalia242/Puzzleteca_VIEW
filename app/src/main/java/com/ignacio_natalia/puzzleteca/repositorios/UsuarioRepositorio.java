@@ -54,4 +54,9 @@ public class UsuarioRepositorio {
         call.enqueue(callback);
     }
 
+    public void actualizarEstado(String email, String tipoUsuario, Callback<Void> callback) {
+        Call<Void> call = servicioApi.cambiarEstado(email, tipoUsuario);
+        call.enqueue(callback);
+    }
+
 }

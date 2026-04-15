@@ -20,6 +20,7 @@ import androidx.appcompat.app.AlertDialog;
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.AppPrincipal;
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos.gestionesAdministrador.puzzles.GestionPuzzles;
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos.gestionesAdministrador.usuarios.GestionUsuarios;
+import com.ignacio_natalia.puzzleteca.utilidades.GestorSesion;
 import com.ignacio_natalia.puzzleteca.utilidades.UtilidadesSesion;
 
 public class PanelAdmin extends Fragment {
@@ -59,7 +60,7 @@ public class PanelAdmin extends Fragment {
         textoNombre.setTextColor(Color.parseColor("#37474F"));
 
         TextView textoId = new TextView(requireContext());
-        textoId.setText("Admin ID: 00001");
+        textoId.setText("Admin ID: " + GestorSesion.obtenerId_usuario(this.requireContext()));
         textoId.setTextSize(13);
         textoId.setTextColor(Color.parseColor("#78909C"));
 

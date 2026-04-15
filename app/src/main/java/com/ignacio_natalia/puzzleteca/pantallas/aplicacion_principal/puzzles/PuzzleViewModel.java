@@ -80,9 +80,9 @@ public class PuzzleViewModel extends ViewModel {
             }
 
             @Override
-            public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull Call<Void> call, @NonNull Throwable excepcion) {
                 puzzleCreado.setValue(false);
-                error.setValue("Fallo de red: " + t.getMessage());
+                error.setValue("Fallo de red: " + excepcion.getMessage());
             }
         });
     }
@@ -101,7 +101,6 @@ public class PuzzleViewModel extends ViewModel {
 
             return Base64.encodeToString(buffer.toByteArray(), Base64.NO_WRAP);
         } catch (IOException e) {
-            e.printStackTrace();
             return null;
         }
     }

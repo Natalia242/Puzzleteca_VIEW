@@ -30,7 +30,7 @@ public class GestionUsuarioViewModel extends ViewModel {
 
     public void cargarUsuarios(String token, String emailUsuarioLogado) {
 
-        repositorio.listarUsuarios(token, new Callback<List<Usuario>>() {
+        repositorio.listarUsuarios(token, new Callback<>() {
 
             @Override
             public void onResponse(Call<List<Usuario>> call, Response<List<Usuario>> response) {
@@ -50,7 +50,7 @@ public class GestionUsuarioViewModel extends ViewModel {
                     usuarios.setValue(listaFiltrada);
 
                 } else {
-                    error.setValue("Error " + response.code() + " al cargar los puzzles");
+                    error.setValue("Error " + response.code() + " al cargar los usuarios");
                 }
             }
 
@@ -60,5 +60,29 @@ public class GestionUsuarioViewModel extends ViewModel {
 
             }
         });
+    }
+
+    private final MutableLiveData<Boolean> usuarioActualizado = new MutableLiveData<>();
+    public void actualizarEstadoUsuario(String email, String tipo) {
+
+        repositorio.actualizarEstado(email, tipo, new Callback<>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    usuarioActualizado.setValue(true);
+                } else {
+                    usuarioActualizado.setValue(false);
+                    error.setValue("Error " + response.code() + " al actualizar");
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable excepcion) {
+                usuarioActualizado.setValue(false);
+                error.setValue("Fallo de red: " + excepcion.getMessage());
+            }
+        });
+
     }
 }

@@ -117,39 +117,85 @@ public class GestionUsuarios extends Fragment {
         nombre.setTextColor(Color.parseColor("#37474F"));
 
         TextView estado = new TextView(requireContext());
-
-        boolean bloqueado = usuario.getTipoUsuario() == Usuario.TipoUsuario.Bloqueado;
-
-        estado.setText("Estado: " + (bloqueado ? "Bloqueado" : "Desbloqueado"));
         estado.setTextSize(13);
-        estado.setTextColor(bloqueado ? Color.RED : Color.parseColor("#2E7D32"));
 
         info.addView(nombre);
         info.addView(estado);
 
-        // ── SWITCH ──
-        Switch switchBloqueo = new Switch(requireContext());
-        switchBloqueo.setChecked(bloqueado);
+        // ── SPINNER ──
+        Spinner spinnerTipo = new Spinner(requireContext());
 
-        switchBloqueo.setOnCheckedChangeListener((buttonView, isChecked) -> {
+        Usuario.TipoUsuario[] tipos = Usuario.TipoUsuario.values();
 
-            usuario.setTipoUsuario(
-                    isChecked
-                            ? Usuario.TipoUsuario.Bloqueado
-                            : Usuario.TipoUsuario.Usuario
-            );
+        ArrayAdapter<Usuario.TipoUsuario> adapter = new ArrayAdapter<>(
+                requireContext(),
+                android.R.layout.simple_spinner_item,
+                tipos
+        );
 
-            estado.setText("Estado: " + (isChecked ? "Bloqueado" : "Desbloqueado"));
-            estado.setTextColor(isChecked ? Color.RED : Color.parseColor("#2E7D32"));
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerTipo.setAdapter(adapter);
 
-            // ── HACER API ──
-            // viewModel.actualizarUsuario(usuario);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerTipo.setAdapter(adapter);
+
+        spinnerTipo.setSelection(usuario.getTipoUsuario().ordinal());
+
+        actualizarEstadoUI(estado, usuario.getTipoUsuario().name());
+
+        final boolean[] inicializado = {false};
+
+        spinnerTipo.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+            boolean inicializado = false;
+
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                if (!inicializado) {
+                    inicializado = true;
+                    return;
+                }
+
+                Usuario.TipoUsuario seleccionado = tipos[position];
+
+                usuario.setTipoUsuario(seleccionado);
+
+                actualizarEstadoUI(estado, seleccionado.name());
+
+                viewModel.actualizarEstadoUsuario(
+                        usuario.getEmail(),
+                        seleccionado.name()
+                );
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
         });
 
         tarjeta.addView(info);
-        tarjeta.addView(switchBloqueo);
+        tarjeta.addView(spinnerTipo);
 
         return tarjeta;
+    }
+    private void actualizarEstadoUI(TextView estado, String tipo) {
+
+        switch (tipo) {
+            case "Bloqueado":
+                estado.setText("Estado: Bloqueado");
+                estado.setTextColor(Color.RED);
+                break;
+
+            case "Admin":
+                estado.setText("Estado: Admin");
+                estado.setTextColor(Color.BLUE);
+                break;
+
+            case "Usuario":
+                estado.setText("Estado: Usuario");
+                estado.setTextColor(Color.parseColor("#2E7D32"));
+                break;
+        }
     }
     private void espacio(LinearLayout layout, int dp) {
         View v = new View(requireContext());

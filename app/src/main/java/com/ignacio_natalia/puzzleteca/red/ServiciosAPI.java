@@ -10,11 +10,13 @@ import com.ignacio_natalia.puzzleteca.modelos.Usuario;
 import java.util.List;
 
 import retrofit2.Call;
+import retrofit2.CallAdapter;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Query;
 
 public interface ServiciosAPI {
@@ -35,5 +37,8 @@ public interface ServiciosAPI {
     Call<Void> confirmarCambioContrasena(@Body ConfirmarCambioContrasenaRequest request);
     @DELETE("eliminarCuenta")
     Call<Void> eliminarCuenta(@Query("email") String email);
+
+    @PUT("cambiarEstado")
+    Call<Void> cambiarEstado(@Query("email") String email, @Query("tipo") String tipo);
 
 }
