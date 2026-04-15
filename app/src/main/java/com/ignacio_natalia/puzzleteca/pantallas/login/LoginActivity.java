@@ -254,6 +254,8 @@ public class LoginActivity extends AppCompatActivity {
                 return;
             }
 
+            GestorSesion.guardarEmail(this, email);
+
             loginViewModel.iniciarSesion(email, contrasena);
         });
     }

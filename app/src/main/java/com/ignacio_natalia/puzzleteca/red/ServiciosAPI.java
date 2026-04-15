@@ -7,7 +7,9 @@ import com.ignacio_natalia.puzzleteca.modelos.SolicitarCodigoRequest;
 import com.ignacio_natalia.puzzleteca.modelos.Usuario;
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.POST;
+import retrofit2.http.Query;
 
 public interface ServiciosAPI {
 
@@ -22,5 +24,7 @@ public interface ServiciosAPI {
 
     @POST("recuperarPassword/confirmar")
     Call<Void> confirmarCambioContrasena(@Body ConfirmarCambioContrasenaRequest request);
+    @DELETE("eliminarCuenta")
+    Call<Void> eliminarCuenta(@Query("email") String email);
 
 }

@@ -1,6 +1,7 @@
 package com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
@@ -10,16 +11,26 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import com.ignacio_natalia.puzzleteca.R;
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.AppPrincipal;
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.puzzles.RegistrarPuzzle;
+import com.ignacio_natalia.puzzleteca.pantallas.login.LoginActivity;
+import com.ignacio_natalia.puzzleteca.repositorios.UsuarioRepositorio;
 import com.ignacio_natalia.puzzleteca.utilidades.GestorSesion;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class PanelUsuario extends Fragment {
+
+    private UsuarioRepositorio repositorio;
 
     @SuppressLint("SetTextI18n")
     @Nullable
@@ -27,6 +38,8 @@ public class PanelUsuario extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup contenedor,
                              @Nullable Bundle instanciaEstadoGuardado) {
+
+        repositorio = new UsuarioRepositorio();
 
         ScrollView scroll = new ScrollView(requireContext());
         scroll.setFillViewport(true);
@@ -100,6 +113,7 @@ public class PanelUsuario extends Fragment {
         textoTiempo.setTypeface(null, Typeface.BOLD);
         textoTiempo.setTextColor(Color.WHITE);
         textoTiempo.setPadding(30, 14, 30, 14);
+
         GradientDrawable formaTiempo = new GradientDrawable();
         formaTiempo.setColor(Color.parseColor("#26A69A"));
         formaTiempo.setCornerRadius(60);
@@ -111,10 +125,9 @@ public class PanelUsuario extends Fragment {
         espacio(layout, 24);
 
         // ── Botón Crear Nuevo Puzzle ──
-        Button btnCrearPuzzle = crearBotonPrimario("➕ Crear Nuevo Puzzle", "#F06292");
+        Button botonCrearPuzzle = crearBotonPrimario("➕ Crear Nuevo Puzzle", "#F06292");
 
-        btnCrearPuzzle.setOnClickListener(v -> {
-
+        botonCrearPuzzle.setOnClickListener(vista -> {
             Fragment fragment = new RegistrarPuzzle();
 
             requireActivity()
@@ -124,19 +137,82 @@ public class PanelUsuario extends Fragment {
                     .addToBackStack(null)
                     .commit();
         });
-        layout.addView(btnCrearPuzzle);
+
+        layout.addView(botonCrearPuzzle);
+        espacio(layout, 14);
+
+        Button botonCerrarSesion = crearBotonPrimario("Cerrar Sesión", "F06292");
+
+        botonCerrarSesion.setOnClickListener(vista -> {
+            new AlertDialog.Builder(requireContext())
+                    .setTitle("Cerrar sesión")
+                    .setMessage("¿Seguro que quiere cerrar sesión?")
+
+                    .setPositiveButton("Eliminar", (dialog, which) -> {
+                        cerrarSesion();
+                    })
+
+                    .setNegativeButton("Cancelar", null)
+                    .show();
+        });
+
+        layout.addView(botonCerrarSesion);
         espacio(layout, 14);
 
         // ── Botón Eliminar Cuenta ──
-        layout.addView(crearBotonSecundario("Eliminar Cuenta   ›"));
+        Button botonEliminarCuenta = crearBotonSecundario("Eliminar Cuenta   ›");
+
+        botonEliminarCuenta.setOnClickListener(vista -> {
+
+            new AlertDialog.Builder(requireContext())
+                    .setTitle("Eliminar cuenta")
+                    .setMessage("¿Seguro que quieres eliminar tu cuenta? Esta acción es irreversible.")
+
+                    .setPositiveButton("Eliminar", (dialog, which) -> {
+                        eliminarCuenta();
+                    })
+
+                    .setNegativeButton("Cancelar", null)
+                    .show();
+        });
+
+        layout.addView(botonEliminarCuenta);
 
         scroll.addView(layout);
         return scroll;
-
     }
+    private void eliminarCuenta() {
+        String email = GestorSesion.obtenerEmail(requireContext());
 
+        repositorio.borrarCuenta(email, new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+
+                if (response.isSuccessful()) {
+
+                    Toast.makeText(requireContext(), "Cuenta eliminada correctamente", Toast.LENGTH_SHORT).show();
+                    cerrarSesion();
+
+                } else {
+                    Toast.makeText(requireContext(), "Error al eliminar la cuenta", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Toast.makeText(requireContext(), "Error de conexión", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+    private void cerrarSesion() {
+
+        GestorSesion.cerrarSesion(requireContext());
+
+        Intent intent = new Intent(requireContext(), LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+    }
     private LinearLayout crearTarjeta() {
-
         LinearLayout tarjeta = new LinearLayout(requireContext());
         tarjeta.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
@@ -148,7 +224,6 @@ public class PanelUsuario extends Fragment {
         tarjeta.setBackground(forma);
 
         return tarjeta;
-
     }
 
     private LinearLayout crearBotonAccion(String emoji, String opcion) {
@@ -185,7 +260,6 @@ public class PanelUsuario extends Fragment {
         boton.addView(textoOpcion);
 
         return boton;
-
     }
 
     private Button crearBotonPrimario(String texto, String color) {
@@ -196,6 +270,7 @@ public class PanelUsuario extends Fragment {
         boton.setTextSize(16);
         boton.setAllCaps(false);
         boton.setPadding(30, 30, 30, 30);
+
         boton.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
 
@@ -205,16 +280,17 @@ public class PanelUsuario extends Fragment {
         boton.setBackground(forma);
 
         return boton;
-
     }
+
     private Button crearBotonSecundario(String texto) {
 
         Button boton = new Button(requireContext());
         boton.setText(texto);
-        boton.setTextColor(Color.parseColor("#78909C"));
+        boton.setTextColor(Color.RED);
         boton.setTextSize(14);
         boton.setAllCaps(false);
         boton.setPadding(30, 20, 30, 20);
+
         boton.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
 
@@ -225,15 +301,12 @@ public class PanelUsuario extends Fragment {
         boton.setBackground(forma);
 
         return boton;
-
     }
-    private void espacio(LinearLayout layout, int dp) {
 
+    private void espacio(LinearLayout layout, int dp) {
         View vista = new View(requireContext());
         vista.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, dp));
         layout.addView(vista);
-
     }
-
 }

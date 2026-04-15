@@ -40,4 +40,9 @@ public class UsuarioRepositorio {
         call.enqueue(callback);
     }
 
+    public void borrarCuenta(String email, Callback<Void> callback) {
+        Call<Void> call = servicioApi.eliminarCuenta(email);
+        call.enqueue(callback);
+    }
+
 }

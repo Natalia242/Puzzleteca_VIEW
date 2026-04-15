@@ -12,6 +12,8 @@ public class GestorSesion {
     private static final String KEY_TOKEN = "JWT_TOKEN";
     private static final String KEY_ROL = "TIPO_USUARIO";
     private static final String KEY_ID_USUARIO = "ID_USUARIO";
+    private static final String KEY_EMAIL = "EMAIL";
+
     public static void guardarToken(Context context, String token) {
         context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
                 .edit().putString(KEY_TOKEN, token).apply();
@@ -40,6 +42,15 @@ public class GestorSesion {
                  .getInt(KEY_ID_USUARIO, -1);
     }
 
+    public static void guardarEmail(Context context, String email) {
+        context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+                .edit().putString(KEY_EMAIL, email).apply();
+    }
+
+    public static String obtenerEmail(Context context) {
+        return context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+                .getString(KEY_EMAIL, null);
+    }
     public static boolean esAdmin(Context context) {
         return "Admin".equals(obtenerRol(context));
     }
