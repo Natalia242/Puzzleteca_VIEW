@@ -23,6 +23,7 @@ import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.puzzles.Reg
 import com.ignacio_natalia.puzzleteca.pantallas.login.LoginActivity;
 import com.ignacio_natalia.puzzleteca.repositorios.UsuarioRepositorio;
 import com.ignacio_natalia.puzzleteca.utilidades.GestorSesion;
+import com.ignacio_natalia.puzzleteca.utilidades.UtilidadesSesion;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -141,76 +142,31 @@ public class PanelUsuario extends Fragment {
         layout.addView(botonCrearPuzzle);
         espacio(layout, 14);
 
-        Button botonCerrarSesion = crearBotonSecundario("Cerrar Sesión   ›");
+        Button botonCerrarSesion = crearBotonSecundario("🗑 Cerrar Sesión   ›");
 
         botonCerrarSesion.setOnClickListener(vista -> {
-            new AlertDialog.Builder(requireContext())
-                    .setTitle("Cerrar sesión")
-                    .setMessage("¿Seguro que quiere cerrar sesión?")
 
-                    .setPositiveButton("Eliminar", (dialog, which) -> {
-                        cerrarSesion();
-                    })
-
-                    .setNegativeButton("Cancelar", null)
-                    .show();
+            UtilidadesSesion.mostrarDialogoCerrarSesion(requireContext(), () -> {
+                UtilidadesSesion.cerrarSesion(requireContext());
+            });
         });
 
         layout.addView(botonCerrarSesion);
         espacio(layout, 14);
 
-        // ── Botón Eliminar Cuenta ──
-        Button botonEliminarCuenta = crearBotonSecundario("Eliminar Cuenta   ›");
+        Button botonEliminarCuenta = crearBotonSecundario("🚪Eliminar Cuenta   ›");
 
         botonEliminarCuenta.setOnClickListener(vista -> {
 
-            new AlertDialog.Builder(requireContext())
-                    .setTitle("Eliminar cuenta")
-                    .setMessage("¿Seguro que quieres eliminar tu cuenta? Esta acción es irreversible.")
-
-                    .setPositiveButton("Eliminar", (dialog, which) -> {
-                        eliminarCuenta();
-                    })
-
-                    .setNegativeButton("Cancelar", null)
-                    .show();
+            UtilidadesSesion.mostrarDialogoEliminarCuenta(requireContext(), () -> {
+                UtilidadesSesion.eliminarCuenta(requireContext(), null);
+            });
         });
 
         layout.addView(botonEliminarCuenta);
 
         scroll.addView(layout);
         return scroll;
-    }
-    private void eliminarCuenta() {
-        String email = GestorSesion.obtenerEmail(requireContext());
-
-        repositorio.borrarCuenta(email, new Callback<Void>() {
-            @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
-
-                if (response.isSuccessful()) {
-
-                    Toast.makeText(requireContext(), "Cuenta eliminada correctamente", Toast.LENGTH_SHORT).show();
-                    cerrarSesion();
-
-                } else {
-                    Toast.makeText(requireContext(), "Error al eliminar la cuenta", Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Void> call, Throwable t) {
-                Toast.makeText(requireContext(), "Error de conexión", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-    private void cerrarSesion() {
-
-        GestorSesion.cerrarSesion(requireContext());
-
-        Intent intent = new Intent(requireContext(), LoginActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
     }
     private LinearLayout crearTarjeta() {
         LinearLayout tarjeta = new LinearLayout(requireContext());

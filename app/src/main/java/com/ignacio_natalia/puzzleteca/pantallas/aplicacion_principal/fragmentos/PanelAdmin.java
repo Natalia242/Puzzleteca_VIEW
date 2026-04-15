@@ -10,9 +10,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+
+import androidx.appcompat.app.AlertDialog;
+
+import com.ignacio_natalia.puzzleteca.utilidades.UtilidadesSesion;
 
 public class PanelAdmin extends Fragment {
 
@@ -51,7 +56,7 @@ public class PanelAdmin extends Fragment {
         textoNombre.setTextColor(Color.parseColor("#37474F"));
 
         TextView textoId = new TextView(requireContext());
-        textoId.setText("Admin to: 00001");
+        textoId.setText("Admin ID: 00001");
         textoId.setTextSize(13);
         textoId.setTextColor(Color.parseColor("#78909C"));
 
@@ -61,13 +66,14 @@ public class PanelAdmin extends Fragment {
         tarjetaAdministrador.addView(iconoAdministrador);
         tarjetaAdministrador.addView(infoAdministrador);
         layout.addView(tarjetaAdministrador);
+
         espacio(layout, 20);
 
         // ── Opciones ──
         layout.addView(crearOpcion("✏️", "Editar Perfil"));
         espacio(layout, 10);
 
-        // ── Tarjeta Mejor Puzzle ──
+        // ── Mejor Puzzle ──
         LinearLayout tarjetaMejorPuzzle = crearTarjeta();
         tarjetaMejorPuzzle.setOrientation(LinearLayout.VERTICAL);
         tarjetaMejorPuzzle.setPadding(40, 30, 40, 30);
@@ -78,6 +84,7 @@ public class PanelAdmin extends Fragment {
         textoMejorPuzzle.setTypeface(null, Typeface.BOLD);
         textoMejorPuzzle.setTextColor(Color.parseColor("#37474F"));
         tarjetaMejorPuzzle.addView(textoMejorPuzzle);
+
         espacio(tarjetaMejorPuzzle, 10);
 
         LinearLayout filaMejorPuzzle = new LinearLayout(requireContext());
@@ -117,51 +124,72 @@ public class PanelAdmin extends Fragment {
 
         filaMejorPuzzle.addView(textoNombrePuzzle);
         filaMejorPuzzle.addView(columnaDerecha);
+
         tarjetaMejorPuzzle.addView(filaMejorPuzzle);
         layout.addView(tarjetaMejorPuzzle);
+
         espacio(layout, 10);
 
-        // ── Opciones de gestión ──
+        // ── Gestión ──
         layout.addView(crearOpcion("🧩", "Gestionar Puzzles"));
         layout.addView(crearOpcion("👥", "Gestionar Usuarios"));
 
+        // ── CERRAR SESIÓN (BOTÓN SECUNDARIO) ──
+        Button btnCerrarSesion = crearBotonSecundario("Cerrar sesión");
+
+        btnCerrarSesion.setOnClickListener(v -> {
+
+            new AlertDialog.Builder(requireContext())
+                    .setTitle("Cerrar sesión")
+                    .setMessage("¿Seguro que quieres cerrar sesión?")
+                    .setPositiveButton("Cerrar sesión", (dialog, which) -> {
+
+                        UtilidadesSesion.cerrarSesion(requireContext());
+
+                    })
+                    .setNegativeButton("Cancelar", null)
+                    .show();
+        });
+
+        layout.addView(btnCerrarSesion);
+
+        espacio(layout, 10);
+
+        // ── ELIMINAR CUENTA (BOTÓN SECUNDARIO) ──
+        Button btnEliminarCuenta = crearBotonSecundario("Eliminar cuenta");
+
+        btnEliminarCuenta.setOnClickListener(v -> {
+
+            new AlertDialog.Builder(requireContext())
+                    .setTitle("Eliminar cuenta")
+                    .setMessage("Esta acción es irreversible. ¿Deseas continuar?")
+                    .setPositiveButton("Eliminar", (dialog, which) -> {
+
+                        UtilidadesSesion.eliminarCuenta(requireContext(), null);
+
+                    })
+                    .setNegativeButton("Cancelar", null)
+                    .show();
+        });
+
+        layout.addView(btnEliminarCuenta);
+
         scroll.addView(layout);
         return scroll;
-
     }
-
-    private LinearLayout crearTarjeta() {
-
-        LinearLayout tarjeta = new LinearLayout(requireContext());
-        LinearLayout.LayoutParams parametrosTarjeta = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-
-        parametrosTarjeta.setMargins(0, 0, 0, 14);
-        tarjeta.setLayoutParams(parametrosTarjeta);
-
-        GradientDrawable forma = new GradientDrawable();
-        forma.setColor(Color.WHITE);
-        forma.setCornerRadius(40);
-        forma.setStroke(2, Color.parseColor("#A5D6A7"));
-        tarjeta.setBackground(forma);
-
-        return tarjeta;
-
-    }
-
     private LinearLayout crearOpcion(String emoji, String opcion) {
 
         LinearLayout fila = new LinearLayout(requireContext());
-
         fila.setOrientation(LinearLayout.HORIZONTAL);
         fila.setGravity(Gravity.CENTER_VERTICAL);
         fila.setPadding(40, 28, 40, 28);
 
-        LinearLayout.LayoutParams parametrosFila = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT);
 
-        parametrosFila.setMargins(0, 0, 0, 10);
-        fila.setLayoutParams(parametrosFila);
+        params.setMargins(0, 0, 0, 10);
+        fila.setLayoutParams(params);
 
         GradientDrawable forma = new GradientDrawable();
         forma.setColor(Color.WHITE);
@@ -169,37 +197,80 @@ public class PanelAdmin extends Fragment {
         forma.setStroke(2, Color.parseColor("#A5D6A7"));
         fila.setBackground(forma);
 
-        TextView textoEmoji = new TextView(requireContext());
-        textoEmoji.setText(emoji);
-        textoEmoji.setTextSize(20);
-        textoEmoji.setPadding(0, 0, 20, 0);
+        TextView emojiTv = new TextView(requireContext());
+        emojiTv.setText(emoji);
+        emojiTv.setTextSize(20);
+        emojiTv.setPadding(0, 0, 20, 0);
 
-        TextView textoOpcion = new TextView(requireContext());
-        textoOpcion.setText(opcion);
-        textoOpcion.setTextSize(15);
-        textoOpcion.setTextColor(Color.parseColor("#37474F"));
-        textoOpcion.setLayoutParams(new LinearLayout.LayoutParams(
+        TextView textoTv = new TextView(requireContext());
+        textoTv.setText(opcion);
+        textoTv.setTextSize(15);
+        textoTv.setTextColor(Color.parseColor("#37474F"));
+        textoTv.setLayoutParams(new LinearLayout.LayoutParams(
                 0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
 
-        TextView textoFlecha = new TextView(requireContext());
-        textoFlecha.setText("›");
-        textoFlecha.setTextSize(20);
-        textoFlecha.setTextColor(Color.parseColor("#90A4AE"));
+        TextView flecha = new TextView(requireContext());
+        flecha.setText("›");
+        flecha.setTextSize(20);
+        flecha.setTextColor(Color.parseColor("#90A4AE"));
 
-        fila.addView(textoEmoji);
-        fila.addView(textoOpcion);
-        fila.addView(textoFlecha);
+        fila.addView(emojiTv);
+        fila.addView(textoTv);
+        fila.addView(flecha);
 
         return fila;
-
     }
+    private Button crearBotonSecundario(String texto) {
 
+        Button boton = new Button(requireContext());
+        boton.setText(texto);
+        boton.setTextColor(Color.RED);
+        boton.setTextSize(14);
+        boton.setAllCaps(false);
+        boton.setPadding(30, 20, 30, 20);
+
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT);
+
+        params.setMargins(0, 20, 0, 0);
+        boton.setLayoutParams(params);
+
+        GradientDrawable forma = new GradientDrawable();
+        forma.setColor(Color.parseColor("#FFF9C4"));
+        forma.setCornerRadius(60);
+        forma.setStroke(2, Color.parseColor("#F0CC50"));
+
+        boton.setBackground(forma);
+
+        return boton;
+    }
+    private LinearLayout crearTarjeta() {
+
+        LinearLayout tarjeta = new LinearLayout(requireContext());
+
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT);
+
+        params.setMargins(0, 0, 0, 14);
+        tarjeta.setLayoutParams(params);
+
+        GradientDrawable forma = new GradientDrawable();
+        forma.setColor(Color.WHITE);
+        forma.setCornerRadius(40);
+        forma.setStroke(2, Color.parseColor("#A5D6A7"));
+
+        tarjeta.setBackground(forma);
+
+        return tarjeta;
+    }
     private void espacio(LinearLayout layout, int dp) {
-        View vista = new View(requireContext());
 
-        vista.setLayoutParams(new LinearLayout.LayoutParams(
+        View v = new View(requireContext());
+        v.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, dp));
-        layout.addView(vista);
-    }
 
+        layout.addView(v);
+    }
 }
