@@ -141,7 +141,7 @@ public class PanelUsuario extends Fragment {
         layout.addView(botonCrearPuzzle);
         espacio(layout, 14);
 
-        Button botonCerrarSesion = crearBotonPrimario("Cerrar Sesión", "F06292");
+        Button botonCerrarSesion = crearBotonSecundario("Cerrar Sesión   ›");
 
         botonCerrarSesion.setOnClickListener(vista -> {
             new AlertDialog.Builder(requireContext())
