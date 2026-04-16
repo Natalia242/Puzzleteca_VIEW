@@ -1,16 +1,14 @@
-package com.ignacio_natalia.puzzleteca.red;
+package com.ignacio_natalia.puzzleteca.red.clientes;
 
 import com.ignacio_natalia.puzzleteca.modelos.ConfirmarCambioContrasenaRequest;
 import com.ignacio_natalia.puzzleteca.modelos.LoginRequest;
 import com.ignacio_natalia.puzzleteca.modelos.LoginRespuesta;
-import com.ignacio_natalia.puzzleteca.modelos.Puzzle;
 import com.ignacio_natalia.puzzleteca.modelos.SolicitarCodigoRequest;
 import com.ignacio_natalia.puzzleteca.modelos.Usuario;
 
 import java.util.List;
 
 import retrofit2.Call;
-import retrofit2.CallAdapter;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;

@@ -18,8 +18,10 @@ import androidx.fragment.app.Fragment;
 import androidx.appcompat.app.AlertDialog;
 
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.AppPrincipal;
+import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos.chats.MisChats;
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos.gestionesAdministrador.puzzles.GestionPuzzles;
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos.gestionesAdministrador.usuarios.GestionUsuarios;
+import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.puzzles.RegistrarPuzzle;
 import com.ignacio_natalia.puzzleteca.utilidades.GestorSesion;
 import com.ignacio_natalia.puzzleteca.utilidades.UtilidadesSesion;
 
@@ -135,7 +137,28 @@ public class PanelAdmin extends Fragment {
         tarjetaMejorPuzzle.addView(filaMejorPuzzle);
         layout.addView(tarjetaMejorPuzzle);
 
+        LinearLayout opMisChats = crearOpcion("💬", "Mis Chats");
+        opMisChats.setOnClickListener(vista -> {
+            requireActivity().getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(AppPrincipal.FRAGMENTO_ID, new MisChats())
+                    .addToBackStack(null).commit();
+        });
+        layout.addView(opMisChats);
+
         espacio(layout, 10);
+        LinearLayout opGestionarCrearPuzzles = crearOpcion("➕", "Crear nuevo puzzle");
+
+        opGestionarCrearPuzzles.setOnClickListener(vista -> {
+            Fragment fragment = new RegistrarPuzzle();
+            requireActivity().
+                    getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(AppPrincipal.FRAGMENTO_ID, fragment)
+                    .addToBackStack(null)
+                    .commit();
+        });
+        layout.addView(opGestionarCrearPuzzles);
 
         LinearLayout opGestionarPuzzles = crearOpcion("🧩", "Gestionar Puzzles");
 

@@ -1,8 +1,8 @@
 package com.ignacio_natalia.puzzleteca.repositorios;
 
 import com.ignacio_natalia.puzzleteca.modelos.Puzzle;
-import com.ignacio_natalia.puzzleteca.red.PuzzleApi;
-import com.ignacio_natalia.puzzleteca.red.ServiciosApiPuzzles;
+import com.ignacio_natalia.puzzleteca.red.puzzles.PuzzleApi;
+import com.ignacio_natalia.puzzleteca.red.puzzles.ServiciosApiPuzzles;
 
 import java.util.List;
 import retrofit2.Call;
@@ -23,6 +23,11 @@ public class PuzzleRepositorio {
 
     public void crearPuzzle(Puzzle puzzle, Callback<Void> callback) {
         Call<Void> call = serviciosApiPuzzles.crearPuzzle(puzzle);
+        call.enqueue(callback);
+    }
+
+    public void cambiarEstadoPuzzle(Integer id_usuario, Integer id_puzzle, String tipo, Callback<Void> callback) {
+        Call<Void> call = serviciosApiPuzzles.cambiarEstadoPuzzle(id_usuario, id_puzzle, tipo);
         call.enqueue(callback);
     }
 }

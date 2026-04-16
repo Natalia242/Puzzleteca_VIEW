@@ -68,4 +68,28 @@ public class GestionPuzzlesViewModel extends ViewModel {
             }
         });
     }
+
+    private final MutableLiveData<Boolean> puzzleActualizado = new MutableLiveData<>();
+
+    public void cambiarEstado(Integer id_usuario, Integer id_puzzle, String tipo) {
+
+        repositorio.cambiarEstadoPuzzle(id_usuario, id_puzzle, tipo, new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    puzzleActualizado.setValue(true);
+
+                } else {
+                    puzzleActualizado.setValue(false);
+                    error.setValue("Error " + response.code() + " al actualizar");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable excepcion) {
+                puzzleActualizado.setValue(false);
+                error.setValue("Fallo de red: " + excepcion.getMessage());
+            }
+        });
+    }
 }

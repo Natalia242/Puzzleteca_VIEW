@@ -3,10 +3,10 @@ package com.ignacio_natalia.puzzleteca.repositorios;
 import com.ignacio_natalia.puzzleteca.modelos.ConfirmarCambioContrasenaRequest;
 import com.ignacio_natalia.puzzleteca.modelos.LoginRequest;
 import com.ignacio_natalia.puzzleteca.modelos.LoginRespuesta;
-import com.ignacio_natalia.puzzleteca.modelos.Puzzle;
 import com.ignacio_natalia.puzzleteca.modelos.SolicitarCodigoRequest;
 import com.ignacio_natalia.puzzleteca.modelos.Usuario;
-import com.ignacio_natalia.puzzleteca.red.*;
+import com.ignacio_natalia.puzzleteca.red.clientes.ClienteApi;
+import com.ignacio_natalia.puzzleteca.red.clientes.ServiciosAPI;
 
 import java.util.List;
 

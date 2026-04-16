@@ -19,6 +19,7 @@ import androidx.fragment.app.Fragment;
 
 import com.ignacio_natalia.puzzleteca.R;
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.AppPrincipal;
+import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos.chats.MisChats;
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.puzzles.RegistrarPuzzle;
 import com.ignacio_natalia.puzzleteca.pantallas.login.LoginActivity;
 import com.ignacio_natalia.puzzleteca.repositorios.UsuarioRepositorio;
@@ -72,6 +73,16 @@ public class PanelUsuario extends Fragment {
         tarjeta.addView(textoSaludo);
         layout.addView(tarjeta);
         espacio(layout, 20);
+
+        Button botonMisChats = crearBotonPrimario("💬 Mis Chats", "#26A69A");
+        botonMisChats.setOnClickListener(vista -> {
+            requireActivity().getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(AppPrincipal.FRAGMENTO_ID, new MisChats())
+                    .addToBackStack(null).commit();
+        });
+        layout.addView(botonMisChats);
+        espacio(layout, 14);
 
         // ── Fila: Mis Puzzles + Editar Perfil ──
         LinearLayout fila = new LinearLayout(requireContext());

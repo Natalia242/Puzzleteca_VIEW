@@ -130,43 +130,81 @@ public class GestionPuzzles extends Fragment {
         autor.setTextSize(13);
         autor.setTextColor(Color.parseColor("#78909C"));
 
+        TextView estado = new TextView(requireContext());
+        estado.setTextSize(13);
+
         info.addView(titulo);
         info.addView(autor);
+        info.addView(estado);
 
-        // ── ESTADO ──
-        TextView estado = new TextView(requireContext());
+        // ── SPINNER ──
+        Spinner spinnerEstado = new Spinner(requireContext());
 
-        boolean bloqueado = puzzle.getEstado() == Puzzle.Estados.Bloqueado;
+        Puzzle.Estados[] estados = Puzzle.Estados.values();
 
-        estado.setText(bloqueado ? "Bloqueado" : "Público");
-        estado.setTextSize(13);
-        estado.setTypeface(null, Typeface.BOLD);
-        estado.setTextColor(bloqueado ? Color.RED : Color.parseColor("#2E7D32"));
+        ArrayAdapter<Puzzle.Estados> adapter = new ArrayAdapter<>(
+                requireContext(),
+                android.R.layout.simple_spinner_item,
+                estados
+        );
 
-        // ── SWITCH ──
-        Switch switchEstado = new Switch(requireContext());
-        switchEstado.setChecked(bloqueado);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerEstado.setAdapter(adapter);
 
-        switchEstado.setOnCheckedChangeListener((buttonView, isChecked) -> {
+        // 🔥 IMPORTANTE: cargar valor desde BD
+        spinnerEstado.setSelection(puzzle.getEstado().ordinal());
 
-            puzzle.setEstado(
-                    isChecked
-                            ? Puzzle.Estados.Bloqueado
-                            : Puzzle.Estados.Publico
-            );
+        actualizarEstadoPuzzleUI(estado, puzzle.getEstado().name());
 
-            estado.setText(isChecked ? "Bloqueado" : "Público");
-            estado.setTextColor(isChecked ? Color.RED : Color.parseColor("#2E7D32"));
+        spinnerEstado.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
-            // TODO API
-            // viewModel.actualizarPuzzle(puzzle);
+            boolean inicializado = false;
+
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                if (!inicializado) {
+                    inicializado = true;
+                    return;
+                }
+
+                Puzzle.Estados seleccionado = estados[position];
+
+                puzzle.setEstado(seleccionado);
+
+                actualizarEstadoPuzzleUI(estado, seleccionado.name());
+
+                viewModel.cambiarEstado(
+                        puzzle.getIdUsuario(),
+                        puzzle.getId_puzzle(),
+                        seleccionado.name()
+                );
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
         });
 
         card.addView(info);
-        card.addView(estado);
-        card.addView(switchEstado);
+        card.addView(spinnerEstado);
 
         return card;
+    }
+    private void actualizarEstadoPuzzleUI(TextView estado, String estadoStr) {
+
+        estado.setText(estadoStr);
+
+        switch (estadoStr) {
+            case "Publico":
+                estado.setTextColor(Color.parseColor("#2E7D32"));
+                break;
+            case "Privado":
+                estado.setTextColor(Color.parseColor("#F9A825"));
+                break;
+            case "Bloqueado":
+                estado.setTextColor(Color.RED);
+                break;
+        }
     }
 
     // ─────────────────────────────────────────────

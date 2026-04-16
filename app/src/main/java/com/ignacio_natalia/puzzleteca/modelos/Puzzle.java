@@ -10,6 +10,7 @@ public class Puzzle {
         Facil, Media, Dificil, Extremo
     }
 
+    private Integer id_puzzle;
     private String titulo;
     private String autor;
     private Integer tiempo;
@@ -24,6 +25,8 @@ public class Puzzle {
         private String imagenBase64;
 
     // ---------- GETTERS ----------
+
+    public Integer getId_puzzle() { return id_puzzle; }
     public String getTitulo() { return titulo; }
     public String getAutor() { return autor; }
     public Integer getTiempo() { return tiempo; }
@@ -35,10 +38,11 @@ public class Puzzle {
     public Integer getIdUsuario() { return idUsuario; }
     public Estados getEstado() { return estado; }
     public String getImagenBase64() { return imagenBase64; }
-
     public boolean isPublico() {
         return estado == Estados.Publico;
     }
+
+    public void setId_puzzle(Integer id_puzzle) { this.id_puzzle = id_puzzle; }
     public void setTitulo(String titulo) { this.titulo = titulo; }
     public void setAutor(String autor) { this.autor = autor; }
     public void setTiempo(Integer tiempo) { this.tiempo = tiempo; }

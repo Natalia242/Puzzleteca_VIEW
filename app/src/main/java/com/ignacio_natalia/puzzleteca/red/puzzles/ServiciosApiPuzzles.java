@@ -1,7 +1,6 @@
-package com.ignacio_natalia.puzzleteca.red;
+package com.ignacio_natalia.puzzleteca.red.puzzles;
 
 import com.ignacio_natalia.puzzleteca.modelos.Puzzle;
-import com.ignacio_natalia.puzzleteca.modelos.Usuario;
 
 import java.util.List;
 import retrofit2.Call;
@@ -9,6 +8,8 @@ import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
+import retrofit2.http.Query;
 
 public interface ServiciosApiPuzzles {
 
@@ -17,4 +18,9 @@ public interface ServiciosApiPuzzles {
 
     @POST("registrarPuzzle")
     Call<Void> crearPuzzle(@Body Puzzle puzzle);
+
+    @PUT("actualizarEstado")
+    Call<Void> cambiarEstadoPuzzle(@Query("id_usuario") Integer id_usuario,
+                                   @Query("id_puzzle") Integer id_puzzle,
+                                   @Query("tipo") String tipo);
 }
