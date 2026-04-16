@@ -25,6 +25,7 @@ public class ConversacionChat extends Fragment {
     private ScrollView scroll;
 
     private int idConversacion;
+    private Integer id_usuario;
     private String emailPropio;
     private String nombreOtro;
 
@@ -41,6 +42,10 @@ public class ConversacionChat extends Fragment {
 
         if ((emailPropio == null || emailPropio.isEmpty()) && getContext() != null) {
             emailPropio = GestorSesion.obtenerEmail(requireContext());
+        }
+
+        if (id_usuario == null && getContext() != null) {
+            id_usuario = GestorSesion.obtenerId_usuario(this.requireContext());
         }
     }
 
@@ -158,9 +163,7 @@ public class ConversacionChat extends Fragment {
 
     private View crearMensaje(MensajeChat m) {
 
-        boolean esPropio = m.getNombre() != null
-                && emailPropio != null
-                && m.getNombre().equals(emailPropio);
+        boolean esPropio = id_usuario.equals(m.getIdUsuario());
 
         LinearLayout fila = new LinearLayout(getContext());
         fila.setGravity(esPropio ? Gravity.END : Gravity.START);
