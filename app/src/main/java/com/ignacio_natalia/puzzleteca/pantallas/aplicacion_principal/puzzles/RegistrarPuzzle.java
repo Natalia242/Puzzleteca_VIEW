@@ -1,5 +1,6 @@
 package com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.puzzles;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
@@ -17,6 +18,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.ignacio_natalia.puzzleteca.R;
 import com.ignacio_natalia.puzzleteca.modelos.Puzzle;
 import com.ignacio_natalia.puzzleteca.utilidades.GestorSesion;
 
@@ -58,6 +60,7 @@ public class RegistrarPuzzle extends Fragment {
         );
     }
 
+    @SuppressLint("SetTextI18n")
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -147,12 +150,12 @@ public class RegistrarPuzzle extends Fragment {
         textoColor.setOrientation(LinearLayout.VERTICAL);
         textoColor.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
         TextView tvColorT = new TextView(getContext());
-        tvColorT.setText("En color");
+        tvColorT.setText("Color del puzzle");
         tvColorT.setTextSize(16);
         tvColorT.setTextColor(COLOR_TEXTO);
         tvColorT.setTypeface(null, Typeface.BOLD);
         TextView tvColorD = new TextView(getContext());
-        tvColorD.setText("El puzzle tiene imagen a color");
+        tvColorD.setText("El puzzle tiene más de un único color");
         tvColorD.setTextSize(12);
         tvColorD.setTextColor(COLOR_SUBTITULO);
         textoColor.addView(tvColorT);
@@ -166,25 +169,43 @@ public class RegistrarPuzzle extends Fragment {
 
         // Switch ESTADO
         LinearLayout filaEstado = crearFilaSwitch();
+        LinearLayout contenidoEstado = new LinearLayout(getContext());
+        contenidoEstado.setOrientation(LinearLayout.HORIZONTAL);
+        contenidoEstado.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
+        contenidoEstado.setGravity(Gravity.CENTER_VERTICAL);
         LinearLayout textoEstado = new LinearLayout(getContext());
         textoEstado.setOrientation(LinearLayout.VERTICAL);
-        textoEstado.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
+        textoEstado.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        ));
         TextView tvEstadoT = new TextView(getContext());
         tvEstadoT.setText("Visibilidad");
         tvEstadoT.setTextSize(16);
         tvEstadoT.setTextColor(COLOR_TEXTO);
         tvEstadoT.setTypeface(null, Typeface.BOLD);
         TextView tvEstadoD = new TextView(getContext());
-        tvEstadoD.setText("Privado");
+        tvEstadoD.setText("Público");
         tvEstadoD.setTextSize(12);
         tvEstadoD.setTextColor(COLOR_SUBTITULO);
+        ImageView iconoEstado = new ImageView(getContext());
+        LinearLayout.LayoutParams iconParams = new LinearLayout.LayoutParams(dp(24), dp(24));
+        iconParams.setMargins(dp(8), 0, 0, 0);
+        iconoEstado.setLayoutParams(iconParams);
+        iconoEstado.setImageResource(R.drawable.open_lock);
         textoEstado.addView(tvEstadoT);
         textoEstado.addView(tvEstadoD);
+        contenidoEstado.addView(textoEstado);
+        contenidoEstado.addView(iconoEstado);
         estadoSwitch = new Switch(getContext());
-        estadoSwitch.setChecked(false);
-        estadoSwitch.setOnCheckedChangeListener((btn, isChecked) ->
-                tvEstadoD.setText(isChecked ? "Publico" : "Privado"));
-        filaEstado.addView(textoEstado);
+        estadoSwitch.setChecked(true);
+        estadoSwitch.setOnCheckedChangeListener((btn, isChecked) -> {
+            tvEstadoD.setText(isChecked ? "Público" : "Privado");
+            iconoEstado.setImageResource(
+                    isChecked ? R.drawable.open_lock : R.drawable.lock
+            );
+        });
+        filaEstado.addView(contenidoEstado);
         filaEstado.addView(estadoSwitch);
         cardOpciones.addView(filaEstado);
         root.addView(cardOpciones);
