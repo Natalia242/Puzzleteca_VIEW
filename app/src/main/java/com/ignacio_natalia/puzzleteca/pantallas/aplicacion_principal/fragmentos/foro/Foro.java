@@ -3,6 +3,7 @@ package com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos
 import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -12,10 +13,13 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+
+import com.ignacio_natalia.puzzleteca.R;
 import com.ignacio_natalia.puzzleteca.modelos.Puzzle;
 import com.ignacio_natalia.puzzleteca.utilidades.GestorSesion;
 
@@ -40,7 +44,7 @@ public class Foro extends Fragment {
                 new int[]{Color.parseColor("#DFF5C9"), Color.parseColor("#B8E6A5")}
         );
 
-        // ---------- SCROLL PRINCIPAL ----------
+        // ---------- SCROLL ----------
         ScrollView scroll = new ScrollView(requireContext());
         scroll.setLayoutParams(new ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
@@ -48,10 +52,10 @@ public class Foro extends Fragment {
         ));
         scroll.setBackground(fondo);
 
-        // ---------- CONTENEDOR DE TARJETAS ----------
+        // ---------- CONTENEDOR ----------
         contenedor = new LinearLayout(requireContext());
         contenedor.setOrientation(LinearLayout.VERTICAL);
-        contenedor.setPadding(32, 32, 32, 32);
+        contenedor.setPadding(dp(16), dp(16), dp(16), dp(16));
 
         scroll.addView(contenedor);
 
@@ -59,7 +63,6 @@ public class Foro extends Fragment {
         viewModel.getPuzzles().observe(getViewLifecycleOwner(), this::mostrarPuzzles);
         viewModel.getError().observe(getViewLifecycleOwner(), this::mostrarError);
 
-        // Obtener token de sesión (ajusta según tu implementación)
         String token = obtenerToken();
         viewModel.cargarPuzzles(token);
 
@@ -76,28 +79,27 @@ public class Foro extends Fragment {
     @SuppressLint("SetTextI18n")
     private View crearTarjeta(Puzzle puzzle) {
 
-        // ---------- TARJETA (card) ----------
+        // ---------- TARJETA ----------
         LinearLayout tarjeta = new LinearLayout(requireContext());
         tarjeta.setOrientation(LinearLayout.VERTICAL);
 
         GradientDrawable fondoTarjeta = new GradientDrawable();
         fondoTarjeta.setColor(Color.WHITE);
-        fondoTarjeta.setCornerRadius(40);
+        fondoTarjeta.setCornerRadius(dp(20));
 
         tarjeta.setBackground(fondoTarjeta);
-        tarjeta.setClipToOutline(true);
 
         LinearLayout.LayoutParams paramsTarjeta = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
         );
-        paramsTarjeta.setMargins(0, 0, 0, 40);
+        paramsTarjeta.setMargins(0, 0, 0, dp(16));
         tarjeta.setLayoutParams(paramsTarjeta);
 
         // ---------- IMAGEN ----------
         ImageView imagen = new ImageView(requireContext());
         imagen.setLayoutParams(new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, 400
+                LinearLayout.LayoutParams.MATCH_PARENT, dp(200)
         ));
         imagen.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
@@ -112,14 +114,14 @@ public class Foro extends Fragment {
         // ---------- CUERPO ----------
         LinearLayout cuerpo = new LinearLayout(requireContext());
         cuerpo.setOrientation(LinearLayout.VERTICAL);
-        cuerpo.setPadding(40, 30, 40, 30);
+        cuerpo.setPadding(dp(16), dp(12), dp(16), dp(12));
 
         // Título
         TextView titulo = new TextView(requireContext());
         titulo.setText(puzzle.getTitulo());
         titulo.setTextColor(Color.parseColor("#2E3A2E"));
         titulo.setTextSize(18);
-        titulo.setTypeface(null, android.graphics.Typeface.BOLD);
+        titulo.setTypeface(null, Typeface.BOLD);
 
         // Autor
         TextView autor = new TextView(requireContext());
@@ -131,13 +133,13 @@ public class Foro extends Fragment {
                 LinearLayout.LayoutParams.WRAP_CONTENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
         );
-        paramsAutor.setMargins(0, 8, 0, 24);
+        paramsAutor.setMargins(0, dp(4), 0, dp(12));
         autor.setLayoutParams(paramsAutor);
 
-        // ---------- BOTÓN DE LIKES ----------
-        TextView botonLikes = crearBotonLikes(puzzle);
+        // ---------- BOTÓN LIKE ----------
+        LinearLayout botonLikes = crearBotonLikes(puzzle);
 
-        // Footer con el botón a la derecha
+        // Footer
         LinearLayout footer = new LinearLayout(requireContext());
         footer.setOrientation(LinearLayout.HORIZONTAL);
         footer.setGravity(Gravity.END);
@@ -153,46 +155,86 @@ public class Foro extends Fragment {
         return tarjeta;
     }
 
-    private TextView crearBotonLikes(Puzzle puzzle) {
-        TextView boton = new TextView(requireContext());
+    private LinearLayout crearBotonLikes(Puzzle puzzle) {
 
-        // Estado mutable del contador
-        final int[] likes = {puzzle.getValoracion() != null ? puzzle.getValoracion() : 0};
+        LinearLayout layout = new LinearLayout(requireContext());
+        layout.setOrientation(LinearLayout.HORIZONTAL);
+        layout.setGravity(Gravity.CENTER_VERTICAL);
+        layout.setPadding(dp(12), dp(8), dp(12), dp(8));
 
-        actualizarTextoLikes(boton, likes[0]);
+        // ICONO
+        ImageView icono = new ImageView(requireContext());
+        LinearLayout.LayoutParams iconParams =
+                new LinearLayout.LayoutParams(dp(24), dp(24));
+        icono.setLayoutParams(iconParams);
 
-        boton.setTextColor(Color.WHITE);
-        boton.setTextSize(15);
-        boton.setPadding(40, 20, 40, 20);
+        // TEXTO
+        TextView texto = new TextView(requireContext());
+        texto.setTextSize(15);
+        texto.setTextColor(Color.parseColor("#2E3A2E"));
 
-        GradientDrawable fondoBoton = new GradientDrawable();
-        fondoBoton.setColor(Color.parseColor("#F06292"));
-        fondoBoton.setCornerRadius(60);
+        LinearLayout.LayoutParams textParams =
+                new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.WRAP_CONTENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT
+                );
+        textParams.setMargins(dp(8), 0, 0, 0);
+        texto.setLayoutParams(textParams);
 
-        boton.setBackground(fondoBoton);
+        int likesIniciales = puzzle.getValoracion() != null ? puzzle.getValoracion() : 0;
 
-        boton.setOnClickListener(v -> {
-            likes[0]++;
-            actualizarTextoLikes(boton, likes[0]);
+        final boolean[] liked = {false};
+        final int[] likes = {likesIniciales};
+
+        actualizarUI(icono, texto, liked[0], likes[0]);
+
+        layout.setOnClickListener(vista -> {
+
+            liked[0] = !liked[0];
+
+            if (liked[0]) {
+                likes[0]++;
+
+            } else {
+                likes[0] --;
+
+            }
+            actualizarUI(icono, texto, liked[0], likes[0]);
+
         });
 
-        return boton;
+        layout.addView(icono);
+        layout.addView(texto);
+
+        return layout;
     }
 
-    private void actualizarTextoLikes(TextView boton, int cantidad) {
-        boton.setText("♥  " + cantidad);
+    private void actualizarUI(ImageView icono, TextView texto, boolean liked, int cantidad) {
+        if (liked) {
+            icono.setImageResource(R.drawable.ic_like_filled);
+        } else {
+            icono.setImageResource(R.drawable.ic_like_outline);
+        }
+        texto.setText(String.valueOf(cantidad));
     }
 
     private void mostrarError(String mensaje) {
         if (mensaje == null) return;
+
         contenedor.removeAllViews();
+
         TextView error = new TextView(requireContext());
         error.setText(mensaje);
         error.setTextColor(Color.parseColor("#D32F2F"));
         error.setTextSize(16);
         error.setGravity(Gravity.CENTER);
-        error.setPadding(40, 80, 40, 0);
+        error.setPadding(dp(16), dp(40), dp(16), 0);
+
         contenedor.addView(error);
+    }
+
+    private int dp(int value) {
+        return (int) (value * requireContext().getResources().getDisplayMetrics().density);
     }
 
     private String obtenerToken() {
