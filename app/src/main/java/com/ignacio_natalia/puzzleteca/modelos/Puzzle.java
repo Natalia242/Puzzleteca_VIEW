@@ -1,5 +1,7 @@
 package com.ignacio_natalia.puzzleteca.modelos;
 
+import android.graphics.Bitmap;
+
 public class Puzzle {
 
     public enum Estados {
@@ -21,8 +23,9 @@ public class Puzzle {
     private Integer valoracion;
     private Integer idUsuario;
     private Estados estado;
+    private String imagenBase64;
+    private Bitmap bitmap;
 
-        private String imagenBase64;
 
     // ---------- GETTERS ----------
 
@@ -38,6 +41,7 @@ public class Puzzle {
     public Integer getIdUsuario() { return idUsuario; }
     public Estados getEstado() { return estado; }
     public String getImagenBase64() { return imagenBase64; }
+    public Bitmap getBitmap() { return bitmap; }
     public boolean isPublico() {
         return estado == Estados.Publico;
     }
@@ -54,4 +58,6 @@ public class Puzzle {
     public void setIdUsuario(Integer idUsuario) { this.idUsuario = idUsuario; }
     public void setEstado(Estados estado) { this.estado = estado; }
     public void setImagenBase64(String imagenBase64) { this.imagenBase64 = imagenBase64; }
+    public void setBitmap(Bitmap bitmap) { this.bitmap = bitmap; }
+
 }

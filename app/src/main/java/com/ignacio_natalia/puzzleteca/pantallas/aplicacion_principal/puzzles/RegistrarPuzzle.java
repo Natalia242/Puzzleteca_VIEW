@@ -8,6 +8,7 @@ import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.*;
 import android.widget.*;
 
@@ -52,9 +53,17 @@ public class RegistrarPuzzle extends Fragment {
                 result -> {
                     if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
                         Uri uri = result.getData().getData();
+                        if (uri == null) return;
                         imagenPreview.setImageURI(uri);
                         imagenPreview.setVisibility(View.VISIBLE);
-                        imagenBase64 = viewModel.convertirImagenBase64(uri, requireContext().getContentResolver());
+                        String base64 = viewModel.convertirImagenBase64(uri, requireContext().getContentResolver());
+                        if (base64 != null) {
+                            imagenBase64 = base64;
+
+                        } else {
+                            Log.e("RegistrarPuzzle", "No se pudo convertir la imagen a base64");
+
+                        }
                     }
                 }
         );
