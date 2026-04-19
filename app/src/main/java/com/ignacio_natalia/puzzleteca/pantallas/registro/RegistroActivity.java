@@ -5,15 +5,18 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
+import android.text.Html;
 import android.text.InputType;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.util.Log;
@@ -34,6 +37,7 @@ public class RegistroActivity extends AppCompatActivity {
 
     private EditText nombreEditText, apellidoEditText, emailEditText, contrasenaEditText;
     private Button botonRegistro;
+    private boolean politicasAceptadas = false;
 
     @SuppressLint({"ClickableViewAccessibility", "SetTextI18n"})
     @Override
@@ -46,12 +50,11 @@ public class RegistroActivity extends AppCompatActivity {
                 new int[]{Color.parseColor("#DFF5C9"), Color.parseColor("#B8E6A5")}
         );
 
-        // Layout principal
         FrameLayout layout = new FrameLayout(this);
         layout.setBackground(fondo);
         layout.setPadding(40, 60, 40, 40);
 
-        // ---------- TITULO ARRIBA ----------
+        // ---------- TITULO ----------
         ImageView titulo = new ImageView(this);
         titulo.setImageResource(R.drawable.titulo);
         titulo.setAdjustViewBounds(true);
@@ -64,7 +67,7 @@ public class RegistroActivity extends AppCompatActivity {
         parametrosTitulo.gravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
         titulo.setLayoutParams(parametrosTitulo);
 
-        // ---------- CONTENEDOR FORMULARIO ----------
+        // ---------- FORMULARIO ----------
         LinearLayout contenedorFormulario = new LinearLayout(this);
         contenedorFormulario.setOrientation(LinearLayout.VERTICAL);
         contenedorFormulario.setGravity(Gravity.CENTER);
@@ -84,7 +87,7 @@ public class RegistroActivity extends AppCompatActivity {
                 );
         parametrosCampos.setMargins(80, 25, 80, 25);
 
-        // ---------- CAMPOS DE TEXTO ----------
+        // ---------- CAMPOS ----------
         nombreEditText = crearEditText("Nombre", R.drawable.people);
         nombreEditText.setLayoutParams(parametrosCampos);
 
@@ -98,11 +101,32 @@ public class RegistroActivity extends AppCompatActivity {
         contrasenaEditText = crearPasswordEditText("Password");
         contrasenaEditText.setLayoutParams(parametrosCampos);
 
-        // ---------- BOTON REGISTRO ----------
+        // ---------- BOTÓN ----------
         botonRegistro = crearBoton();
         botonRegistro.setLayoutParams(parametrosCampos);
 
-        // ---------- TEXTO LOGIN ----------
+        // 🔴 DESHABILITADO DESDE EL INICIO
+        botonRegistro.setEnabled(false);
+        botonRegistro.setAlpha(0.5f);
+
+        // ---------- CHECKBOX POLÍTICAS ----------
+        CheckBox checkPoliticas = new CheckBox(this);
+        checkPoliticas.setText("Acepto la Política de Privacidad y los Términos");
+        checkPoliticas.setTextColor(Color.DKGRAY);
+        checkPoliticas.setPadding(60, 20, 60, 20);
+
+        checkPoliticas.setOnCheckedChangeListener((buttonView, isChecked) -> {
+
+            if (isChecked) {
+                mostrarPoliticas(checkPoliticas);
+            } else {
+                politicasAceptadas = false;
+                botonRegistro.setEnabled(false);
+                botonRegistro.setAlpha(0.5f);
+            }
+        });
+
+        // ---------- LOGIN TEXTO ----------
         TextView textoLogin = new TextView(this);
         textoLogin.setText("¿Ya tienes cuenta? Iniciar sesión");
         textoLogin.setTextColor(Color.parseColor("#455A64"));
@@ -111,29 +135,38 @@ public class RegistroActivity extends AppCompatActivity {
         textoLogin.setPadding(20, 20, 20, 10);
 
         textoLogin.setOnClickListener(v -> {
-            Intent intent = new Intent(RegistroActivity.this,
+            Intent intent = new Intent(this,
                     com.ignacio_natalia.puzzleteca.pantallas.login.LoginActivity.class);
             startActivity(intent);
         });
 
-        // Añadir campos al contenedor
+        // ---------- AÑADIR VISTAS ----------
         contenedorFormulario.addView(nombreEditText);
         contenedorFormulario.addView(apellidoEditText);
         contenedorFormulario.addView(emailEditText);
         contenedorFormulario.addView(contrasenaEditText);
+        contenedorFormulario.addView(checkPoliticas);
         contenedorFormulario.addView(botonRegistro);
         contenedorFormulario.addView(textoLogin);
 
-        // Añadir elementos al layout
         layout.addView(titulo);
         layout.addView(contenedorFormulario);
 
         setContentView(layout);
 
-        // ViewModel
+        // ---------- VIEWMODEL ----------
         registroViewModel = new ViewModelProvider(this).get(RegistroViewModel.class);
 
+        // ---------- REGISTRO ----------
         botonRegistro.setOnClickListener(v -> {
+
+            if (!politicasAceptadas) {
+                Toast.makeText(this,
+                        "Debes aceptar las políticas para registrarte",
+                        Toast.LENGTH_SHORT).show();
+                return;
+            }
+
             String nombre = nombreEditText.getText().toString().trim();
             String apellido = apellidoEditText.getText().toString().trim();
             String email = emailEditText.getText().toString().trim();
@@ -141,44 +174,45 @@ public class RegistroActivity extends AppCompatActivity {
 
             if (nombre.isEmpty() || apellido.isEmpty() || email.isEmpty() || contrasena.isEmpty()) {
                 Toast.makeText(this, "Completa todos los campos", Toast.LENGTH_SHORT).show();
-            } else {
-                Usuario usuario = new Usuario(nombre, apellido, email, contrasena, Usuario.TipoUsuario.Usuario);
-
-                // Intentamos registrar al usuario
-                registroViewModel.crearUsuario(usuario);
-
-                // Observamos el resultado del registro
-                registroViewModel.getUsuarioCreado().observe(this, exito -> {
-                    if (exito) {
-
-                        // Ahora hacemos login automático
-                        loginViewModel = new ViewModelProvider(this).get(LoginViewModel.class);
-                        loginViewModel.iniciarSesion(email, contrasena); // usamos email y password ingresados
-
-                        // Observamos el resultado del login
-                        loginViewModel.getLoginExitoso().observe(this, loginRespuesta -> {
-                            GestorSesion.guardarToken(this, loginRespuesta.getToken());
-
-                            Intent intent = new Intent(this, AppPrincipal.class);
-                            startActivity(intent);
-                            finish();
-                        });
-
-                        loginViewModel.getError().observe(this, mensaje -> {
-                            Toast.makeText(this, "Login automático fallido: " + mensaje, Toast.LENGTH_SHORT).show();
-                        });
-
-                    } else {
-                        Log.e("RegistroActivity", "Error al registrar el usuario");
-                        Toast.makeText(this, "Error al registrar el usuario", Toast.LENGTH_SHORT).show();
-                    }
-                });
+                return;
             }
+
+            Usuario usuario = new Usuario(nombre, apellido, email, contrasena,
+                    Usuario.TipoUsuario.Usuario);
+
+            registroViewModel.crearUsuario(usuario);
+
+            registroViewModel.getUsuarioCreado().observe(this, exito -> {
+
+                if (exito) {
+
+                    loginViewModel = new ViewModelProvider(this).get(LoginViewModel.class);
+                    loginViewModel.iniciarSesion(email, contrasena);
+
+                    loginViewModel.getLoginExitoso().observe(this, loginRespuesta -> {
+                        GestorSesion.guardarToken(this, loginRespuesta.getToken());
+
+                        startActivity(new Intent(this, AppPrincipal.class));
+                        finish();
+                    });
+
+                    loginViewModel.getError().observe(this, mensaje -> {
+                        Toast.makeText(this,
+                                "Login automático fallido: " + mensaje,
+                                Toast.LENGTH_SHORT).show();
+                    });
+
+                } else {
+                    Log.e("RegistroActivity", "Error al registrar usuario");
+                    Toast.makeText(this,
+                            "Error al registrar el usuario",
+                            Toast.LENGTH_SHORT).show();
+                }
+            });
         });
     }
 
-    // ---------- BOTON BONITO ----------
-    @SuppressLint("SetTextI18n")
+    // ---------- BOTÓN ----------
     private Button crearBoton() {
         Button boton = new Button(this);
         boton.setText("Registrarse");
@@ -192,12 +226,10 @@ public class RegistroActivity extends AppCompatActivity {
         forma.setColor(Color.parseColor("#26A69A"));
 
         boton.setBackground(forma);
-
         return boton;
     }
 
-    // ---------- EDITTEXT BONITO ----------
-    @SuppressLint("UseCompatTextViewDrawableApis")
+    // ---------- EDITTEXT ----------
     private EditText crearEditText(String campo, int icono) {
         EditText texto = new EditText(this);
         texto.setHint(campo);
@@ -206,7 +238,6 @@ public class RegistroActivity extends AppCompatActivity {
         texto.setHintTextColor(Color.GRAY);
         texto.setPadding(40, 35, 40, 35);
 
-        // 👉 ICONO IZQUIERDO
         texto.setCompoundDrawablesWithIntrinsicBounds(icono, 0, 0, 0);
         texto.setCompoundDrawablePadding(20);
 
@@ -220,6 +251,7 @@ public class RegistroActivity extends AppCompatActivity {
 
     @SuppressLint("ClickableViewAccessibility")
     private EditText crearPasswordEditText(String campo) {
+
         EditText texto = crearEditText(campo, android.R.drawable.ic_lock_lock);
 
         texto.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
@@ -232,6 +264,7 @@ public class RegistroActivity extends AppCompatActivity {
         );
 
         texto.setOnTouchListener((v, event) -> {
+
             if (event.getAction() == MotionEvent.ACTION_UP) {
 
                 if (event.getRawX() >= (texto.getRight()
@@ -268,6 +301,53 @@ public class RegistroActivity extends AppCompatActivity {
         });
 
         return texto;
+    }
+
+    // ---------- POLÍTICAS ----------
+    @SuppressLint("SetTextI18n")
+    private void mostrarPoliticas(CheckBox checkPoliticas) {
+
+        ScrollView scrollView = new ScrollView(this);
+
+        TextView texto = new TextView(this);
+        texto.setText(Html.fromHtml(
+                "Esta aplicación permite publicar dentro de una red social.<br><br>" +
+                        "<b>Recopilamos datos básicos</b> como nombre, email, contraseña (cifrada) y contenido que publiques en la app.<br><br>" +
+                        "Estos datos se utilizan únicamente para:<br>" +
+                        "- <b>Gestionar tu cuenta</b><br>" +
+                        "- <b>Permitir la publicación de puzzles</b><br>" +
+                        "- <b>Mejorar la experiencia de la aplicación</b><br>" +
+                        "- <b>Mantener la seguridad del servicio</b><br><br>" +
+                        "Tu contenido puede ser visible para otros usuarios dentro de la plataforma.<br><br>" +
+                        "<b>No compartimos tus datos con terceros</b>, salvo obligación legal.<br><br>" +
+                        "<b>Puedes eliminar tu cuenta</b> y tus datos <b>en cualquier momento.</b><br><br>" +
+                        "<b>Al continuar, aceptas estas condiciones.</b>"
+        ));
+        texto.setPadding(40, 40, 40, 40);
+        texto.setTextColor(Color.DKGRAY);
+
+        scrollView.addView(texto);
+
+        new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle("Política de Privacidad")
+                .setView(scrollView)
+                .setPositiveButton("Acepto", (dialog, which) -> {
+
+                    checkPoliticas.setChecked(true);
+                    politicasAceptadas = true;
+
+                    botonRegistro.setEnabled(true);
+                    botonRegistro.setAlpha(1f);
+                })
+                .setNegativeButton("Cancelar", (dialog, which) -> {
+
+                    checkPoliticas.setChecked(false);
+                    politicasAceptadas = false;
+
+                    botonRegistro.setEnabled(false);
+                    botonRegistro.setAlpha(0.5f);
+                })
+                .show();
     }
 
 }

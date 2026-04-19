@@ -35,7 +35,7 @@ public class GestionPuzzlesViewModel extends ViewModel {
 
     public void cargarPuzzles(String token) {
 
-        repositorio.obtenerPuzzles(token, new Callback<List<Puzzle>>() {
+        repositorio.obtenerPuzzles(token, new Callback<>() {
 
             @Override
             public void onResponse(@NonNull Call<List<Puzzle>> call,
@@ -73,7 +73,7 @@ public class GestionPuzzlesViewModel extends ViewModel {
 
     public void cambiarEstado(Integer id_usuario, Integer id_puzzle, String tipo) {
 
-        repositorio.cambiarEstadoPuzzle(id_usuario, id_puzzle, tipo, new Callback<Void>() {
+        repositorio.cambiarEstadoPuzzle(id_usuario, id_puzzle, tipo, new Callback<>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {

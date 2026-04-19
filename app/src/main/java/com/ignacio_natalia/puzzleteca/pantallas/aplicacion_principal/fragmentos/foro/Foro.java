@@ -16,11 +16,13 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.ignacio_natalia.puzzleteca.R;
 import com.ignacio_natalia.puzzleteca.modelos.Puzzle;
+import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.AppPrincipal;
 import com.ignacio_natalia.puzzleteca.utilidades.GestorSesion;
 
 import java.util.List;
@@ -38,19 +40,27 @@ public class Foro extends Fragment {
 
         viewModel = new ViewModelProvider(this).get(ForoViewModel.class);
 
-        // ---------- FONDO DEGRADADO ----------
-        GradientDrawable fondo = new GradientDrawable(
-                GradientDrawable.Orientation.TOP_BOTTOM,
-                new int[]{Color.parseColor("#DFF5C9"), Color.parseColor("#B8E6A5")}
-        );
-
         // ---------- SCROLL ----------
         ScrollView scroll = new ScrollView(requireContext());
         scroll.setLayoutParams(new ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT
         ));
-        scroll.setBackground(fondo);
+
+        scroll.setOnScrollChangeListener((v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
+
+            AppCompatActivity activity = (AppCompatActivity) getActivity();
+            if (activity instanceof AppPrincipal) {
+
+                boolean haciaAbajo = scrollY > oldScrollY;
+
+                if (haciaAbajo) {
+                    ((AppPrincipal) activity).ocultarBarra();
+                } else {
+                    ((AppPrincipal) activity).mostrarBarra();
+                }
+            }
+        });
 
         // ---------- CONTENEDOR ----------
         contenedor = new LinearLayout(requireContext());

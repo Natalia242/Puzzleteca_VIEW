@@ -19,6 +19,7 @@ import android.widget.*;
 
 import com.ignacio_natalia.puzzleteca.R;
 import com.ignacio_natalia.puzzleteca.modelos.Puzzle;
+import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos.MisPuzzles;
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos.foro.Foro;
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos.PanelAdmin;
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos.PanelUsuario;
@@ -34,7 +35,9 @@ public class AppPrincipal extends AppCompatActivity {
 
     private LinearLayout contenedorPuzzles;
     private ScrollView scrollPuzzles;
+    private LinearLayout barraNavegacionRoot;
     private FrameLayout contenedorFragmento;
+    private ImageView tituloPantalla;
 
     // Tabs (ahora LinearLayout en lugar de TextView)
     private LinearLayout botonInicio, botonPuzzles, botonRanking, botonForo, botonPerfil;
@@ -55,7 +58,7 @@ public class AppPrincipal extends AppCompatActivity {
 
         GradientDrawable fondo = new GradientDrawable(
                 GradientDrawable.Orientation.TOP_BOTTOM,
-                new int[]{Color.parseColor("#DFF5C9"), Color.parseColor("#B8E6A5")}
+                new int[]{Color.parseColor("#F1B2CA"), Color.parseColor("#FFF6F9")}
         );
 
         LinearLayout root = new LinearLayout(this);
@@ -63,19 +66,45 @@ public class AppPrincipal extends AppCompatActivity {
         root.setBackground(fondo);
 
         // ── Cabecera ──
-        TextView titulo = new TextView(this);
-        titulo.setText("Puzzles disponibles");
-        titulo.setTextSize(22);
-        titulo.setTextColor(Color.parseColor("#F06292"));
-        titulo.setTypeface(null, Typeface.BOLD);
-        titulo.setGravity(Gravity.CENTER);
-        titulo.setPadding(40, 60, 40, 30);
-        root.addView(titulo);
+        tituloPantalla = new ImageView(this);
+        tituloPantalla.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        ));
+        tituloPantalla.setAdjustViewBounds(true);
+        tituloPantalla.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        tituloPantalla.setPadding(40, 60, 40, 30);
+        tituloPantalla.setElevation(12f);
+        tituloPantalla.setPadding(40, 40, 40, 20);
+
+        root.addView(tituloPantalla);
 
         // ── ScrollView con lista de tarjetas (Inicio) ──
         scrollPuzzles = new ScrollView(this);
         scrollPuzzles.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, 0, 1f));
+
+        scrollPuzzles.setOnScrollChangeListener(new View.OnScrollChangeListener() {
+
+            private int ultimoScrollY = 0;
+            private boolean oculta = false;
+
+            @Override
+            public void onScrollChange(View v, int scrollX, int scrollY,
+                                       int oldScrollX, int oldScrollY) {
+
+                if (scrollY > oldScrollY + 10 && !oculta) {
+                    // 👉 scroll hacia abajo → ocultar
+                    ocultarBarra();
+                    oculta = true;
+
+                } else if (scrollY < oldScrollY - 10 && oculta) {
+                    // 👈 scroll hacia arriba → mostrar
+                    mostrarBarra();
+                    oculta = false;
+                }
+            }
+        });
 
         contenedorPuzzles = new LinearLayout(this);
         contenedorPuzzles.setOrientation(LinearLayout.VERTICAL);
@@ -95,6 +124,7 @@ public class AppPrincipal extends AppCompatActivity {
         root.addView(construirBarraNavegacion());
 
         setContentView(root);
+        tituloPantalla.setImageResource(R.drawable.titulo_inicio_recortado);
 
         // ── ViewModel + carga ──
         PuzzleViewModel puzzleViewModel = new ViewModelProvider(this).get(PuzzleViewModel.class);
@@ -113,6 +143,10 @@ public class AppPrincipal extends AppCompatActivity {
     private void mostrarInicio() {
         scrollPuzzles.setVisibility(ScrollView.VISIBLE);
         contenedorFragmento.setVisibility(FrameLayout.GONE);
+    }
+
+    private void actualizarTituloPantalla(int drawableRes) {
+        tituloPantalla.setImageResource(drawableRes);
     }
 
     private void mostrarFragmento(Fragment fragmento) {
@@ -162,14 +196,42 @@ public class AppPrincipal extends AppCompatActivity {
         botonRanking.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
         botonPerfil.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
 
-        botonInicio.setOnClickListener(vista  -> seleccionarTab(botonInicio, this::mostrarInicio));
-        botonPuzzles.setOnClickListener(vista -> seleccionarTab(botonPuzzles, () -> mostrarFragmento(new Foro())));
-        botonForo.setOnClickListener(vista    -> seleccionarTab(botonForo,    () -> mostrarFragmento(new Foro())));
-        botonRanking.setOnClickListener(vista -> seleccionarTab(botonRanking, () -> mostrarFragmento(new Ranking())));
-        botonPerfil.setOnClickListener(vista  -> {
+        botonInicio.setOnClickListener(vista ->
+                seleccionarTab(botonInicio, () -> {
+                    actualizarTituloPantalla(R.drawable.titulo_inicio_recortado);
+                    mostrarInicio();
+                })
+        );
+
+        botonPuzzles.setOnClickListener(vista ->
+                seleccionarTab(botonPuzzles, () -> {
+                    actualizarTituloPantalla(R.drawable.titulo_mis_puzzles_recortado);
+                    mostrarFragmento(new MisPuzzles());
+                })
+        );
+
+        botonRanking.setOnClickListener(vista ->
+                seleccionarTab(botonRanking, () -> {
+                    actualizarTituloPantalla(R.drawable.titulo_ranking_diario_recortado);
+                    mostrarFragmento(new Ranking());
+                })
+        );
+
+        botonForo.setOnClickListener(vista ->
+                seleccionarTab(botonForo, () -> {
+                    actualizarTituloPantalla(R.drawable.titulo_foro_recortado);
+                    mostrarFragmento(new Foro());
+                })
+        );
+
+        botonPerfil.setOnClickListener(vista -> {
             String rol = GestorSesion.obtenerRol(this);
-            seleccionarTab(botonPerfil, () -> mostrarFragmento(
-                    "Admin".equals(rol) ? new PanelAdmin() : new PanelUsuario()));
+            seleccionarTab(botonPerfil, () -> {
+                actualizarTituloPantalla(0);
+                mostrarFragmento(
+                        "Admin".equals(rol) ? new PanelAdmin() : new PanelUsuario()
+                );
+            });
         });
 
         barraNavegacion.addView(botonInicio);
@@ -177,6 +239,9 @@ public class AppPrincipal extends AppCompatActivity {
         barraNavegacion.addView(botonRanking);
         barraNavegacion.addView(botonForo);
         barraNavegacion.addView(botonPerfil);
+
+        barraNavegacionRoot = root;
+
         root.addView(barraNavegacion);
 
         return root;
@@ -408,6 +473,26 @@ public class AppPrincipal extends AppCompatActivity {
 
     private int dpToPx(int dp) {
         return Math.round(dp * getResources().getDisplayMetrics().density);
+    }
+
+    public void ocultarBarra() {
+        if (barraNavegacionRoot == null) return;
+
+        barraNavegacionRoot.animate()
+                .translationY(barraNavegacionRoot.getHeight())
+                .alpha(0f)
+                .setDuration(250)
+                .start();
+    }
+
+    public void mostrarBarra() {
+        if (barraNavegacionRoot == null) return;
+
+        barraNavegacionRoot.animate()
+                .translationY(0)
+                .alpha(1f)
+                .setDuration(250)
+                .start();
     }
 
 }
