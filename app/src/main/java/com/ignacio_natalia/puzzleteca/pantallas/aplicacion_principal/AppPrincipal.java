@@ -74,7 +74,7 @@ public class AppPrincipal extends AppCompatActivity {
         tituloPantalla.setAdjustViewBounds(true);
         tituloPantalla.setScaleType(ImageView.ScaleType.FIT_CENTER);
         tituloPantalla.setPadding(40, 60, 40, 30);
-        tituloPantalla.setElevation(12f);
+        tituloPantalla.setElevation(10f);
         tituloPantalla.setPadding(40, 40, 40, 20);
 
         root.addView(tituloPantalla);
@@ -124,7 +124,7 @@ public class AppPrincipal extends AppCompatActivity {
         root.addView(construirBarraNavegacion());
 
         setContentView(root);
-        tituloPantalla.setImageResource(R.drawable.titulo_inicio_recortado);
+        tituloPantalla.setImageResource(R.drawable.titulo_inicio);
 
         // ── ViewModel + carga ──
         PuzzleViewModel puzzleViewModel = new ViewModelProvider(this).get(PuzzleViewModel.class);
@@ -198,28 +198,28 @@ public class AppPrincipal extends AppCompatActivity {
 
         botonInicio.setOnClickListener(vista ->
                 seleccionarTab(botonInicio, () -> {
-                    actualizarTituloPantalla(R.drawable.titulo_inicio_recortado);
+                    actualizarTituloPantalla(R.drawable.titulo_inicio);
                     mostrarInicio();
                 })
         );
 
         botonPuzzles.setOnClickListener(vista ->
                 seleccionarTab(botonPuzzles, () -> {
-                    actualizarTituloPantalla(R.drawable.titulo_mis_puzzles_recortado);
+                    actualizarTituloPantalla(R.drawable.titulo_mis_puzzles);
                     mostrarFragmento(new MisPuzzles());
                 })
         );
 
         botonRanking.setOnClickListener(vista ->
                 seleccionarTab(botonRanking, () -> {
-                    actualizarTituloPantalla(R.drawable.titulo_ranking_diario_recortado);
+                    actualizarTituloPantalla(R.drawable.titulo_ranking_diario);
                     mostrarFragmento(new Ranking());
                 })
         );
 
         botonForo.setOnClickListener(vista ->
                 seleccionarTab(botonForo, () -> {
-                    actualizarTituloPantalla(R.drawable.titulo_foro_recortado);
+                    actualizarTituloPantalla(R.drawable.titulo_foro);
                     mostrarFragmento(new Foro());
                 })
         );
