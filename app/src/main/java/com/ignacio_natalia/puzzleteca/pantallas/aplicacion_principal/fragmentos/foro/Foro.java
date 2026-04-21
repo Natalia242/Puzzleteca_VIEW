@@ -31,7 +31,6 @@ public class Foro extends Fragment {
 
     private ForoViewModel viewModel;
     private LinearLayout contenedor;
-    private List<Puzzle> listaPuzzles;
 
     @Nullable
     @Override
@@ -74,9 +73,6 @@ public class Foro extends Fragment {
         viewModel.getPuzzles().observe(getViewLifecycleOwner(), this::mostrarPuzzles);
         viewModel.getError().observe(getViewLifecycleOwner(), this::mostrarError);
 
-        // Observer para actualizar la imagen de una tarjeta concreta cuando su decodificación termina
-        viewModel.getPuzzleActualizado().observe(getViewLifecycleOwner(), this::actualizarImagenTarjeta);
-
         String token = obtenerToken();
         viewModel.cargarPuzzles(token);
 
@@ -84,39 +80,16 @@ public class Foro extends Fragment {
     }
 
     private void mostrarPuzzles(List<Puzzle> puzzles) {
-        this.listaPuzzles = puzzles;
         contenedor.removeAllViews();
         for (Puzzle puzzle : puzzles) {
             contenedor.addView(crearTarjeta(puzzle));
         }
     }
 
-    /**
-     * Actualiza solo la imagen de la tarjeta en la posición indicada,
-     * sin reconstruir toda la lista.
-     */
-    private void actualizarImagenTarjeta(Integer index) {
-        if (index == null || listaPuzzles == null) return;
-        if (index < 0 || index >= listaPuzzles.size()) return;
-
-        View tarjeta = contenedor.getChildAt(index);
-        if (!(tarjeta instanceof LinearLayout)) return;
-
-        // La estructura de la tarjeta es: LinearLayout > [ImageView, LinearLayout(cuerpo)]
-        View primerHijo = ((LinearLayout) tarjeta).getChildAt(0);
-        if (!(primerHijo instanceof ImageView)) return;
-
-        ImageView imagen = (ImageView) primerHijo;
-        Bitmap bitmap = listaPuzzles.get(index).getBitmap();
-
-        if (bitmap != null) {
-            imagen.setImageBitmap(bitmap);
-        }
-    }
-
     @SuppressLint("SetTextI18n")
     private View crearTarjeta(Puzzle puzzle) {
 
+        // ---------- TARJETA ----------
         LinearLayout tarjeta = new LinearLayout(requireContext());
         tarjeta.setOrientation(LinearLayout.VERTICAL);
 
@@ -141,12 +114,11 @@ public class Foro extends Fragment {
         imagen.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
         Bitmap bitmap = puzzle.getBitmap();
-
         if (bitmap != null) {
             imagen.setImageBitmap(bitmap);
         } else {
-            // ✅ TU IMAGEN, no la del sistema
-            imagen.setImageResource(R.drawable.fotopredeterminada);
+            imagen.setImageResource(android.R.drawable.ic_menu_gallery);
+            imagen.setBackgroundColor(Color.parseColor("#C8E6C9"));
         }
 
         // ---------- CUERPO ----------
@@ -154,12 +126,14 @@ public class Foro extends Fragment {
         cuerpo.setOrientation(LinearLayout.VERTICAL);
         cuerpo.setPadding(dp(16), dp(12), dp(16), dp(12));
 
+        // Título
         TextView titulo = new TextView(requireContext());
         titulo.setText(puzzle.getTitulo());
         titulo.setTextColor(Color.parseColor("#2E3A2E"));
         titulo.setTextSize(18);
         titulo.setTypeface(null, Typeface.BOLD);
 
+        // Autor
         TextView autor = new TextView(requireContext());
         autor.setText("Autor: " + puzzle.getAutor());
         autor.setTextColor(Color.parseColor("#607D5E"));
@@ -172,8 +146,10 @@ public class Foro extends Fragment {
         paramsAutor.setMargins(0, dp(4), 0, dp(12));
         autor.setLayoutParams(paramsAutor);
 
+        // ---------- BOTÓN LIKE ----------
         LinearLayout botonLikes = crearBotonLikes(puzzle);
 
+        // Footer
         LinearLayout footer = new LinearLayout(requireContext());
         footer.setOrientation(LinearLayout.HORIZONTAL);
         footer.setGravity(Gravity.END);
@@ -228,10 +204,13 @@ public class Foro extends Fragment {
 
             if (liked[0]) {
                 likes[0]++;
+
             } else {
-                likes[0]--;
+                likes[0] --;
+
             }
             actualizarUI(icono, texto, liked[0], likes[0]);
+
         });
 
         layout.addView(icono);

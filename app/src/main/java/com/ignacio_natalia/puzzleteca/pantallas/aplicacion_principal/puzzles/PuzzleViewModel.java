@@ -40,10 +40,17 @@ public class PuzzleViewModel extends ViewModel {
             public void onResponse(@NonNull Call<List<Puzzle>> call, @NonNull Response<List<Puzzle>> response) {
 
                 if (response.isSuccessful() && response.body() != null) {
+
                     puzzles.setValue(response.body());
 
+                } else if (response.code() == 404) {
+
+                    puzzles.setValue(java.util.Collections.emptyList());
+
                 } else {
+
                     error.setValue("Error " + response.code() + " al cargar los puzzles");
+
                 }
 
             }
