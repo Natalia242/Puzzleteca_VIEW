@@ -13,7 +13,9 @@ import android.view.*;
 import android.widget.*;
 
 import com.ignacio_natalia.puzzleteca.modelos.Puzzle;
+import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.AppPrincipal;
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.puzzles.PuzzleViewModel;
+import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.puzzles.RegistrarPuzzle;
 import com.ignacio_natalia.puzzleteca.utilidades.GestorSesion;
 
 import java.util.List;
@@ -132,49 +134,57 @@ public class MisPuzzles extends Fragment {
         paramsSub.setMargins(0, 10, 0, 30);
         subtitulo.setLayoutParams(paramsSub);
 
-        // 🔘 Botón bonito (custom)
-        Button boton = new Button(getContext());
-        boton.setText("Crear Puzzle");
-        boton.setTextColor(Color.WHITE);
-        boton.setAllCaps(false);
-        boton.setTextSize(15);
+        Button botonRegistro = new Button(getContext());
+        botonRegistro.setText("Crear Puzzle");
+        botonRegistro.setTextColor(Color.WHITE);
+        botonRegistro.setAllCaps(false);
+        botonRegistro.setTextSize(15);
 
         GradientDrawable fondoBoton = new GradientDrawable();
         fondoBoton.setColor(Color.parseColor("#F06292"));
         fondoBoton.setCornerRadius(50);
 
-        boton.setBackground(fondoBoton);
-        boton.setPadding(60, 25, 60, 25);
-        boton.setElevation(6f);
+        botonRegistro.setBackground(fondoBoton);
+        botonRegistro.setPadding(60, 25, 60, 25);
+        botonRegistro.setElevation(6f);
 
-        boton.setOnClickListener(v -> {
-            // TODO navegar
+        botonRegistro.setOnClickListener(v -> {
+            Fragment fragment = new RegistrarPuzzle();
+
+            requireActivity()
+                    .getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(AppPrincipal.FRAGMENTO_ID, fragment)
+                    .addToBackStack(null)
+                    .commit();
         });
 
         layoutVacio.addView(icono);
         layoutVacio.addView(titulo);
         layoutVacio.addView(subtitulo);
-        layoutVacio.addView(boton);
+        layoutVacio.addView(botonRegistro);
 
         root.addView(layoutVacio);
     }
 
-    // ─────────────────────────────────────────────
-    // 🟢 BOTÓN FLOTANTE (FAB)
-    // ─────────────────────────────────────────────
-
     private void mostrarBotonFlotante() {
 
-        ImageButton fab = new ImageButton(getContext());
+        ImageButton botonRegistro = new ImageButton(getContext());
 
         GradientDrawable fondo = new GradientDrawable();
-        fondo.setColor(Color.parseColor("#4CAF50"));
+
+        // Fondos para el boton
+        // fondo.setColor(Color.parseColor("#E91E63"));
+        fondo.setColor(Color.parseColor("#D16A8A"));
+        // fondo.setColor(Color.parseColor("#9C27B0")); //Enseñar por cortesia
+
+        // fondo.setColor(Color.parseColor("#4CAF50"));
         fondo.setShape(GradientDrawable.OVAL);
 
-        fab.setBackground(fondo);
-        fab.setImageResource(android.R.drawable.ic_input_add);
-        fab.setColorFilter(Color.WHITE);
-        fab.setScaleType(ImageView.ScaleType.CENTER);
+        botonRegistro.setBackground(fondo);
+        botonRegistro.setImageResource(android.R.drawable.ic_input_add);
+        botonRegistro.setColorFilter(Color.WHITE);
+        botonRegistro.setScaleType(ImageView.ScaleType.CENTER);
 
         int size = dpToPx(60);
 
@@ -182,19 +192,22 @@ public class MisPuzzles extends Fragment {
         params.gravity = Gravity.BOTTOM | Gravity.END;
         params.setMargins(0, 0, dpToPx(20), dpToPx(20));
 
-        fab.setLayoutParams(params);
-        fab.setElevation(12f);
+        botonRegistro.setLayoutParams(params);
+        botonRegistro.setElevation(12f);
 
-        fab.setOnClickListener(v -> {
-            // TODO: navegar a crear puzzle
+        botonRegistro.setOnClickListener(v -> {
+            Fragment fragment = new RegistrarPuzzle();
+
+            requireActivity()
+                    .getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(AppPrincipal.FRAGMENTO_ID, fragment)
+                    .addToBackStack(null)
+                    .commit();
         });
 
-        root.addView(fab);
+        root.addView(botonRegistro);
     }
-
-    // ─────────────────────────────────────────────
-    // 🟢 TARJETA PUZZLE
-    // ─────────────────────────────────────────────
 
     @SuppressLint("SetTextI18n")
     private LinearLayout crearTarjeta(Puzzle puzzle) {
