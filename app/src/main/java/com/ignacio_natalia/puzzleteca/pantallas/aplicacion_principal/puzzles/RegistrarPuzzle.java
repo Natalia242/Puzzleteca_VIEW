@@ -79,11 +79,11 @@ public class RegistrarPuzzle extends Fragment {
         ScrollView scroll = new ScrollView(getContext());
         scroll.setFillViewport(true);
 
-        GradientDrawable fondo = new GradientDrawable(
+        /*GradientDrawable fondo = new GradientDrawable(
                 GradientDrawable.Orientation.TOP_BOTTOM,
                 new int[]{COLOR_FONDO, COLOR_FONDO2}
         );
-        scroll.setBackground(fondo);
+        scroll.setBackground(fondo);*/
 
         LinearLayout root = new LinearLayout(getContext());
         root.setOrientation(LinearLayout.VERTICAL);
