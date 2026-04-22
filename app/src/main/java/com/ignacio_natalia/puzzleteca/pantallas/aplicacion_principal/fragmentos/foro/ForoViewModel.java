@@ -46,8 +46,6 @@ public class ForoViewModel extends AndroidViewModel {
         return error;
     }
 
-    // -------- COMENTARIOS --------
-
     public LiveData<List<Comentario>> getComentariosPorPuzzle(Integer idPuzzle) {
         if (!comentariosPorPuzzle.containsKey(idPuzzle)) {
             comentariosPorPuzzle.put(idPuzzle, new MutableLiveData<>());
@@ -103,8 +101,6 @@ public class ForoViewModel extends AndroidViewModel {
         });
     }
 
-    // -------- Puzzles (tu código sin cambios importantes) --------
-
     public void cargarPuzzles(String token) {
 
         repositorio.obtenerPuzzles(token, new Callback<>() {
@@ -119,14 +115,18 @@ public class ForoViewModel extends AndroidViewModel {
                         Bitmap bitmap;
 
                         if (base64 != null && !base64.isEmpty()) {
+
                             try {
                                 bitmap = decodarBase64(base64);
+
                             } catch (Exception e) {
                                 bitmap = BitmapFactory.decodeResource(
                                         getApplication().getResources(),
                                         R.drawable.fotopredeterminada
+
                                 );
                             }
+
                         } else {
                             bitmap = BitmapFactory.decodeResource(
                                     getApplication().getResources(),
@@ -138,6 +138,7 @@ public class ForoViewModel extends AndroidViewModel {
                     }
 
                     puzzles.setValue(response.body());
+
 
                 } else {
                     error.setValue("Error " + response.code());

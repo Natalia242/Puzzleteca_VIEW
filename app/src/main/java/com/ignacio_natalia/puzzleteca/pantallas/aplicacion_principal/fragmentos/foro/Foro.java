@@ -77,6 +77,7 @@ public class Foro extends Fragment {
     private void mostrarPuzzles(List<Puzzle> puzzles) {
         contenedor.removeAllViews();
         for (Puzzle puzzle : puzzles) {
+            System.out.println("Datos del puzzle " + puzzle);
             contenedor.addView(crearTarjeta(puzzle));
         }
     }
@@ -127,19 +128,11 @@ public class Foro extends Fragment {
         LinearLayout footer = new LinearLayout(requireContext());
         footer.setGravity(Gravity.END);
 
-        footer.addView(crearBotonLikes(puzzle));
-
-        cuerpo.addView(titulo);
-        cuerpo.addView(autor);
-        cuerpo.addView(footer);
-
-        tarjeta.addView(imagen);
-        tarjeta.addView(cuerpo);
-
-        // ===================== COMENTARIOS =====================
+        // ===================== COMENTARIOS UI =====================
         LinearLayout seccionComentarios = new LinearLayout(requireContext());
         seccionComentarios.setOrientation(LinearLayout.VERTICAL);
         seccionComentarios.setPadding(dp(16), dp(8), dp(16), dp(12));
+        seccionComentarios.setVisibility(View.GONE); // 👈 IMPORTANTE
 
         TextView tituloComentarios = new TextView(requireContext());
         tituloComentarios.setText("Comentarios");
@@ -147,7 +140,6 @@ public class Foro extends Fragment {
 
         LinearLayout listaComentarios = new LinearLayout(requireContext());
         listaComentarios.setOrientation(LinearLayout.VERTICAL);
-
 
         EditText input = new EditText(requireContext());
         input.setHint("Escribe un comentario...");
@@ -157,26 +149,6 @@ public class Foro extends Fragment {
 
         String token = obtenerToken();
 
-        // cargar comentarios de ESTE puzzle
-        viewModel.cargarComentarios(token, puzzle.getId_puzzle());
-
-        viewModel.getComentariosPorPuzzle(puzzle.getId_puzzle())
-                .observe(getViewLifecycleOwner(), comentarios -> {
-
-                    listaComentarios.removeAllViews();
-
-                    if (comentarios != null) {
-                        for (Comentario c : comentarios) {
-
-                            TextView txt = new TextView(requireContext());
-                            txt.setText(c.getContenido());
-                            txt.setPadding(0, dp(4), 0, dp(4));
-
-                            listaComentarios.addView(txt);
-                        }
-                    }
-                });
-
         btn.setOnClickListener(v -> {
 
             String texto = input.getText().toString().trim();
@@ -185,10 +157,9 @@ public class Foro extends Fragment {
 
                 Comentario comentario = new Comentario();
                 comentario.setContenido(texto);
-                comentario.setId_puzzle(puzzle.getId_puzzle());
+                comentario.setId_puzzle(puzzle.getId());
 
                 viewModel.crearComentario(comentario, token);
-
                 input.setText("");
             }
         });
@@ -198,11 +169,79 @@ public class Foro extends Fragment {
         seccionComentarios.addView(input);
         seccionComentarios.addView(btn);
 
+        // ===================== FOOTER =====================
+        footer.addView(crearBotonLikes(puzzle));
+        footer.addView(crearBotonComentarios(puzzle, listaComentarios, seccionComentarios));
+
+        cuerpo.addView(titulo);
+        cuerpo.addView(autor);
+        cuerpo.addView(footer);
+
+        tarjeta.addView(imagen);
+        tarjeta.addView(cuerpo);
         tarjeta.addView(seccionComentarios);
 
         return tarjeta;
     }
 
+    // ===================== BOTÓN COMENTARIOS =====================
+    private LinearLayout crearBotonComentarios(Puzzle puzzle,
+                                               LinearLayout listaComentarios,
+                                               LinearLayout seccionComentarios) {
+
+        LinearLayout layout = new LinearLayout(requireContext());
+        layout.setOrientation(LinearLayout.HORIZONTAL);
+
+        ImageView icon = new ImageView(requireContext());
+
+        // ··· icono comentarios
+        icon.setImageResource(android.R.drawable.ic_menu_send);
+
+        TextView txt = new TextView(requireContext());
+        txt.setText("Comentarios");
+
+        layout.addView(icon);
+        layout.addView(txt);
+
+        final boolean[] cargado = {false};
+        final boolean[] visible = {false};
+
+        String token = obtenerToken();
+
+        layout.setOnClickListener(v -> {
+
+            visible[0] = !visible[0];
+            seccionComentarios.setVisibility(visible[0] ? View.VISIBLE : View.GONE);
+
+            if (!cargado[0]) {
+
+                viewModel.cargarComentarios(token, puzzle.getId());
+
+                viewModel.getComentariosPorPuzzle(puzzle.getId())
+                        .observe(getViewLifecycleOwner(), comentarios -> {
+
+                            listaComentarios.removeAllViews();
+
+                            if (comentarios != null) {
+                                for (Comentario c : comentarios) {
+
+                                    TextView txtC = new TextView(requireContext());
+                                    txtC.setText(c.getContenido());
+                                    txtC.setPadding(0, dp(4), 0, dp(4));
+
+                                    listaComentarios.addView(txtC);
+                                }
+                            }
+                        });
+
+                cargado[0] = true;
+            }
+        });
+
+        return layout;
+    }
+
+    // ===================== LIKES =====================
     private LinearLayout crearBotonLikes(Puzzle puzzle) {
 
         LinearLayout layout = new LinearLayout(requireContext());

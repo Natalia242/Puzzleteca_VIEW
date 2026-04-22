@@ -120,7 +120,7 @@ public class GestionPuzzles extends Fragment {
                 0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
 
         TextView titulo = new TextView(requireContext());
-        titulo.setText("🧩 " + puzzle.getTitulo());
+        titulo.setText("🧩 " + puzzle.getTitulo() + puzzle.getId());
         titulo.setTextSize(15);
         titulo.setTypeface(null, Typeface.BOLD);
         titulo.setTextColor(Color.parseColor("#37474F"));
@@ -176,7 +176,7 @@ public class GestionPuzzles extends Fragment {
 
                 viewModel.cambiarEstado(
                         puzzle.getIdUsuario(),
-                        puzzle.getId_puzzle(),
+                        puzzle.getId(),
                         seleccionado.name()
                 );
             }
