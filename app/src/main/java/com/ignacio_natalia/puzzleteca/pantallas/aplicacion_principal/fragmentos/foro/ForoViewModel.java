@@ -122,7 +122,7 @@ public class ForoViewModel extends AndroidViewModel {
                             } catch (Exception e) {
                                 bitmap = BitmapFactory.decodeResource(
                                         getApplication().getResources(),
-                                        R.drawable.fotopredeterminada
+                                        R.drawable.foto_predeterminada
 
                                 );
                             }
@@ -130,7 +130,7 @@ public class ForoViewModel extends AndroidViewModel {
                         } else {
                             bitmap = BitmapFactory.decodeResource(
                                     getApplication().getResources(),
-                                    R.drawable.fotopredeterminada
+                                    R.drawable.foto_predeterminada
                             );
                         }
 
