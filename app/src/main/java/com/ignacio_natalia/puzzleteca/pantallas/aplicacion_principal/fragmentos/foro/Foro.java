@@ -148,6 +148,7 @@ public class Foro extends Fragment {
         LinearLayout listaComentarios = new LinearLayout(requireContext());
         listaComentarios.setOrientation(LinearLayout.VERTICAL);
 
+
         EditText input = new EditText(requireContext());
         input.setHint("Escribe un comentario...");
 
