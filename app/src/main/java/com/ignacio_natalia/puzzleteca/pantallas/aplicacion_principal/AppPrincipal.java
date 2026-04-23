@@ -183,11 +183,11 @@ public class AppPrincipal extends AppCompatActivity {
         barraNavegacion.setGravity(Gravity.CENTER_VERTICAL);
         barraNavegacion.setPadding(0, dpToPx(6), 0, dpToPx(6));
 
-        botonInicio = crearTab(ContextCompat.getDrawable(this, R.drawable.ic_home),   "Inicio");
-        botonPuzzles = crearTab(ContextCompat.getDrawable(this, R.drawable.ic_puzzle),  "Puzzles");
-        botonRanking = crearTab(ContextCompat.getDrawable(this, R.drawable.ic_trophy),  "Ranking");
-        botonForo = crearTab(ContextCompat.getDrawable(this, R.drawable.ic_forum),   "Foro");
-        botonPerfil = crearTab(ContextCompat.getDrawable(this, R.drawable.ic_person),  "Perfil");
+        botonInicio = crearTab(ContextCompat.getDrawable(this, R.drawable.home),   "Inicio");
+        botonPuzzles = crearTab(ContextCompat.getDrawable(this, R.drawable.puzzle),  "Puzzles");
+        botonRanking = crearTab(ContextCompat.getDrawable(this, R.drawable.trophy),  "Ranking");
+        botonForo = crearTab(ContextCompat.getDrawable(this, R.drawable.forum),   "Foro");
+        botonPerfil = crearTab(ContextCompat.getDrawable(this, R.drawable.person),  "Perfil");
 
         //LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f);
         botonInicio.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
@@ -198,28 +198,28 @@ public class AppPrincipal extends AppCompatActivity {
 
         botonInicio.setOnClickListener(vista ->
                 seleccionarTab(botonInicio, () -> {
-                    actualizarTituloPantalla(R.drawable.titulo_inicio);
+                    actualizarTituloPantalla(R.drawable.titulo_inicio_recortado);
                     mostrarInicio();
                 })
         );
 
         botonPuzzles.setOnClickListener(vista ->
                 seleccionarTab(botonPuzzles, () -> {
-                    actualizarTituloPantalla(R.drawable.titulo_mis_puzzles);
+                    actualizarTituloPantalla(R.drawable.titulo_mis_puzzles_recortado);
                     mostrarFragmento(new MisPuzzles());
                 })
         );
 
         botonRanking.setOnClickListener(vista ->
                 seleccionarTab(botonRanking, () -> {
-                    actualizarTituloPantalla(R.drawable.titulo_ranking_diario);
+                    actualizarTituloPantalla(R.drawable.titulo_ranking_diario_recortado);
                     mostrarFragmento(new Ranking());
                 })
         );
 
         botonForo.setOnClickListener(vista ->
                 seleccionarTab(botonForo, () -> {
-                    actualizarTituloPantalla(R.drawable.titulo_foro);
+                    actualizarTituloPantalla(R.drawable.titulo_foro_recortado);
                     mostrarFragmento(new Foro());
                 })
         );

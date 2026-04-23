@@ -77,7 +77,6 @@ public class Foro extends Fragment {
     private void mostrarPuzzles(List<Puzzle> puzzles) {
         contenedor.removeAllViews();
         for (Puzzle puzzle : puzzles) {
-            System.out.println("Datos del puzzle " + puzzle);
             contenedor.addView(crearTarjeta(puzzle));
         }
     }
@@ -100,6 +99,7 @@ public class Foro extends Fragment {
         params.setMargins(0, 0, 0, dp(16));
         tarjeta.setLayoutParams(params);
 
+        // ------------------ IMAGEN ------------------
         ImageView imagen = new ImageView(requireContext());
         imagen.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, dp(200)
@@ -113,6 +113,7 @@ public class Foro extends Fragment {
             imagen.setImageResource(android.R.drawable.ic_menu_gallery);
         }
 
+        // ------------------ CUERPO ------------------
         LinearLayout cuerpo = new LinearLayout(requireContext());
         cuerpo.setOrientation(LinearLayout.VERTICAL);
         cuerpo.setPadding(dp(16), dp(12), dp(16), dp(12));
@@ -125,14 +126,11 @@ public class Foro extends Fragment {
         TextView autor = new TextView(requireContext());
         autor.setText("Autor: " + puzzle.getAutor());
 
-        LinearLayout footer = new LinearLayout(requireContext());
-        footer.setGravity(Gravity.END);
-
         // ===================== COMENTARIOS UI =====================
         LinearLayout seccionComentarios = new LinearLayout(requireContext());
         seccionComentarios.setOrientation(LinearLayout.VERTICAL);
         seccionComentarios.setPadding(dp(16), dp(8), dp(16), dp(12));
-        seccionComentarios.setVisibility(View.GONE); // 👈 IMPORTANTE
+        seccionComentarios.setVisibility(View.GONE);
 
         TextView tituloComentarios = new TextView(requireContext());
         tituloComentarios.setText("Comentarios");
@@ -150,11 +148,9 @@ public class Foro extends Fragment {
         String token = obtenerToken();
 
         btn.setOnClickListener(v -> {
-
             String texto = input.getText().toString().trim();
 
             if (!texto.isEmpty()) {
-
                 Comentario comentario = new Comentario();
                 comentario.setContenido(texto);
                 comentario.setId_puzzle(puzzle.getId());
@@ -169,13 +165,30 @@ public class Foro extends Fragment {
         seccionComentarios.addView(input);
         seccionComentarios.addView(btn);
 
-        // ===================== FOOTER =====================
-        footer.addView(crearBotonLikes(puzzle));
-        footer.addView(crearBotonComentarios(puzzle, listaComentarios, seccionComentarios));
+        // ===================== ACCIONES =====================
+        LinearLayout acciones = new LinearLayout(requireContext());
+        acciones.setOrientation(LinearLayout.HORIZONTAL);
+        acciones.setGravity(Gravity.CENTER_VERTICAL);
+        acciones.setPadding(0, dp(8), 0, 0);
 
+        LinearLayout comentarios = crearBotonComentarios(puzzle, listaComentarios, seccionComentarios);
+        LinearLayout likes = crearBotonLikes(puzzle);
+
+        // Spacer para empujar el like a la derecha
+        View spacer = new View(requireContext());
+        LinearLayout.LayoutParams spacerParams = new LinearLayout.LayoutParams(
+                0, ViewGroup.LayoutParams.WRAP_CONTENT, 1
+        );
+        spacer.setLayoutParams(spacerParams);
+
+        acciones.addView(comentarios);
+        acciones.addView(spacer);
+        acciones.addView(likes);
+
+        // ------------------ MONTAJE ------------------
         cuerpo.addView(titulo);
         cuerpo.addView(autor);
-        cuerpo.addView(footer);
+        cuerpo.addView(acciones);
 
         tarjeta.addView(imagen);
         tarjeta.addView(cuerpo);
@@ -193,12 +206,13 @@ public class Foro extends Fragment {
         layout.setOrientation(LinearLayout.HORIZONTAL);
 
         ImageView icon = new ImageView(requireContext());
-
-        // ··· icono comentarios
-        icon.setImageResource(android.R.drawable.ic_menu_send);
+        icon.setImageResource(android.R.drawable.ic_dialog_email);
+        icon.setColorFilter(Color.GRAY);
 
         TextView txt = new TextView(requireContext());
-        txt.setText("Comentarios");
+        txt.setPadding(dp(6), 0, 0, 0);
+        txt.setTextColor(Color.GRAY);
+        txt.setText("0");
 
         layout.addView(icon);
         layout.addView(txt);
@@ -223,6 +237,9 @@ public class Foro extends Fragment {
                             listaComentarios.removeAllViews();
 
                             if (comentarios != null) {
+
+                                txt.setText(String.valueOf(comentarios.size()));
+
                                 for (Comentario c : comentarios) {
 
                                     TextView txtC = new TextView(requireContext());
@@ -249,6 +266,8 @@ public class Foro extends Fragment {
 
         ImageView icon = new ImageView(requireContext());
         TextView txt = new TextView(requireContext());
+        txt.setPadding(dp(6), 0, 0, 0);
+        txt.setTextColor(Color.GRAY);
 
         int likes = puzzle.getValoracion() != null ? puzzle.getValoracion() : 0;
 
@@ -270,10 +289,8 @@ public class Foro extends Fragment {
     }
 
     private void actualizarUI(ImageView icon, TextView txt, boolean liked, int count) {
-        icon.setImageResource(liked ?
-                R.drawable.ic_like_filled :
-                R.drawable.ic_like_outline);
-
+        icon.setImageResource(liked ? R.drawable.like : R.drawable.no_like);
+        icon.setColorFilter(liked ? Color.RED : Color.GRAY);
         txt.setText(String.valueOf(count));
     }
 
