@@ -2,15 +2,12 @@ package com.ignacio_natalia.puzzleteca.modelos;
 
 import android.graphics.Bitmap;
 
+import androidx.annotation.NonNull;
+
 public class Puzzle {
 
-    public enum Estados {
-        Publico, Privado, Bloqueado
-    }
-
-    public enum Dificultades {
-        Facil, Media, Dificil, Extremo
-    }
+    public enum Estados {Publico, Privado, Bloqueado}
+    public enum Dificultades {Facil, Media, Dificil, Extremo}
 
     private Integer id;
     private String titulo;
@@ -26,9 +23,7 @@ public class Puzzle {
     private String imagenBase64;
     private Bitmap bitmap;
 
-
     // ---------- GETTERS ----------
-
     public Integer getId() { return id; }
 
     public String getTitulo() { return titulo; }
@@ -47,6 +42,7 @@ public class Puzzle {
         return estado == Estados.Publico;
     }
 
+    // ---------- SETTERS ----------
     public void setId(Integer id) { this.id = id; }
 
     public void setTitulo(String titulo) { this.titulo = titulo; }
@@ -63,6 +59,7 @@ public class Puzzle {
     public void setImagenBase64(String imagenBase64) { this.imagenBase64 = imagenBase64; }
     public void setBitmap(Bitmap bitmap) { this.bitmap = bitmap; }
 
+    @NonNull
     @Override
     public String toString() {
         return "Puzzle{" +
@@ -81,4 +78,5 @@ public class Puzzle {
                 ", bitmap=" + bitmap +
                 '}';
     }
+
 }

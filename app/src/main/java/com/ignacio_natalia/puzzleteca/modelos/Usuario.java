@@ -1,10 +1,10 @@
 package com.ignacio_natalia.puzzleteca.modelos;
 
+import androidx.annotation.NonNull;
+
 public class Usuario {
 
-    public enum TipoUsuario {
-        Admin, Bloqueado, Usuario
-    }
+    public enum TipoUsuario {Admin, Bloqueado, Usuario}
 
     private String nombre;
     private String apellido;
@@ -59,6 +59,18 @@ public class Usuario {
 
     public void setTipoUsuario(TipoUsuario tipoUsuario) {
         this.tipoUsuario = tipoUsuario;
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return "Usuario{" +
+                "nombre='" + nombre + '\'' +
+                ", apellido='" + apellido + '\'' +
+                ", email='" + email + '\'' +
+                ", contrasenna='" + contrasenna + '\'' +
+                ", tipoUsuario=" + tipoUsuario +
+                '}';
     }
 
 }
