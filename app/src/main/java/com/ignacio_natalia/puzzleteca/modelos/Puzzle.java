@@ -4,7 +4,9 @@ import android.graphics.Bitmap;
 
 import androidx.annotation.NonNull;
 
-public class Puzzle {
+import java.io.Serializable;
+
+public class Puzzle implements Serializable {
 
     public enum Estados {Publico, Privado, Bloqueado}
     public enum Dificultades {Facil, Media, Dificil, Extremo}
@@ -21,7 +23,7 @@ public class Puzzle {
     private Integer idUsuario;
     private Estados estado;
     private String imagenBase64;
-    private Bitmap bitmap;
+    private transient Bitmap bitmap;
 
     // ---------- GETTERS ----------
     public Integer getId() { return id; }

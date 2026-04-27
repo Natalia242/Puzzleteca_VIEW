@@ -21,6 +21,7 @@ import com.ignacio_natalia.puzzleteca.R;
 import com.ignacio_natalia.puzzleteca.modelos.Comentario;
 import com.ignacio_natalia.puzzleteca.modelos.Puzzle;
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.AppPrincipal;
+import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos.PuzzleDialogFragment;
 import com.ignacio_natalia.puzzleteca.utilidades.GestorSesion;
 
 import java.util.List;
@@ -107,11 +108,17 @@ public class Foro extends Fragment {
         imagen.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
         Bitmap bitmap = puzzle.getBitmap();
+
         if (bitmap != null) {
             imagen.setImageBitmap(bitmap);
         } else {
             imagen.setImageResource(android.R.drawable.ic_menu_gallery);
         }
+
+        imagen.setOnClickListener(v -> {
+            PuzzleDialogFragment dialog = PuzzleDialogFragment.newInstance(puzzle);
+            dialog.show(getParentFragmentManager(), "puzzle_dialog");
+        });
 
         // ------------------ CUERPO ------------------
         LinearLayout cuerpo = new LinearLayout(requireContext());
