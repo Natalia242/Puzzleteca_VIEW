@@ -8,7 +8,6 @@ import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.*;
 import android.widget.*;
 
@@ -23,6 +22,17 @@ import com.ignacio_natalia.puzzleteca.R;
 import com.ignacio_natalia.puzzleteca.modelos.Puzzle;
 import com.ignacio_natalia.puzzleteca.utilidades.GestorSesion;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+
+/**
+ * Pantalla de registro de puzzles.
+ *
+ * CAMBIO: ya no convierte la imagen a base64. En su lugar guarda el archivo
+ * en caché y lo envía como multipart al backend, que lo procesa con
+ * ImagenService (redimensiona + comprime) y guarda en disco.
+ */
 public class RegistrarPuzzle extends Fragment {
 
     private PuzzleViewModel viewModel;
@@ -31,12 +41,12 @@ public class RegistrarPuzzle extends Fragment {
     private Spinner dificultadSpinner;
     private Switch colorSwitch, estadoSwitch;
     private ImageView imagenPreview;
-    private String imagenBase64;
+
+    /** Archivo temporal de la imagen seleccionada (null si no hay imagen). */
+    private File imagenSeleccionada = null;
 
     private ActivityResultLauncher<Intent> launcher;
 
-    private static final int COLOR_FONDO      = Color.parseColor("#DFF5C9");
-    private static final int COLOR_FONDO2     = Color.parseColor("#B8E6A5");
     private static final int COLOR_CARD       = Color.WHITE;
     private static final int COLOR_ACENTO     = Color.parseColor("#F06292");
     private static final int COLOR_BORDE      = Color.parseColor("#A5D6A7");
@@ -48,25 +58,27 @@ public class RegistrarPuzzle extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         viewModel = new ViewModelProvider(this).get(PuzzleViewModel.class);
+
         launcher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
-                    if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
+                    if (result.getResultCode() == Activity.RESULT_OK
+                            && result.getData() != null) {
                         Uri uri = result.getData().getData();
                         if (uri == null) return;
-                        imagenPreview.setImageURI(uri);
-                        imagenPreview.setVisibility(View.VISIBLE);
-                        String base64 = viewModel.convertirImagenBase64(uri, requireContext().getContentResolver());
-                        if (base64 != null) {
-                            imagenBase64 = base64;
 
+                        // Copiar al caché para enviarlo como File en multipart
+                        File f = uriAFile(uri);
+                        if (f != null) {
+                            imagenSeleccionada = f;
+                            imagenPreview.setImageURI(uri);
+                            imagenPreview.setVisibility(View.VISIBLE);
                         } else {
-                            Log.e("RegistrarPuzzle", "No se pudo convertir la imagen a base64");
-
+                            Toast.makeText(requireContext(),
+                                    "No se pudo cargar la imagen", Toast.LENGTH_SHORT).show();
                         }
                     }
-                }
-        );
+                });
     }
 
     @SuppressLint("SetTextI18n")
@@ -79,17 +91,10 @@ public class RegistrarPuzzle extends Fragment {
         ScrollView scroll = new ScrollView(getContext());
         scroll.setFillViewport(true);
 
-        /*GradientDrawable fondo = new GradientDrawable(
-                GradientDrawable.Orientation.TOP_BOTTOM,
-                new int[]{COLOR_FONDO, COLOR_FONDO2}
-        );
-        scroll.setBackground(fondo);*/
-
         LinearLayout root = new LinearLayout(getContext());
         root.setOrientation(LinearLayout.VERTICAL);
         root.setPadding(dp(20), dp(24), dp(20), dp(40));
 
-        // Titulo pantalla
         TextView tvTitulo = new TextView(getContext());
         tvTitulo.setText("Nuevo Puzzle");
         tvTitulo.setTextSize(26);
@@ -108,7 +113,7 @@ public class RegistrarPuzzle extends Fragment {
         root.addView(tvTitulo);
         root.addView(tvSubtitulo);
 
-        // Seccion: Informacion basica
+        // Sección: Información básica
         root.addView(crearTituloSeccion("Informacion basica"));
         LinearLayout cardBasica = crearCard();
         titulo = crearCampo("Titulo del puzzle");
@@ -119,7 +124,7 @@ public class RegistrarPuzzle extends Fragment {
         root.addView(cardBasica);
         root.addView(crearEspacio(dp(14)));
 
-        // Seccion: Detalles
+        // Sección: Detalles
         root.addView(crearTituloSeccion("Detalles"));
         LinearLayout cardDetalles = crearCard();
         tiempo      = crearCampoNumero("Tiempo (Horas)");
@@ -149,11 +154,10 @@ public class RegistrarPuzzle extends Fragment {
         root.addView(cardDetalles);
         root.addView(crearEspacio(dp(14)));
 
-        // Seccion: Opciones
+        // Sección: Opciones
         root.addView(crearTituloSeccion("Opciones"));
         LinearLayout cardOpciones = crearCard();
 
-        // Switch COLOR
         LinearLayout filaColor = crearFilaSwitch();
         LinearLayout textoColor = new LinearLayout(getContext());
         textoColor.setOrientation(LinearLayout.VERTICAL);
@@ -176,7 +180,6 @@ public class RegistrarPuzzle extends Fragment {
         cardOpciones.addView(filaColor);
         cardOpciones.addView(crearSeparador());
 
-        // Switch ESTADO
         LinearLayout filaEstado = crearFilaSwitch();
         LinearLayout contenidoEstado = new LinearLayout(getContext());
         contenidoEstado.setOrientation(LinearLayout.HORIZONTAL);
@@ -185,9 +188,7 @@ public class RegistrarPuzzle extends Fragment {
         LinearLayout textoEstado = new LinearLayout(getContext());
         textoEstado.setOrientation(LinearLayout.VERTICAL);
         textoEstado.setLayoutParams(new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.WRAP_CONTENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-        ));
+                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
         TextView tvEstadoT = new TextView(getContext());
         tvEstadoT.setText("Visibilidad");
         tvEstadoT.setTextSize(16);
@@ -210,9 +211,7 @@ public class RegistrarPuzzle extends Fragment {
         estadoSwitch.setChecked(true);
         estadoSwitch.setOnCheckedChangeListener((btn, isChecked) -> {
             tvEstadoD.setText(isChecked ? "Público" : "Privado");
-            iconoEstado.setImageResource(
-                    isChecked ? R.drawable.open_lock : R.drawable.lock
-            );
+            iconoEstado.setImageResource(isChecked ? R.drawable.open_lock : R.drawable.lock);
         });
         filaEstado.addView(contenidoEstado);
         filaEstado.addView(estadoSwitch);
@@ -220,7 +219,7 @@ public class RegistrarPuzzle extends Fragment {
         root.addView(cardOpciones);
         root.addView(crearEspacio(dp(14)));
 
-        // Seccion: Imagen
+        // Sección: Imagen
         root.addView(crearTituloSeccion("Imagen"));
         LinearLayout cardImagen = crearCard();
         cardImagen.setGravity(Gravity.CENTER_HORIZONTAL);
@@ -246,7 +245,6 @@ public class RegistrarPuzzle extends Fragment {
         root.addView(cardImagen);
         root.addView(crearEspacio(dp(28)));
 
-        // Boton crear
         Button btnCrear = crearBotonPrincipal("Crear Puzzle");
         btnCrear.setOnClickListener(v -> crearPuzzle());
         root.addView(btnCrear);
@@ -255,10 +253,10 @@ public class RegistrarPuzzle extends Fragment {
 
         viewModel.getPuzzleCreado().observe(getViewLifecycleOwner(), creado -> {
             if (creado != null && creado)
-                Toast.makeText(getContext(), "Puzzle creado con exito!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Puzzle creado con éxito!", Toast.LENGTH_SHORT).show();
         });
-        viewModel.getError().observe(getViewLifecycleOwner(), error ->
-                Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show());
+        viewModel.getError().observe(getViewLifecycleOwner(), e ->
+                Toast.makeText(getContext(), e, Toast.LENGTH_SHORT).show());
 
         return scroll;
     }
@@ -278,20 +276,44 @@ public class RegistrarPuzzle extends Fragment {
             puzzle.setPiezas(Integer.parseInt(piezas.getText().toString().trim()));
             puzzle.setDescripcion(descripcion.getText().toString().trim());
             puzzle.setColor(colorSwitch.isChecked());
-            // Switch ON = Publico, Switch OFF = Privado
             puzzle.setEstado(estadoSwitch.isChecked() ? Puzzle.Estados.Publico : Puzzle.Estados.Privado);
-            puzzle.setDificultad(Puzzle.Dificultades.valueOf(dificultadSpinner.getSelectedItem().toString()));
+            puzzle.setDificultad(Puzzle.Dificultades.valueOf(
+                    dificultadSpinner.getSelectedItem().toString()));
             puzzle.setIdUsuario(GestorSesion.obtenerId_usuario(getContext()));
-            puzzle.setImagenBase64(imagenBase64);
-            viewModel.crearPuzzle(puzzle);
+
+            String token = GestorSesion.obtenerToken(getContext());
+            // Pasamos el File (puede ser null si no se seleccionó imagen)
+            viewModel.crearPuzzle(token, puzzle, imagenSeleccionada);
+
         } catch (NumberFormatException e) {
-            Toast.makeText(getContext(), "Revisa que tiempo y piezas sean numeros", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Revisa que tiempo y piezas sean números",
+                    Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
-            Toast.makeText(getContext(), "Error al rellenar los datos", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Error al rellenar los datos",
+                    Toast.LENGTH_SHORT).show();
         }
     }
 
-    // --- Helpers ---
+    /** Copia un Uri de contenido a un File temporal en caché */
+    private File uriAFile(Uri uri) {
+        try {
+            InputStream is = requireContext().getContentResolver().openInputStream(uri);
+            if (is == null) return null;
+            File temp = File.createTempFile("puzzle_img_", ".jpg",
+                    requireContext().getCacheDir());
+            FileOutputStream fos = new FileOutputStream(temp);
+            byte[] buf = new byte[4096];
+            int n;
+            while ((n = is.read(buf)) != -1) fos.write(buf, 0, n);
+            is.close();
+            fos.close();
+            return temp;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    // --- Helpers de UI ---
 
     private LinearLayout crearCard() {
         LinearLayout card = new LinearLayout(getContext());

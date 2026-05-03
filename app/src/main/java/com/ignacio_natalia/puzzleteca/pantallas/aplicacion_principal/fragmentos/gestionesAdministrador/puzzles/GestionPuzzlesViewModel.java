@@ -35,7 +35,7 @@ public class GestionPuzzlesViewModel extends ViewModel {
 
     public void cargarPuzzles(String token) {
 
-        repositorio.obtenerPuzzles(token, new Callback<>() {
+        repositorio.obtenerPuzzles(token,"", new Callback<>() {
 
             @Override
             public void onResponse(@NonNull Call<List<Puzzle>> call,

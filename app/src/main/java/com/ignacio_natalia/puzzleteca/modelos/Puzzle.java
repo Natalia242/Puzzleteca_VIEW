@@ -23,6 +23,8 @@ public class Puzzle implements Serializable {
     private Integer idUsuario;
     private Estados estado;
     private String imagenBase64;
+    /** URL pública de la imagen (nueva estrategia: fichero en servidor, no base64) */
+    private String imagenUrl;
     private transient Bitmap bitmap;
 
     // ---------- GETTERS ----------
@@ -39,6 +41,7 @@ public class Puzzle implements Serializable {
     public Integer getIdUsuario() { return idUsuario; }
     public Estados getEstado() { return estado; }
     public String getImagenBase64() { return imagenBase64; }
+    public String getImagenUrl() { return imagenUrl; }
     public Bitmap getBitmap() { return bitmap; }
     public boolean isPublico() {
         return estado == Estados.Publico;
@@ -59,6 +62,7 @@ public class Puzzle implements Serializable {
     public void setIdUsuario(Integer idUsuario) { this.idUsuario = idUsuario; }
     public void setEstado(Estados estado) { this.estado = estado; }
     public void setImagenBase64(String imagenBase64) { this.imagenBase64 = imagenBase64; }
+    public void setImagenUrl(String imagenUrl) { this.imagenUrl = imagenUrl; }
     public void setBitmap(Bitmap bitmap) { this.bitmap = bitmap; }
 
     @NonNull
