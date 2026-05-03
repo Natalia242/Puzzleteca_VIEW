@@ -1,0 +1,85 @@
+package com.ignacio_natalia.puzzleteca.red.posts;
+
+import com.ignacio_natalia.puzzleteca.modelos.ComentarioPost;
+import com.ignacio_natalia.puzzleteca.modelos.Post;
+
+import java.util.List;
+import java.util.Map;
+
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import retrofit2.Call;
+import retrofit2.http.DELETE;
+import retrofit2.http.GET;
+import retrofit2.http.Header;
+import retrofit2.http.Multipart;
+import retrofit2.http.POST;
+import retrofit2.http.Part;
+import retrofit2.http.Path;
+import retrofit2.http.Query;
+
+public interface ServiciosApiPost {
+
+    /**
+     * Crea un post con imagen opcional.
+     * El backend espera multipart/form-data con:
+     *  - idUsuario  (part de texto)
+     *  - contenido  (part de texto, opcional)
+     *  - imagen     (part de fichero, opcional)
+     */
+    @Multipart
+    @POST("crearPost")
+    Call<Post> crearPost(
+            @Header("Authorization") String token,
+            @Part("idUsuario") RequestBody idUsuario,
+            @Part("contenido") RequestBody contenido,
+            @Part MultipartBody.Part imagen   // puede ser null
+    );
+
+    /** Overload sin imagen (solo texto) */
+    @Multipart
+    @POST("crearPost")
+    Call<Post> crearPostSoloTexto(
+            @Header("Authorization") String token,
+            @Part("idUsuario") RequestBody idUsuario,
+            @Part("contenido") RequestBody contenido
+    );
+
+    @POST("{idPost}/like")
+    Call<Map<String, Boolean>> toggleLike(
+            @Header("Authorization") String token,
+            @Path("idPost") Integer idPost,
+            @Query("liked") boolean liked
+    );
+
+    /**
+     * Feed paginado — devuelve un objeto Page de Spring.
+     * Usamos Map para extraer el campo "content" sin definir un wrapper extra.
+     */
+    @GET("feed")
+    Call<retrofit2.converter.gson.GsonConverterFactory> obtenerFeed(
+            @Header("Authorization") String token,
+            @Query("pagina") int pagina,
+            @Query("tamanno") int tamanno
+    );
+
+    /**
+     * Feed paginado — versión simple que devuelve la lista "content" directamente.
+     * Si el backend devuelve Page<Post>, Gson lo deserializará como Map; usamos
+     * un wrapper propio {@link PaginacionPost}.
+     */
+    @GET("feed")
+    Call<PaginacionPost> getFeed(
+            @Header("Authorization") String token,
+            @Query("pagina") int pagina,
+            @Query("tamanno") int tamanno
+    );
+
+    /** Elimina un post */
+    @DELETE("eliminar/{idPost}")
+    Call<Map<String, String>> eliminarPost(
+            @Header("Authorization") String token,
+            @Path("idPost") Integer idPost,
+            @Query("idUsuario") Integer idUsuario
+    );
+}

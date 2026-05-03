@@ -43,6 +43,7 @@ public class AppPrincipal extends AppCompatActivity {
     private LinearLayout botonInicio, botonPuzzles, botonRanking, botonForo, botonPerfil;
     // Indicador deslizante
     private View indicadorActivo;
+    PuzzleViewModel puzzleViewModel;
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -127,7 +128,7 @@ public class AppPrincipal extends AppCompatActivity {
         tituloPantalla.setImageResource(R.drawable.titulo_inicio);
 
         // ── ViewModel + carga ──
-        PuzzleViewModel puzzleViewModel = new ViewModelProvider(this).get(PuzzleViewModel.class);
+        puzzleViewModel = new ViewModelProvider(this).get(PuzzleViewModel.class);
         String token = GestorSesion.obtenerToken(this);
         puzzleViewModel.getPuzzles().observe(this, this::mostrarPuzzles);
         puzzleViewModel.getError().observe(this, msg ->
@@ -136,6 +137,15 @@ public class AppPrincipal extends AppCompatActivity {
 
         // Seleccionar Inicio por defecto tras layout
         root.post(() -> seleccionarTab(botonInicio, null));
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (puzzleViewModel != null) {
+            String token = GestorSesion.obtenerToken(this);
+            puzzleViewModel.cargarPuzzles(token);
+        }
     }
 
     // ── Navegación ────────────────────────────────────────────────────────────
@@ -409,9 +419,7 @@ public class AppPrincipal extends AppCompatActivity {
         contenedorPuzzles.removeAllViews();
 
         for (Puzzle p : lista) {
-            if (p.isPublico()) {
-                contenedorPuzzles.addView(crearTarjeta(p));
-            }
+            contenedorPuzzles.addView(crearTarjeta(p));
         }
 
     }
