@@ -18,20 +18,25 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
 import com.ignacio_natalia.puzzleteca.modelos.Puzzle;
+import com.ignacio_natalia.puzzleteca.repositorios.RankingRepositorio;
+import com.ignacio_natalia.puzzleteca.utilidades.GestorSesion;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class PuzzleDialogFragment extends DialogFragment {
 
     private static final String ARG_PUZZLE = "puzzle";
 
     private Puzzle puzzle;
+    private RankingRepositorio rankingRepositorio;
 
     public static PuzzleDialogFragment newInstance(Puzzle puzzle) {
         PuzzleDialogFragment fragment = new PuzzleDialogFragment();
-
         Bundle args = new Bundle();
         args.putSerializable(ARG_PUZZLE, puzzle);
         fragment.setArguments(args);
-
         return fragment;
     }
 
@@ -46,25 +51,24 @@ public class PuzzleDialogFragment extends DialogFragment {
             puzzle = (Puzzle) getArguments().getSerializable(ARG_PUZZLE);
         }
 
+        rankingRepositorio = new RankingRepositorio();
+
         LinearLayout layout = new LinearLayout(requireContext());
         layout.setOrientation(LinearLayout.VERTICAL);
         layout.setPadding(dp(20), dp(20), dp(20), dp(20));
 
-        // ---------------- IMAGEN ----------------
+        // ── Imagen ────────────────────────────────────────────────────────
         ImageView imagen = new ImageView(requireContext());
         imagen.setLayoutParams(new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                dp(200)
-        ));
+                ViewGroup.LayoutParams.MATCH_PARENT, dp(200)));
         imagen.setScaleType(ImageView.ScaleType.CENTER_CROP);
-
         if (puzzle.getBitmap() != null) {
             imagen.setImageBitmap(puzzle.getBitmap());
         } else {
             imagen.setImageResource(android.R.drawable.ic_menu_gallery);
         }
 
-        // ---------------- TEXTO ----------------
+        // ── Textos ────────────────────────────────────────────────────────
         TextView titulo = new TextView(requireContext());
         titulo.setText(puzzle.getTitulo());
         titulo.setTextSize(20);
@@ -85,45 +89,93 @@ public class PuzzleDialogFragment extends DialogFragment {
         TextView tiempo = new TextView(requireContext());
         tiempo.setText("Tiempo: " + puzzle.getTiempo() + " min");
 
-        // ---------------- RATING ----------------
-        RatingBar ratingBar = new RatingBar(requireContext());
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+        // ── RatingBar ─────────────────────────────────────────────────────
+        LinearLayout.LayoutParams rbParams = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
-        );
-        params.topMargin = dp(12);
+                ViewGroup.LayoutParams.WRAP_CONTENT);
+        rbParams.topMargin = dp(12);
 
-        ratingBar.setLayoutParams(params);
-
+        RatingBar ratingBar = new RatingBar(requireContext());
+        ratingBar.setLayoutParams(rbParams);
         ratingBar.setNumStars(5);
         ratingBar.setStepSize(1f);
-        ratingBar.setScaleX(1f);
-        ratingBar.setScaleY(1f);
-
-        // Para hacerlo más grande
-//        ratingBar.getLayoutParams().height = dp(48);
-
         ratingBar.setRating(0);
 
+        // Etiqueta de estado de la valoración
+        TextView tvEstadoValoracion = new TextView(requireContext());
+        tvEstadoValoracion.setText("Toca las estrellas para valorar");
+        tvEstadoValoracion.setTextSize(12);
+        tvEstadoValoracion.setPadding(0, dp(4), 0, 0);
+
         ratingBar.setOnRatingBarChangeListener((bar, rating, fromUser) -> {
-            if (fromUser) {
-                puzzle.setValoracion((int) rating);
+            if (!fromUser) return;
 
+            int stars      = (int) rating;
+            String token   = GestorSesion.obtenerToken(requireContext());
+            int    idUsuario = GestorSesion.obtenerId_usuario(requireContext());
+
+            // Evitar valorar el propio puzzle
+            if (puzzle.getIdUsuario() != null && puzzle.getIdUsuario().equals(idUsuario)) {
                 Toast.makeText(requireContext(),
-                        "Has valorado con " + (int) rating + " estrellas",
+                        "No puedes valorar tu propio puzzle",
                         Toast.LENGTH_SHORT).show();
-
-                // Conectar aquí con el ViewModel/API
-                // viewModel.valorarPuzzle(puzzle.getId(), (int) rating, token);
+                ratingBar.setRating(0);
+                return;
             }
+
+            tvEstadoValoracion.setText("Enviando valoración…");
+            ratingBar.setEnabled(false);
+
+            rankingRepositorio.valorarPuzzle(
+                    token,
+                    puzzle.getId(),
+                    idUsuario,
+                    stars,
+                    new Callback<Void>() {
+                        @Override
+                        public void onResponse(@NonNull Call<Void> call,
+                                               @NonNull Response<Void> response) {
+                            if (!isAdded()) return;
+                            if (response.isSuccessful()) {
+                                // 201 → OK
+                                puzzle.setValoracion(stars);
+                                tvEstadoValoracion.setText("✅ Valorado con " + stars + " ★");
+                                Toast.makeText(requireContext(),
+                                        "Has valorado con " + stars + " estrellas",
+                                        Toast.LENGTH_SHORT).show();
+                            } else if (response.code() == 409) {
+                                // Ya valorado
+                                tvEstadoValoracion.setText("Ya valoraste este puzzle");
+                                ratingBar.setEnabled(false);
+                                Toast.makeText(requireContext(),
+                                        "Ya has valorado este puzzle",
+                                        Toast.LENGTH_SHORT).show();
+                            } else {
+                                tvEstadoValoracion.setText("Error al valorar. Inténtalo de nuevo");
+                                ratingBar.setEnabled(true);
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(@NonNull Call<Void> call,
+                                              @NonNull Throwable t) {
+                            if (!isAdded()) return;
+                            tvEstadoValoracion.setText("Sin conexión. Inténtalo de nuevo");
+                            ratingBar.setEnabled(true);
+                            Toast.makeText(requireContext(),
+                                    "Error de red",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    }
+            );
         });
 
-        // ---------------- BOTÓN CERRAR ----------------
+        // ── Botón cerrar ──────────────────────────────────────────────────
         Button cerrar = new Button(requireContext());
         cerrar.setText("Cerrar");
         cerrar.setOnClickListener(v -> dismiss());
 
-        // ---------------- MONTAJE ----------------
+        // ── Montaje ───────────────────────────────────────────────────────
         layout.addView(imagen);
         layout.addView(titulo);
         layout.addView(autor);
@@ -132,6 +184,7 @@ public class PuzzleDialogFragment extends DialogFragment {
         layout.addView(piezas);
         layout.addView(tiempo);
         layout.addView(ratingBar);
+        layout.addView(tvEstadoValoracion);
         layout.addView(cerrar);
 
         return layout;
@@ -140,17 +193,14 @@ public class PuzzleDialogFragment extends DialogFragment {
     @Override
     public void onStart() {
         super.onStart();
-
         if (getDialog() != null && getDialog().getWindow() != null) {
             getDialog().getWindow().setLayout(
                     ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT
-            );
+                    ViewGroup.LayoutParams.WRAP_CONTENT);
         }
     }
 
     private int dp(int v) {
         return (int) (v * requireContext().getResources().getDisplayMetrics().density);
     }
-
 }
