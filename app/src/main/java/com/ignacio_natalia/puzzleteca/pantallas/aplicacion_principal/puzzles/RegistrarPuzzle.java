@@ -3,11 +3,14 @@ package com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.puzzles;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.*;
 import android.widget.*;
 
@@ -18,6 +21,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.google.android.material.slider.LabelFormatter;
+import com.google.android.material.slider.Slider;
 import com.ignacio_natalia.puzzleteca.R;
 import com.ignacio_natalia.puzzleteca.modelos.Puzzle;
 import com.ignacio_natalia.puzzleteca.utilidades.GestorSesion;
@@ -28,7 +33,7 @@ import java.io.InputStream;
 
 /**
  * Pantalla de registro de puzzles.
- *
+ * <p>
  * CAMBIO: ya no convierte la imagen a base64. En su lugar guarda el archivo
  * en caché y lo envía como multipart al backend, que lo procesa con
  * ImagenService (redimensiona + comprime) y guarda en disco.
@@ -38,21 +43,32 @@ public class RegistrarPuzzle extends Fragment {
     private PuzzleViewModel viewModel;
 
     private EditText titulo, autor, tiempo, piezas, descripcion;
-    private Spinner dificultadSpinner;
+    private Slider dificultadSlider;
+    private TextView tvDifValor;
+    private boolean dificultadAutomatica = true;
+
+    @SuppressLint("UseSwitchCompatOrMaterialCode")
     private Switch colorSwitch, estadoSwitch;
     private ImageView imagenPreview;
 
-    /** Archivo temporal de la imagen seleccionada (null si no hay imagen). */
+    /**
+     * Archivo temporal de la imagen seleccionada (null si no hay imagen).
+     */
     private File imagenSeleccionada = null;
-
     private ActivityResultLauncher<Intent> launcher;
 
-    private static final int COLOR_CARD       = Color.WHITE;
-    private static final int COLOR_ACENTO     = Color.parseColor("#F06292");
-    private static final int COLOR_BORDE      = Color.parseColor("#A5D6A7");
-    private static final int COLOR_TEXTO      = Color.parseColor("#263238");
-    private static final int COLOR_TEXTO_HINT = Color.parseColor("#90A4AE");
-    private static final int COLOR_SUBTITULO  = Color.parseColor("#546E7A");
+    private static final int
+            COLOR_CARD = Color.WHITE,
+            COLOR_ACENTO = Color.parseColor("#F06292"),
+            COLOR_BORDE = Color.parseColor("#A5D6A7"),
+            COLOR_TEXTO = Color.parseColor("#263238"),
+            COLOR_TEXTO_HINT = Color.parseColor("#90A4AE"),
+            COLOR_SUBTITULO = Color.parseColor("#546E7A"),
+
+            COLOR_FACIL = Color.parseColor("#7BCF9E"),
+            COLOR_MEDIA = Color.parseColor("#F2C66D"),
+            COLOR_DIFICIL = Color.parseColor("#F6A06A"),
+            COLOR_EXTREMO = Color.parseColor("#E57373");
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -95,6 +111,7 @@ public class RegistrarPuzzle extends Fragment {
         root.setOrientation(LinearLayout.VERTICAL);
         root.setPadding(dp(20), dp(24), dp(20), dp(40));
 
+        // Titulo pantalla
         TextView tvTitulo = new TextView(getContext());
         tvTitulo.setText("Nuevo Puzzle");
         tvTitulo.setTextSize(26);
@@ -131,17 +148,70 @@ public class RegistrarPuzzle extends Fragment {
         piezas      = crearCampoNumero("Numero de piezas");
         descripcion = crearCampoMultilinea("Descripcion");
 
+        LinearLayout filaDificultad = new LinearLayout(getContext());
+        filaDificultad.setOrientation(LinearLayout.HORIZONTAL);
+        filaDificultad.setGravity(Gravity.CENTER_VERTICAL);
+        filaDificultad.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        ));
+
         TextView tvDifLabel = crearLabel("Dificultad");
-        dificultadSpinner = new Spinner(getContext());
-        ArrayAdapter<String> adDif = new ArrayAdapter<>(getContext(),
-                android.R.layout.simple_spinner_item,
-                new String[]{"Facil", "Media", "Dificil", "Extremo"});
-        adDif.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        dificultadSpinner.setAdapter(adDif);
-        LinearLayout.LayoutParams spParams = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        spParams.setMargins(0, dp(4), 0, dp(8));
-        dificultadSpinner.setLayoutParams(spParams);
+        tvDifLabel.setLayoutParams(new LinearLayout.LayoutParams(
+                0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f
+        ));
+
+        CheckBox autoCheck = new CheckBox(getContext());
+        autoCheck.setChecked(true); // activado por defecto
+
+        autoCheck.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            dificultadAutomatica = isChecked;
+            dificultadSlider.setEnabled(!isChecked);
+
+            if (isChecked) {
+                recalcularDificultad();
+            }
+        });
+
+        filaDificultad.addView(tvDifLabel);
+        filaDificultad.addView(autoCheck);
+
+        dificultadSlider = new Slider(getContext());
+        dificultadSlider.setValueFrom(0);
+        dificultadSlider.setValueTo(3);
+        dificultadSlider.setStepSize(1);
+        dificultadSlider.setValue(0);
+
+        dificultadAutomatica = true;
+        dificultadSlider.setEnabled(false);
+
+        dificultadSlider.setTrackInactiveTintList(ColorStateList.valueOf(Color.TRANSPARENT));
+        dificultadSlider.setTrackActiveTintList(ColorStateList.valueOf(COLOR_FACIL));
+        dificultadSlider.setThumbTintList(ColorStateList.valueOf(COLOR_FACIL));
+        dificultadSlider.setLabelBehavior(LabelFormatter.LABEL_GONE);
+
+        tvDifValor = new TextView(getContext());
+        tvDifValor.setText("Fácil");
+        tvDifValor.setTextColor(COLOR_SUBTITULO);
+
+        dificultadSlider.addOnChangeListener((slider, value, fromUser) -> {
+            if (fromUser) {
+                dificultadAutomatica = false;
+                autoCheck.setChecked(false);
+                dificultadSlider.setEnabled(true);
+            }
+            actualizarTextoYColor((int) value);
+        });
+
+        piezas.addTextChangedListener(new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.toString().isEmpty()) return;
+                recalcularDificultad();
+            }
+        });
 
         cardDetalles.addView(tiempo);
         cardDetalles.addView(crearSeparador());
@@ -149,8 +219,10 @@ public class RegistrarPuzzle extends Fragment {
         cardDetalles.addView(crearSeparador());
         cardDetalles.addView(descripcion);
         cardDetalles.addView(crearSeparador());
-        cardDetalles.addView(tvDifLabel);
-        cardDetalles.addView(dificultadSpinner);
+        cardDetalles.addView(filaDificultad);
+        cardDetalles.addView(dificultadSlider);
+        cardDetalles.addView(tvDifValor);
+
         root.addView(cardDetalles);
         root.addView(crearEspacio(dp(14)));
 
@@ -158,6 +230,7 @@ public class RegistrarPuzzle extends Fragment {
         root.addView(crearTituloSeccion("Opciones"));
         LinearLayout cardOpciones = crearCard();
 
+        // Switch COLOR
         LinearLayout filaColor = crearFilaSwitch();
         LinearLayout textoColor = new LinearLayout(getContext());
         textoColor.setOrientation(LinearLayout.VERTICAL);
@@ -175,11 +248,17 @@ public class RegistrarPuzzle extends Fragment {
         textoColor.addView(tvColorD);
         colorSwitch = new Switch(getContext());
         colorSwitch.setChecked(true);
+
+        colorSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            recalcularDificultad();
+        });
+
         filaColor.addView(textoColor);
         filaColor.addView(colorSwitch);
         cardOpciones.addView(filaColor);
         cardOpciones.addView(crearSeparador());
 
+        // Switch ESTADO
         LinearLayout filaEstado = crearFilaSwitch();
         LinearLayout contenidoEstado = new LinearLayout(getContext());
         contenidoEstado.setOrientation(LinearLayout.HORIZONTAL);
@@ -245,6 +324,7 @@ public class RegistrarPuzzle extends Fragment {
         root.addView(cardImagen);
         root.addView(crearEspacio(dp(28)));
 
+        // Boton crear
         Button btnCrear = crearBotonPrincipal("Crear Puzzle");
         btnCrear.setOnClickListener(v -> crearPuzzle());
         root.addView(btnCrear);
@@ -260,6 +340,68 @@ public class RegistrarPuzzle extends Fragment {
 
         return scroll;
     }
+
+    private int calcularDificultad(int piezas, boolean color) {
+
+        int dificultad;
+
+        if (piezas <= 100) dificultad = 0;
+        else if (piezas <= 1000) dificultad = 1;
+        else if (piezas < 10000) dificultad = 2;
+        else dificultad = 3;
+
+        if (!color && dificultad < 3) dificultad++;
+
+        return dificultad;
+
+    }
+
+    private void recalcularDificultad() {
+        if (dificultadAutomatica && !piezas.getText().toString().isEmpty()) {
+            try {
+                dificultadSlider.setValue(
+                        calcularDificultad(Integer.parseInt(piezas.getText().toString()), colorSwitch.isChecked())
+                );
+            } catch (Exception ignored) {}
+        }
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void actualizarTextoYColor(int dificultad) {
+
+        int color;
+
+        switch (dificultad) {
+            case 1:
+                tvDifValor.setText("Media");
+                color = COLOR_MEDIA;
+                break;
+            case 2:
+                tvDifValor.setText("Dificil");
+                color = COLOR_DIFICIL;
+                break;
+            case 3:
+                tvDifValor.setText("Extremo");
+                color = COLOR_EXTREMO;
+                break;
+            default:
+                tvDifValor.setText("Facil");
+                color = COLOR_FACIL;
+                break;
+        }
+
+        // 🔥 track activo
+        dificultadSlider.setTrackActiveTintList(ColorStateList.valueOf(color));
+
+        // 🎯 thumb (punto)
+        dificultadSlider.setThumbTintList(ColorStateList.valueOf(color));
+
+    }
+
+    private int dp(int dp) {
+        return Math.round(dp * getResources().getDisplayMetrics().density);
+    }
+
 
     private void abrirGaleria() {
         Intent intent = new Intent(Intent.ACTION_PICK);
@@ -277,8 +419,26 @@ public class RegistrarPuzzle extends Fragment {
             puzzle.setDescripcion(descripcion.getText().toString().trim());
             puzzle.setColor(colorSwitch.isChecked());
             puzzle.setEstado(estadoSwitch.isChecked() ? Puzzle.Estados.Publico : Puzzle.Estados.Privado);
-            puzzle.setDificultad(Puzzle.Dificultades.valueOf(
-                    dificultadSpinner.getSelectedItem().toString()));
+
+            Puzzle.Dificultades dificultad;
+
+            switch ((int) dificultadSlider.getValue()) {
+                case 1:
+                    dificultad = Puzzle.Dificultades.Media;
+                    break;
+                case 2:
+                    dificultad = Puzzle.Dificultades.Dificil;
+                    break;
+                case 3:
+                    dificultad = Puzzle.Dificultades.Extremo;
+                    break;
+                default:
+                    dificultad = Puzzle.Dificultades.Facil;
+                    break;
+            }
+
+            puzzle.setDificultad(dificultad);
+
             puzzle.setIdUsuario(GestorSesion.obtenerId_usuario(getContext()));
 
             String token = GestorSesion.obtenerToken(getContext());
@@ -437,7 +597,4 @@ public class RegistrarPuzzle extends Fragment {
         return btn;
     }
 
-    private int dp(int dp) {
-        return Math.round(dp * getResources().getDisplayMetrics().density);
-    }
 }
