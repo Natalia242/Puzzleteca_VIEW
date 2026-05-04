@@ -61,9 +61,7 @@ public class Puzzle implements Serializable {
     public void setValoracion(Integer valoracion) { this.valoracion = valoracion; }
     public void setIdUsuario(Integer idUsuario) { this.idUsuario = idUsuario; }
     public void setEstado(Estados estado) { this.estado = estado; }
-    public void setImagenBase64(String imagenBase64) { this.imagenBase64 = imagenBase64; }
     public void setImagenUrl(String imagenUrl) { this.imagenUrl = imagenUrl; }
-    public void setBitmap(Bitmap bitmap) { this.bitmap = bitmap; }
 
     @NonNull
     @Override
@@ -80,8 +78,6 @@ public class Puzzle implements Serializable {
                 ", valoracion=" + valoracion +
                 ", idUsuario=" + idUsuario +
                 ", estado=" + estado +
-                ", imagenBase64='" + imagenBase64 + '\'' +
-                ", bitmap=" + bitmap +
                 '}';
     }
 
