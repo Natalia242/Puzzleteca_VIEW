@@ -17,7 +17,7 @@ import retrofit2.http.Query;
 
 public interface ServiciosApiPuzzles {
 
-    @GET("obtenerPuzzles")
+    @GET("puzzles/obtenerPuzzles")
     Call<List<Puzzle>> obtenerPuzzles(
             @Header("Authorization") String token,
             @Query("estado") String estado
@@ -27,7 +27,7 @@ public interface ServiciosApiPuzzles {
      * Obtiene solo los puzzles del usuario indicado.
      * Útil para el selector de puzzle al crear un post.
      */
-    @GET("misPuzzles")
+    @GET("puzzles/misPuzzles")
     Call<List<Puzzle>> misPuzzles(
             @Header("Authorization") String token,
             @Query("idUsuario") Integer idUsuario
@@ -39,7 +39,7 @@ public interface ServiciosApiPuzzles {
      * y guarda solo la ruta relativa en BD (no base64).
      */
     @Multipart
-    @POST("registrarPuzzle")
+    @POST("puzzles/registrarPuzzle")
     Call<Void> crearPuzzle(
             @Header("Authorization") String token,
             @Part("titulo")       RequestBody titulo,
@@ -56,7 +56,7 @@ public interface ServiciosApiPuzzles {
 
     /** Sobrecarga sin imagen */
     @Multipart
-    @POST("registrarPuzzle")
+    @POST("puzzles/registrarPuzzle")
     Call<Void> crearPuzzleSinImagen(
             @Header("Authorization") String token,
             @Part("titulo")       RequestBody titulo,
@@ -70,7 +70,7 @@ public interface ServiciosApiPuzzles {
             @Part("idUsuario")    RequestBody idUsuario
     );
 
-    @PUT("actualizarEstado")
+    @PUT("puzzles/actualizarEstado")
     Call<Void> cambiarEstadoPuzzle(
             @Query("id_usuario") Integer id_usuario,
             @Query("id_puzzle")  Integer id_puzzle,

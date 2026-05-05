@@ -14,13 +14,13 @@ import retrofit2.http.POST;
 public interface ServiciosApiRanking {
 
     /** GET /ranking/diario — lista ordenada por media DESC */
-    @GET("diario")
+    @GET("ranking/diario")
     Call<List<RankingUsuario>> obtenerRankingDiario(
             @Header("Authorization") String token
     );
 
     /** POST /ranking/valorar — envía la puntuación de un puzzle */
-    @POST("valorar")
+    @POST("ranking/valorar")
     Call<Void> valorarPuzzle(
             @Header("Authorization") String token,
             @Body ValorarRequest body

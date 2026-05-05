@@ -28,7 +28,7 @@ public interface ServiciosApiPost {
      *  - imagen     (part de fichero, opcional)
      */
     @Multipart
-    @POST("crearPost")
+    @POST("posts/crearPost")
     Call<Post> crearPost(
             @Header("Authorization") String token,
             @Part("idUsuario") RequestBody idUsuario,
@@ -38,14 +38,14 @@ public interface ServiciosApiPost {
 
     /** Overload sin imagen (solo texto) */
     @Multipart
-    @POST("crearPost")
+    @POST("posts/crearPost")
     Call<Post> crearPostSoloTexto(
             @Header("Authorization") String token,
             @Part("idUsuario") RequestBody idUsuario,
             @Part("contenido") RequestBody contenido
     );
 
-    @POST("{idPost}/like")
+    @POST("posts/{idPost}/like")
     Call<Map<String, Boolean>> toggleLike(
             @Header("Authorization") String token,
             @Path("idPost") Integer idPost,
@@ -56,7 +56,7 @@ public interface ServiciosApiPost {
      * Feed paginado — devuelve un objeto Page de Spring.
      * Usamos Map para extraer el campo "content" sin definir un wrapper extra.
      */
-    @GET("feed")
+    @GET("posts/feed")
     Call<retrofit2.converter.gson.GsonConverterFactory> obtenerFeed(
             @Header("Authorization") String token,
             @Query("pagina") int pagina,
@@ -68,7 +68,7 @@ public interface ServiciosApiPost {
      * Si el backend devuelve Page<Post>, Gson lo deserializará como Map; usamos
      * un wrapper propio {@link PaginacionPost}.
      */
-    @GET("feed")
+    @GET("posts/feed")
     Call<PaginacionPost> getFeed(
             @Header("Authorization") String token,
             @Query("pagina") int pagina,
@@ -76,7 +76,7 @@ public interface ServiciosApiPost {
     );
 
     /** Elimina un post */
-    @DELETE("eliminar/{idPost}")
+    @DELETE("posts/eliminar/{idPost}")
     Call<Map<String, String>> eliminarPost(
             @Header("Authorization") String token,
             @Path("idPost") Integer idPost,

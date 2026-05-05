@@ -1,11 +1,13 @@
 package com.ignacio_natalia.puzzleteca.red.clientes;
 
+import com.ignacio_natalia.puzzleteca.BuildConfig;
+
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ClienteApi {
 
-    private static final String BASE_URL = "http://10.0.2.2:8080/usuarios/";
+    private static final String BASE_URL = BuildConfig.BASE_URL;
     private static Retrofit retrofit = null;
 
     // Metodo para obtener el cliente Retrofit singleton
