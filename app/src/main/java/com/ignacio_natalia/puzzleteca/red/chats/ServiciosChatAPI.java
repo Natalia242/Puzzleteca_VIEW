@@ -12,12 +12,12 @@ import retrofit2.http.Path;
 
 public interface ServiciosChatAPI {
 
-    @POST("crearConversacion")
+    @POST("chat/crearConversacion")
     Call<ConversacionRespuesta> crearConversacion(
             @Body CrearConversacionRequest request
     );
 
-    @GET("mensajes/{id}")
+    @GET("chat/mensajes/{id}")
     Call<List<MensajeChat>> obtenerMensajes(
             @Path("id") int idConversacion
     );

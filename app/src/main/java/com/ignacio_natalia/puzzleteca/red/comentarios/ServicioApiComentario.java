@@ -13,12 +13,12 @@ import retrofit2.http.Path;
 
 public interface ServicioApiComentario {
 
-    @GET("puzzle/{idPuzzle}")
+    @GET("comentarios/puzzle/{idPuzzle}")
     Call<List<Comentario>> obtenerComentarioPorPuzzle(
             @Header("Authorization") String token,
             @Path("idPuzzle") Integer idPuzzle
     );
 
-    @POST("comentario")
+    @POST("comentarios/comentario")
     Call<Void> crearComentario(@Body Comentario comentario);
 }
