@@ -1,7 +1,6 @@
 package com.ignacio_natalia.puzzleteca.red.chats;
 
 import com.ignacio_natalia.puzzleteca.BuildConfig;
-
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 

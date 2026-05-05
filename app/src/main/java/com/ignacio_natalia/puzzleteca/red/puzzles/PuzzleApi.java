@@ -1,8 +1,9 @@
 package com.ignacio_natalia.puzzleteca.red.puzzles;
-import com.ignacio_natalia.puzzleteca.BuildConfig;
 
+import com.ignacio_natalia.puzzleteca.BuildConfig;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+
 public class PuzzleApi {
     private static final String BASE_URL = BuildConfig.BASE_URL;
     private static Retrofit retrofit = null;

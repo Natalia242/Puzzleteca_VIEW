@@ -2,7 +2,6 @@ package com.ignacio_natalia.puzzleteca.red.posts;
 
 import com.google.gson.annotations.SerializedName;
 import com.ignacio_natalia.puzzleteca.modelos.Post;
-
 import java.util.List;
 
 /**
