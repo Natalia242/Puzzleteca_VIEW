@@ -1,6 +1,7 @@
 package com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.Typeface;
@@ -42,34 +43,33 @@ import retrofit2.Response;
 /**
  * Fragment que muestra el ranking diario de usuarios.
  * Se actualiza automáticamente cada INTERVALO_POLLING ms (polling).
- *
+ * <p>
  * ── Diseño completamente programático (sin inflate de layouts XML) ──────
- *  Top 1-2-3  → tarjeta con gradiente, medalla emoji, RatingBar y donut.
- *  Posición 4+ → fila compacta con badge circular, nombre, barra de progreso rosa.
- *
+ * Top 1-2-3  → tarjeta con gradiente, medalla emoji, RatingBar y donut.
+ * Posición 4+ → fila compacta con badge circular, nombre, barra de progreso rosa.
+ * <p>
  * La única clase de vista no estándar es DonutProgressView, definida aquí
  * como clase privada estática. No requiere XML ni dependencias externas.
  */
 public class Ranking extends Fragment {
 
     // ── Paleta ────────────────────────────────────────────────────────────
-    private static final String C_FONDO = "#F2F9F4";
-    private static final String C_TITULO = "#2E7D6E";
+    private static final String C_TITULO    = "#2E7D6E";
     private static final String C_SUBTITULO = "#78909C";
-    private static final String C_ROSA = "#F06292";
-    private static final String C_TEAL = "#26A69A";
-    private static final String C_NARANJA = "#FF8A65";
-    private static final String C_NOMBRE = "#2E4057";
-    private static final String C_GRIS = "#90A4AE";
-    private static final String C_BARRA_BG = "#F8E0E8";
-    private static final String C_ESTRELLA = "#FDD835";
-    private static final String C_LINEA = "#4DB6AC";
+    private static final String C_ROSA      = "#F06292";
+    private static final String C_TEAL      = "#26A69A";
+    private static final String C_NARANJA   = "#FF8A65";
+    private static final String C_NOMBRE    = "#2E4057";
+    private static final String C_GRIS      = "#90A4AE";
+    private static final String C_BARRA_BG  = "#F8E0E8";
+    private static final String C_ESTRELLA  = "#FDD835";
+    private static final String C_LINEA     = "#4DB6AC";
 
     // Fondos tarjeta Top
-    private static final String[] BG_TOP = {"#FFF0F4", "#F0FAFA", "#FFF8F0"};
+    private static final String[] BG_TOP    = {"#FFF0F4", "#F0FAFA", "#FFF8F0"};
     private static final String[] BORDE_TOP = {"#F48FB1", "#80CBC4", "#FFAB40"};
     private static final String[] COLOR_POS = {C_ROSA, C_TEAL, C_NARANJA};
-    private static final int[] MEDALLAS = {R.drawable.top1, R.drawable.top2, R.drawable.top3};
+    private static final int[]    MEDALLAS  = {R.drawable.top1, R.drawable.top2, R.drawable.top3};
 
     // ── Polling ───────────────────────────────────────────────────────────
     private static final long INTERVALO_POLLING = 10_000L;
@@ -82,12 +82,12 @@ public class Ranking extends Fragment {
     };
 
     // ── Vistas ────────────────────────────────────────────────────────────
-    private RecyclerView   recyclerView;
-    private ProgressBar    progressBar;
-    private TextView       tvVacio;
+    private RecyclerView recyclerView;
+    private ProgressBar  progressBar;
+    private TextView     tvVacio;
 
     // ── Datos ─────────────────────────────────────────────────────────────
-    private RankingAdapter     adapter;
+    private RankingAdapter    adapter;
     private RankingRepositorio repositorio;
 
     // ═════════════════════════════════════════════════════════════════════
@@ -105,7 +105,6 @@ public class Ranking extends Fragment {
         // ── Layout raíz ────────────────────────────────────────────────
         LinearLayout root = new LinearLayout(requireContext());
         root.setOrientation(LinearLayout.VERTICAL);
-        root.setBackgroundColor(Color.parseColor(C_FONDO));
 
         // ── Cabecera ────────────────────────────────────────────────────
         root.addView(crearCabecera());
@@ -115,7 +114,7 @@ public class Ranking extends Fragment {
         LinearLayout.LayoutParams pbParams = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
-        pbParams.gravity   = Gravity.CENTER_HORIZONTAL;
+        pbParams.gravity = Gravity.CENTER_HORIZONTAL;
         pbParams.topMargin = dp(20);
         progressBar.setLayoutParams(pbParams);
         progressBar.setVisibility(View.GONE);
@@ -138,6 +137,7 @@ public class Ranking extends Fragment {
         recyclerView.setAdapter(adapter);
         recyclerView.setPadding(dp(14), dp(8), dp(14), dp(16));
         recyclerView.setClipToPadding(false);
+        recyclerView.setClipChildren(false);
         LinearLayout.LayoutParams rvParams = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, 0, 1f);
         recyclerView.setLayoutParams(rvParams);
@@ -146,8 +146,17 @@ public class Ranking extends Fragment {
         return root;
     }
 
-    @Override public void onResume() { super.onResume(); handler.post(poller); }
-    @Override public void onPause()  { super.onPause();  handler.removeCallbacks(poller); }
+    @Override
+    public void onResume() {
+        super.onResume();
+        handler.post(poller);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        handler.removeCallbacks(poller);
+    }
 
     // ═════════════════════════════════════════════════════════════════════
     //  Cabecera:  ────── Ranking Diario ──────
@@ -196,7 +205,7 @@ public class Ranking extends Fragment {
         tvSub.setTextColor(Color.parseColor(C_SUBTITULO));
         LinearLayout.LayoutParams sp = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        sp.gravity   = Gravity.CENTER_HORIZONTAL;
+        sp.gravity = Gravity.CENTER_HORIZONTAL;
         sp.topMargin = dp(3);
         tvSub.setLayoutParams(sp);
         cont.addView(tvSub);
@@ -242,6 +251,7 @@ public class Ranking extends Fragment {
                     tvVacio.setVisibility(View.VISIBLE);
                 }
             }
+
             @Override
             public void onFailure(@NonNull Call<List<RankingUsuario>> call, @NonNull Throwable t) {
                 if (!isAdded()) return;
@@ -256,82 +266,153 @@ public class Ranking extends Fragment {
     }
 
     // ═════════════════════════════════════════════════════════════════════
-    //  Adapter  (dos tipos de ítem: TOP y NORMAL)
+    //  Adapter  (dos tipos de ítem: PODIUM y NORMAL)
     // ═════════════════════════════════════════════════════════════════════
 
     private class RankingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-        private static final int TYPE_TOP    = 0;
-        private static final int TYPE_NORMAL = 1;
+        private static final int TYPE_PODIUM = 0;   // fila única con los 3 primeros
+        private static final int TYPE_NORMAL = 1;   // posiciones 4+
 
         private final List<RankingUsuario> datos;
-        RankingAdapter(List<RankingUsuario> datos) { this.datos = datos; }
 
-        void actualizar(List<RankingUsuario> nuevos) {
-            datos.clear(); datos.addAll(nuevos); notifyDataSetChanged();
+        RankingAdapter(List<RankingUsuario> datos) {
+            this.datos = datos;
         }
 
-        @Override public int getItemViewType(int pos) { return pos < 3 ? TYPE_TOP : TYPE_NORMAL; }
-        @Override public int getItemCount() { return datos.size(); }
+        void actualizar(List<RankingUsuario> nuevos) {
+            datos.clear();
+            datos.addAll(nuevos);
+            notifyDataSetChanged();
+        }
 
-        @NonNull @Override
+        @Override
+        public int getItemCount() {
+            if (datos.isEmpty()) return 0;
+            // El podio (top 1-3) ocupa 1 sola celda; el resto son ítems individuales
+            int rest = Math.max(datos.size() - 3, 0);
+            return 1 + rest;
+        }
+
+        @Override
+        public int getItemViewType(int pos) {
+            return pos == 0 ? TYPE_PODIUM : TYPE_NORMAL;
+        }
+
+        @NonNull
+        @Override
         public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int tipo) {
-            return tipo == TYPE_TOP
-                    ? new VHTop(crearItemTop(parent))
+            return tipo == TYPE_PODIUM
+                    ? new VHPodium(crearItemPodium(parent))
                     : new VHNormal(crearItemNormal(parent));
         }
 
         @Override
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder h, int position) {
-            RankingUsuario u   = datos.get(position);
-            int            pos = position + 1;
-            if (h instanceof VHTop)    bindTop   ((VHTop)    h, u, pos);
-            else                       bindNormal ((VHNormal) h, u, pos);
+            if (h instanceof VHPodium) {
+                bindPodium((VHPodium) h);
+            } else {
+                // posición real en datos: el podio ocupa slot 0, así que
+                // posición 1 del RecyclerView → datos[3], posición 2 → datos[4], etc.
+                int dataIdx = position - 1 + 3;
+                RankingUsuario u = datos.get(dataIdx);
+                int pos = dataIdx + 1;
+                bindNormal((VHNormal) h, u, pos);
+            }
         }
 
         // ─────────────────────────────────────────────────────────────
-        //  Bind Top 1–3
+        //  Bind Podium — rellena las 3 tarjetas (orden visual: 2°|1°|3°)
         // ─────────────────────────────────────────────────────────────
 
         @SuppressLint("SetTextI18n")
-        private void bindTop(VHTop h, RankingUsuario u, int pos) {
-            int i = pos - 1; // índice 0-based para arrays de paleta
+        private void bindPodium(VHPodium h) {
+            // Orden visual: columna izq=2°, columna centro=1°, columna der=3°
+            // dataIdx: datos[0]=1°, datos[1]=2°, datos[2]=3°
+            int[]       dataIdxs   = {1, 0, 2};          // qué dato va en cada columna
+            int[]       paletaIdxs = {1, 0, 2};          // índice en arrays de paleta
+            LinearLayout[] cards   = {h.card2, h.card1, h.card3};
 
-            // Fondo de tarjeta
-            GradientDrawable fondo = new GradientDrawable();
-            fondo.setColor(Color.parseColor(BG_TOP[i]));
-            fondo.setCornerRadius(dp(20));
-            fondo.setStroke(dp(2), Color.parseColor(BORDE_TOP[i]));
-            h.card.setBackground(fondo);
+            // Pedestal: 1° sin margen extra, 2° baja 20dp, 3° baja 36dp
+            int[] pedestalDp = {20, 0, 36};              // top margin por columna
 
-            // Círculo de medalla
-            GradientDrawable circ = new GradientDrawable();
-            circ.setShape(GradientDrawable.OVAL);
-            circ.setColor(Color.parseColor(COLOR_POS[i]));
-            circ.setAlpha(200);
-            h.viewMedallaCirculo.setBackground(circ);
+            for (int col = 0; col < 3; col++) {
+                int dataIdx   = dataIdxs[col];
+                int pi        = paletaIdxs[col];
+                LinearLayout card = cards[col];
 
-            h.ivMedalla.setImageResource(MEDALLAS[i]);
-            h.tvPosicion.setText(String.valueOf(pos));
-            h.tvPosicion.setTextColor(Color.parseColor(COLOR_POS[i]));
-            h.tvNombre.setText(u.getNombre() + " " + u.getApellido());
+                if (dataIdx >= datos.size()) {
+                    card.setVisibility(View.INVISIBLE);
+                    continue;
+                }
+                card.setVisibility(View.VISIBLE);
 
-            float media = safe(u.getMediaDiaria());
-            h.ratingBar.setRating(Math.min(media, 5f));
+                RankingUsuario u   = datos.get(dataIdx);
+                int posNum         = dataIdx + 1;        // 1, 2 ó 3
 
-            float pct    = media / 5f;
-            int   pctInt = Math.round(pct * 100);
+                if (posNum == 1) {
+                    card.setScaleX(1.08f);
+                    card.setScaleY(1.08f);
+                    card.setElevation(dp(6));
+                }
 
-            int colorArco = Color.parseColor(COLOR_POS[i]);
-            h.donutRing.setPorcentaje(pct);
-            h.donutRing.setColorArco(colorArco);
+                // Fondo tarjeta
+                GradientDrawable fondo = new GradientDrawable();
+                fondo.setColor(Color.parseColor(BG_TOP[pi]));
+                fondo.setCornerRadius(dp(20));
+                fondo.setStroke(dp(2), Color.parseColor(BORDE_TOP[pi]));
+                card.setBackground(fondo);
 
-            h.tvPorcentaje.setText(pctInt + "%");
-            h.tvPorcentaje.setTextColor(colorArco);
+                // Círculo de medalla
+                View viewCirculo = card.findViewWithTag("medallaCirculo_" + posNum);
+                GradientDrawable circ = new GradientDrawable();
+                circ.setShape(GradientDrawable.OVAL);
+                circ.setColor(Color.parseColor(COLOR_POS[pi]));
+                circ.setAlpha(200);
+                viewCirculo.setBackground(circ);
 
-            long total = u.getTotalValoraciones() != null ? u.getTotalValoraciones() : 0L;
-            h.tvTotal.setText(formatNum(total) + " valoraciones");
-            h.tvMedia.setText(String.format(Locale.getDefault(), "Media: %.2f ⭐", media));
+                // Medalla
+                ImageView ivMedalla = card.findViewWithTag("medalla_" + posNum);
+                ivMedalla.setImageResource(MEDALLAS[pi]);
+
+                // Posición
+                TextView tvPos = card.findViewWithTag("posicion_" + posNum);
+                tvPos.setText(String.valueOf(posNum));
+                tvPos.setTextColor(Color.parseColor(COLOR_POS[pi]));
+
+                // Nombre
+                TextView tvNombre = card.findViewWithTag("nombre_" + posNum);
+                tvNombre.setText(u.getNombre() + " " + u.getApellido());
+
+                // Rating
+                float media = safe(u.getMediaDiaria());
+                RatingBar rb = card.findViewWithTag("rating_" + posNum);
+                rb.setRating(Math.min(media, 5f));
+
+                // Donut
+                float pct    = media / 5f;
+                int   pctInt = Math.round(pct * 100);
+                int colorArco = Color.parseColor(COLOR_POS[pi]);
+
+                DonutProgressView donut = card.findViewWithTag("donutRing_" + posNum);
+                donut.setPorcentaje(pct);
+                donut.setColorArco(colorArco);
+
+                TextView tvPct = card.findViewWithTag("porcentaje_" + posNum);
+                tvPct.setText(pctInt + "%");
+                tvPct.setTextColor(colorArco);
+
+                // Total y media
+                long total = u.getTotalValoraciones() != null ? u.getTotalValoraciones() : 0L;
+                TextView tvTotal = card.findViewWithTag("total_" + posNum);
+                tvTotal.setText(formatNum(total) + " valoraciones");
+
+                TextView tvMedia = card.findViewWithTag("media_" + posNum);
+                tvMedia.setText(String.format(Locale.getDefault(), "Media: %.2f ⭐", media));
+
+                // Pedestal: ajustamos el margen superior de cada tarjeta
+                card.setTranslationY(dp(pedestalDp[col]));
+            }
         }
 
         // ─────────────────────────────────────────────────────────────
@@ -356,15 +437,11 @@ public class Ranking extends Fragment {
             h.ratingBar.setRating(Math.min(media, 5f));
             h.tvPorcentaje.setText(pctInt + "%");
 
-            // 🔥 SOLUCIÓN SEGURA (sin requireContext)
             final float pctFinal = pct;
             h.barraPista.post(() -> {
-                int total = h.barraPista.getWidth();
-
-                // usamos contexto de la propia vista
+                int total    = h.barraPista.getWidth();
                 int minWidth = dp(h.barraPista, 4);
-                int fill  = Math.max(Math.round(total * pctFinal), minWidth);
-
+                int fill     = Math.max(Math.round(total * pctFinal), minWidth);
                 ViewGroup.LayoutParams lp = h.barraFill.getLayoutParams();
                 lp.width = fill;
                 h.barraFill.setLayoutParams(lp);
@@ -376,137 +453,168 @@ public class Ranking extends Fragment {
         }
 
         // ─────────────────────────────────────────────────────────────
-        //  Construcción de vista  —  ÍTEM TOP (posiciones 1, 2, 3)
+        //  Construcción de vista — PODIO (fila horizontal 2°|1°|3°)
         // ─────────────────────────────────────────────────────────────
 
-        private View crearItemTop(ViewGroup parent) {
+        private View crearItemPodium(ViewGroup parent) {
 
-            // Tarjeta contenedora
-            LinearLayout card = new LinearLayout(parent.getContext());
-            card.setOrientation(LinearLayout.VERTICAL);
-            card.setGravity(Gravity.CENTER_HORIZONTAL);
-            card.setPadding(dp(10), dp(12), dp(10), dp(16));
-            card.setElevation(dp(6));
+            // Contenedor horizontal; alineado por abajo → efecto pedestal
+            LinearLayout row = new LinearLayout(parent.getContext());
+            row.setOrientation(LinearLayout.HORIZONTAL);
+            row.setGravity(Gravity.BOTTOM);
             RecyclerView.LayoutParams rp = new RecyclerView.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            rp.setMargins(dp(4), dp(4), dp(4), dp(10));
-            card.setLayoutParams(rp);
-            card.setTag("card");
+            rp.setMargins(dp(4), dp(4), dp(4), dp(50));
+            row.setLayoutParams(rp);
 
-            // ── Círculo medalla ─────────────────────────────────────────
-            FrameLayout frameMedalla = new FrameLayout(parent.getContext());
-            LinearLayout.LayoutParams fmp = new LinearLayout.LayoutParams(dp(54), dp(54));
-            fmp.setMargins(0, 0, 0, dp(6));
+            // Orden visual: 2° | 1° | 3°
+            int[]   posiciones = {2, 1, 3};
+            float[] pesos      = {1f, 1.1f, 1f};   // columna central ligeramente más ancha
+
+            for (int col = 0; col < 3; col++) {
+                int posNum = posiciones[col];
+                LinearLayout card = crearTarjetaTop(parent.getContext(), posNum);
+
+                LinearLayout.LayoutParams cp = new LinearLayout.LayoutParams(
+                        0, ViewGroup.LayoutParams.WRAP_CONTENT, pesos[col]);
+                cp.setMargins(dp(3), 0, dp(3), 0);
+                card.setLayoutParams(cp);
+                card.setTag("podio_" + posNum);
+                row.addView(card);
+            }
+
+            return row;
+        }
+
+        // ── Tarjeta individual del podio ───────────────────────────────
+
+        private LinearLayout crearTarjetaTop(Context ctx, int posNum) {
+
+            LinearLayout card = new LinearLayout(ctx);
+            card.setOrientation(LinearLayout.VERTICAL);
+            card.setGravity(Gravity.CENTER_HORIZONTAL);
+            card.setPadding(dp(6), dp(10), dp(6), dp(12));
+            card.setTranslationZ(dp(2));
+
+            // ── Círculo + medalla ──────────────────────────────────────
+            FrameLayout frameMedalla = new FrameLayout(ctx);
+            LinearLayout.LayoutParams fmp = new LinearLayout.LayoutParams(dp(50), dp(50));
+            fmp.setMargins(0, 0, 0, dp(4));
             frameMedalla.setLayoutParams(fmp);
 
-            View viewCirculo = new View(parent.getContext());
+            View viewCirculo = new View(ctx);
             viewCirculo.setLayoutParams(new FrameLayout.LayoutParams(
                     FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
-            viewCirculo.setTag("medallaCirculo");
+            viewCirculo.setTag("medallaCirculo_" + posNum);
 
-            ImageView ivMedalla = new ImageView(parent.getContext());
+            ImageView ivMedalla = new ImageView(ctx);
             ivMedalla.setLayoutParams(new FrameLayout.LayoutParams(
-                    FrameLayout.LayoutParams.MATCH_PARENT,
-                    FrameLayout.LayoutParams.MATCH_PARENT));
+                    FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
             ivMedalla.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-            ivMedalla.setTag("medalla");
+            ivMedalla.setTag("medalla_" + posNum);
+
+            ivMedalla.setScaleX(1.5f);
+            ivMedalla.setScaleY(1.5f);
+            ivMedalla.setClipToOutline(false);
 
             frameMedalla.addView(viewCirculo);
             frameMedalla.addView(ivMedalla);
             card.addView(frameMedalla);
 
-            // ── Fila: número posición + nombre ─────────────────────────
-            LinearLayout filaNombre = new LinearLayout(parent.getContext());
+            // ── Fila posición + nombre ─────────────────────────────────
+            LinearLayout filaNombre = new LinearLayout(ctx);
             filaNombre.setOrientation(LinearLayout.HORIZONTAL);
             filaNombre.setGravity(Gravity.CENTER);
             filaNombre.setLayoutParams(new LinearLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
-            TextView tvPosicion = new TextView(parent.getContext());
-            tvPosicion.setTextSize(22);
-            tvPosicion.setTypeface(null, Typeface.BOLD);
+            TextView tvPos = new TextView(ctx);
+            tvPos.setTextSize(18);
+            tvPos.setTypeface(null, Typeface.BOLD);
             LinearLayout.LayoutParams pp = new LinearLayout.LayoutParams(
                     ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            pp.setMargins(0, 0, dp(6), 0);
-            tvPosicion.setLayoutParams(pp);
-            tvPosicion.setTag("posicion");
+            pp.setMargins(0, 0, dp(4), 0);
+            tvPos.setLayoutParams(pp);
+            tvPos.setTag("posicion_" + posNum);
 
-            TextView tvNombre = new TextView(parent.getContext());
-            tvNombre.setTextSize(14);
+            TextView tvNombre = new TextView(ctx);
+            tvNombre.setTextSize(12);
             tvNombre.setTypeface(null, Typeface.BOLD);
             tvNombre.setTextColor(Color.parseColor(C_NOMBRE));
             tvNombre.setMaxLines(1);
             tvNombre.setEllipsize(TextUtils.TruncateAt.END);
-            tvNombre.setTag("nombre");
+            tvNombre.setTag("nombre_" + posNum);
 
-            filaNombre.addView(tvPosicion);
+            filaNombre.addView(tvPos);
             filaNombre.addView(tvNombre);
             card.addView(filaNombre);
 
-            // ── RatingBar ───────────────────────────────────────────────
-            RatingBar rb = new RatingBar(parent.getContext(), null, android.R.attr.ratingBarStyleSmall);
+            // ── RatingBar ──────────────────────────────────────────────
+            RatingBar rb = new RatingBar(ctx, null, android.R.attr.ratingBarStyleSmall);
             rb.setNumStars(5);
             rb.setStepSize(0.5f);
             rb.setIsIndicator(true);
-            rb.getProgressDrawable().setColorFilter(Color.parseColor(C_ESTRELLA), PorterDuff.Mode.SRC_IN);
+            rb.getProgressDrawable().setColorFilter(
+                    Color.parseColor(C_ESTRELLA), PorterDuff.Mode.SRC_IN);
             LinearLayout.LayoutParams rbp = new LinearLayout.LayoutParams(
                     ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            rbp.setMargins(0, dp(4), 0, dp(8));
+            rbp.setMargins(0, dp(3), 0, dp(6));
             rb.setLayoutParams(rbp);
-            rb.setTag("rating");
+            rb.setTag("rating_" + posNum);
             card.addView(rb);
 
-            // ── Donut ───────────────────────────────────────────────────
-            FrameLayout frameDonut = new FrameLayout(parent.getContext());
-            LinearLayout.LayoutParams dp88 = new LinearLayout.LayoutParams(dp(90), dp(90));
-            dp88.setMargins(0, dp(6), 0, dp(6));
-            frameDonut.setLayoutParams(dp88);
+            // ── Donut ──────────────────────────────────────────────────
+            FrameLayout frameDonut = new FrameLayout(ctx);
+            LinearLayout.LayoutParams dp80 = new LinearLayout.LayoutParams(dp(78), dp(78));
+            dp80.setMargins(0, dp(4), 0, dp(4));
+            frameDonut.setLayoutParams(dp80);
 
-            DonutProgressView donut = new DonutProgressView(parent.getContext());
+            DonutProgressView donut = new DonutProgressView(ctx);
             donut.setLayoutParams(new FrameLayout.LayoutParams(
                     FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
-            donut.setTag("donutRing");
+            donut.setTag("donutRing_" + posNum);
 
-            TextView tvPct = new TextView(parent.getContext());
-            tvPct.setTextSize(17);
+            TextView tvPct = new TextView(ctx);
+            tvPct.setTextSize(15);
             tvPct.setTypeface(null, Typeface.BOLD);
             tvPct.setGravity(Gravity.CENTER);
             tvPct.setLayoutParams(new FrameLayout.LayoutParams(
                     FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
-            tvPct.setTag("porcentaje");
+            tvPct.setTag("porcentaje_" + posNum);
 
             frameDonut.addView(donut);
             frameDonut.addView(tvPct);
             card.addView(frameDonut);
 
-            // ── Total valoraciones ──────────────────────────────────────
-            TextView tvTotal = new TextView(parent.getContext());
-            tvTotal.setTextSize(11);
+            // ── Total valoraciones ─────────────────────────────────────
+            TextView tvTotal = new TextView(ctx);
+            tvTotal.setTextSize(10);
             tvTotal.setTextColor(Color.parseColor(C_GRIS));
+            tvTotal.setGravity(Gravity.CENTER_HORIZONTAL);
             LinearLayout.LayoutParams tp = new LinearLayout.LayoutParams(
                     ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             tp.setMargins(0, dp(2), 0, 0);
             tvTotal.setLayoutParams(tp);
-            tvTotal.setTag("total");
+            tvTotal.setTag("total_" + posNum);
             card.addView(tvTotal);
 
-            // ── Media numérica ──────────────────────────────────────────
-            TextView tvMedia = new TextView(parent.getContext());
-            tvMedia.setTextSize(11);
+            // ── Media numérica ─────────────────────────────────────────
+            TextView tvMedia = new TextView(ctx);
+            tvMedia.setTextSize(10);
             tvMedia.setTextColor(Color.parseColor(C_GRIS));
-            tvMedia.setTag("media");
+            tvMedia.setGravity(Gravity.CENTER_HORIZONTAL);
+            tvMedia.setTag("media_" + posNum);
             card.addView(tvMedia);
 
             return card;
         }
 
         // ─────────────────────────────────────────────────────────────
-        //  Construcción de vista  —  ÍTEM NORMAL (posiciones 4+)
+        //  Construcción de vista — ÍTEM NORMAL (posiciones 4+)
         // ─────────────────────────────────────────────────────────────
 
         private View crearItemNormal(ViewGroup parent) {
 
-            // Tarjeta contenedora
             LinearLayout card = new LinearLayout(parent.getContext());
             card.setOrientation(LinearLayout.HORIZONTAL);
             card.setGravity(Gravity.CENTER_VERTICAL);
@@ -518,7 +626,7 @@ public class Ranking extends Fragment {
             card.setLayoutParams(rp);
             GradientDrawable fondoCard = new GradientDrawable();
             fondoCard.setColor(Color.WHITE);
-            fondoCard.setCornerRadius(dp(16));
+            fondoCard.setCornerRadius(dp(100));
             fondoCard.setStroke(dp(1), Color.parseColor("#E8EDF2"));
             card.setBackground(fondoCard);
 
@@ -575,7 +683,8 @@ public class Ranking extends Fragment {
             rb.setNumStars(5);
             rb.setStepSize(0.5f);
             rb.setIsIndicator(true);
-            rb.getProgressDrawable().setColorFilter(Color.parseColor(C_ESTRELLA), PorterDuff.Mode.SRC_IN);
+            rb.getProgressDrawable().setColorFilter(
+                    Color.parseColor(C_ESTRELLA), PorterDuff.Mode.SRC_IN);
             LinearLayout.LayoutParams rbp = new LinearLayout.LayoutParams(
                     ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             rbp.setMargins(0, 0, dp(10), 0);
@@ -639,32 +748,20 @@ public class Ranking extends Fragment {
         //  ViewHolders
         // ─────────────────────────────────────────────────────────────
 
-        class VHTop extends RecyclerView.ViewHolder {
-            LinearLayout card;
-            View viewMedallaCirculo;
-            ImageView ivMedalla;
-            TextView tvPosicion, tvNombre, tvPorcentaje, tvTotal, tvMedia;
-            RatingBar ratingBar;
-            DonutProgressView donutRing;
+        class VHPodium extends RecyclerView.ViewHolder {
+            LinearLayout card1, card2, card3;   // slot 1°, 2°, 3°
 
-            VHTop(View v) {
+            VHPodium(View v) {
                 super(v);
-                card = (LinearLayout) v;
-                viewMedallaCirculo = v.findViewWithTag("medallaCirculo");
-                ivMedalla = v.findViewWithTag("medalla");
-                tvPosicion = v.findViewWithTag("posicion");
-                tvNombre = v.findViewWithTag("nombre");
-                ratingBar = v.findViewWithTag("rating");
-                donutRing = v.findViewWithTag("donutRing");
-                tvPorcentaje = v.findViewWithTag("porcentaje");
-                tvTotal = v.findViewWithTag("total");
-                tvMedia = v.findViewWithTag("media");
+                card1 = v.findViewWithTag("podio_1");
+                card2 = v.findViewWithTag("podio_2");
+                card3 = v.findViewWithTag("podio_3");
             }
         }
 
         class VHNormal extends RecyclerView.ViewHolder {
-            View      viewBadge, barraFill, barraPista;
-            TextView  tvPosicion, tvNombre, tvPorcentaje, tvTotal;
+            View     viewBadge, barraFill, barraPista;
+            TextView tvPosicion, tvNombre, tvPorcentaje, tvTotal;
             RatingBar ratingBar;
 
             VHNormal(View v) {
@@ -675,7 +772,7 @@ public class Ranking extends Fragment {
                 ratingBar   = v.findViewWithTag("rating");
                 barraPista  = v.findViewWithTag("barraPista");
                 barraFill   = v.findViewWithTag("barraFill");
-                tvPorcentaje= v.findViewWithTag("porcentaje");
+                tvPorcentaje = v.findViewWithTag("porcentaje");
                 tvTotal     = v.findViewWithTag("total");
             }
         }
@@ -684,7 +781,9 @@ public class Ranking extends Fragment {
         //  Helpers
         // ─────────────────────────────────────────────────────────────
 
-        private float safe(Double d) { return d != null ? d.floatValue() : 0f; }
+        private float safe(Double d) {
+            return d != null ? d.floatValue() : 0f;
+        }
 
         private String formatNum(long n) {
             return String.format(Locale.getDefault(), "%,d", n).replace(',', '.');
@@ -698,8 +797,10 @@ public class Ranking extends Fragment {
 
     private static class DonutProgressView extends View {
 
-        private final android.graphics.Paint pistaPaint = new android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG);
-        private final android.graphics.Paint arcoPaint  = new android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG);
+        private final android.graphics.Paint pistaPaint =
+                new android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG);
+        private final android.graphics.Paint arcoPaint  =
+                new android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG);
         private android.graphics.RectF rect;
         private float porcentaje = 0f;
 
@@ -718,8 +819,15 @@ public class Ranking extends Fragment {
             arcoPaint.setStrokeCap(android.graphics.Paint.Cap.ROUND);
         }
 
-        void setPorcentaje(float pct) { this.porcentaje = Math.max(0f, Math.min(1f, pct)); invalidate(); }
-        void setColorArco(int color)  { arcoPaint.setColor(color); invalidate(); }
+        void setPorcentaje(float pct) {
+            this.porcentaje = Math.max(0f, Math.min(1f, pct));
+            invalidate();
+        }
+
+        void setColorArco(int color) {
+            arcoPaint.setColor(color);
+            invalidate();
+        }
 
         @Override
         protected void onSizeChanged(int w, int h, int ow, int oh) {
@@ -731,8 +839,8 @@ public class Ranking extends Fragment {
         @Override
         protected void onDraw(android.graphics.Canvas canvas) {
             if (rect == null) return;
-            canvas.drawArc(rect,   0f,             360f,               false, pistaPaint);
-            canvas.drawArc(rect, -90f, 360f * porcentaje,              false, arcoPaint);
+            canvas.drawArc(rect, 0f,   360f,              false, pistaPaint);
+            canvas.drawArc(rect, -90f, 360f * porcentaje, false, arcoPaint);
         }
     }
 
@@ -747,5 +855,4 @@ public class Ranking extends Fragment {
     private int dp(View view, int v) {
         return (int) (v * view.getContext().getResources().getDisplayMetrics().density);
     }
-
 }

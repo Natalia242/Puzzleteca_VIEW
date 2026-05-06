@@ -1,20 +1,31 @@
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="24dp"
-    android:height="24dp"
-    android:viewportWidth="24"
-    android:viewportHeight="24">
+    android:width="96dp"
+    android:height="96dp"
+    android:viewportWidth="96"
+    android:viewportHeight="96">
 
     <!-- Cinta -->
     <path
-        android:fillColor="#F57C00"
-        android:pathData="M6,2 L10,10 L14,10 L18,2 Z"/>
+        android:fillColor="#F06292"
+        android:pathData="M24,0 L48,28 L72,0 L60,0 L48,16 L36,0 Z"/>
+
+    <!-- Sombra -->
+    <path
+        android:fillColor="#33000000"
+        android:pathData="M48,30 A22,22 0 1,1 47.9,30 Z"/>
 
     <!-- Medalla -->
     <path
-        android:fillColor="#FFD700"
-        android:pathData="M12,12
-                          m-6,0
-                          a6,6 0 1,0 12,0
-                          a6,6 0 1,0 -12,0"/>
+        android:fillColor="#EC407A"
+        android:pathData="M48,28 A20,20 0 1,1 47.9,28 Z"/>
 
+    <!-- Borde interno -->
+    <path
+        android:fillColor="#F8BBD0"
+        android:pathData="M48,32 A16,16 0 1,1 47.9,32 Z"/>
+
+    <!-- Número -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M46,38 L48,36 L52,36 L52,60 L46,60 L46,42 L44,44 L42,40 Z"/>
 </vector>
