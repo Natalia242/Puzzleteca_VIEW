@@ -1,0 +1,39 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="96dp"
+    android:height="96dp"
+    android:viewportWidth="96"
+    android:viewportHeight="96">
+
+    <!-- Cinta -->
+    <path
+        android:fillColor="#4DB6AC"
+        android:pathData="M24,0 L48,28 L72,0 L60,0 L48,16 L36,0 Z"/>
+
+    <!-- Sombra -->
+    <path
+        android:fillColor="#33000000"
+        android:pathData="M48,30 A22,22 0 1,1 47.9,30 Z"/>
+
+    <!-- Medalla -->
+    <path
+        android:fillColor="#B0BEC5"
+        android:pathData="M48,28 A20,20 0 1,1 47.9,28 Z"/>
+
+    <!-- Borde interno -->
+    <path
+        android:fillColor="#ECEFF1"
+        android:pathData="M48,32 A16,16 0 1,1 47.9,32 Z"/>
+
+    <!-- Número 2
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M40,42
+                          Q48,34 56,42
+                          Q56,48 44,54
+                          L56,54
+                          L56,58
+                          L40,58
+                          Q40,52 50,46
+                          Q54,44 52,40
+                          Q50,36 44,42 Z"/> -->
+</vector>
