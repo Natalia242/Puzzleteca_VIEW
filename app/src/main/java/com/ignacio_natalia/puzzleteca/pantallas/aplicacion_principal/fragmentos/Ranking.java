@@ -163,13 +163,14 @@ public class Ranking extends Fragment {
     //                   Valoraciones de hoy
     // ═════════════════════════════════════════════════════════════════════
 
+    @SuppressLint("SetTextI18n")
     private LinearLayout crearCabecera() {
         LinearLayout cont = new LinearLayout(requireContext());
         cont.setOrientation(LinearLayout.VERTICAL);
         cont.setGravity(Gravity.CENTER_HORIZONTAL);
         LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        p.setMargins(0, dp(20), 0, dp(8));
+        p.setMargins(0, dp(0), 0, dp(10));
         cont.setLayoutParams(p);
 
         // Fila con líneas laterales
@@ -185,7 +186,7 @@ public class Ranking extends Fragment {
         View lineaR = lineaDecorativa();
 
         TextView tvTitulo = new TextView(requireContext());
-        tvTitulo.setText("Ranking Diario");
+        tvTitulo.setText("Valoraciones de hoy");
         tvTitulo.setTextSize(22);
         tvTitulo.setTypeface(null, Typeface.BOLD);
         tvTitulo.setTextColor(Color.parseColor(C_TITULO));
@@ -199,16 +200,16 @@ public class Ranking extends Fragment {
         fila.addView(lineaR);
         cont.addView(fila);
 
-        TextView tvSub = new TextView(requireContext());
-        tvSub.setText("Valoraciones de hoy");
-        tvSub.setTextSize(12);
-        tvSub.setTextColor(Color.parseColor(C_SUBTITULO));
-        LinearLayout.LayoutParams sp = new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        sp.gravity = Gravity.CENTER_HORIZONTAL;
-        sp.topMargin = dp(3);
-        tvSub.setLayoutParams(sp);
-        cont.addView(tvSub);
+//        TextView tvSub = new TextView(requireContext());
+//        tvSub.setText("Valoraciones de hoy");
+//        tvSub.setTextSize(12);
+//        tvSub.setTextColor(Color.parseColor(C_SUBTITULO));
+//        LinearLayout.LayoutParams sp = new LinearLayout.LayoutParams(
+//                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+//        sp.gravity = Gravity.CENTER_HORIZONTAL;
+//        sp.topMargin = dp(3);
+//        tvSub.setLayoutParams(sp);
+//        cont.addView(tvSub);
 
         return cont;
     }
