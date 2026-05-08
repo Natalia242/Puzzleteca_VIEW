@@ -68,4 +68,10 @@ public class PostRepositorio {
                            Callback<Map<String, Boolean>> callback) {
         api.toggleLike("Bearer " + token, idPost, liked).enqueue(callback);
     }
+
+    public void obtenerPost(String token, Integer idPost, Callback<Post> callback) {
+
+        api.obtenerPost("Bearer " + token, idPost).enqueue(callback);
+
+    }
 }

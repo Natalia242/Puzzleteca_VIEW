@@ -24,6 +24,7 @@ import com.ignacio_natalia.puzzleteca.utilidades.GestorSesion;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import com.bumptech.glide.Glide;
 
 public class PuzzleDialogFragment extends DialogFragment {
 
@@ -62,10 +63,20 @@ public class PuzzleDialogFragment extends DialogFragment {
         imagen.setLayoutParams(new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, dp(200)));
         imagen.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        if (puzzle.getBitmap() != null) {
-            imagen.setImageBitmap(puzzle.getBitmap());
+
+        if (puzzle.getImagenUrl() != null
+                && !puzzle.getImagenUrl().isEmpty()) {
+
+            Glide.with(this)
+                    .load(puzzle.getImagenUrl())
+                    .placeholder(android.R.drawable.ic_menu_gallery)
+                    .error(android.R.drawable.ic_menu_report_image)
+                    .into(imagen);
+
         } else {
+
             imagen.setImageResource(android.R.drawable.ic_menu_gallery);
+
         }
 
         // ── Textos ────────────────────────────────────────────────────────
