@@ -75,6 +75,10 @@ public interface ServiciosApiPost {
             @Query("tamanno") int tamanno
     );
 
+    @GET("posts/{idPost}")
+    Call<Post> obtenerPost(@Header("Authorization") String token,
+                           @Path("idPost") Integer idPost);
+
     /** Elimina un post */
     @DELETE("posts/eliminar/{idPost}")
     Call<Map<String, String>> eliminarPost(

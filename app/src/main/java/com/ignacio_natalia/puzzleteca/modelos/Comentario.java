@@ -1,9 +1,30 @@
 package com.ignacio_natalia.puzzleteca.modelos;
 
 public class Comentario {
+
+    private Integer id;
+
     private String contenido;
-    private Integer id_usuario;
-    private Integer id_puzzle;
+
+    private Integer idUsuario;
+
+    private Integer idPost;
+
+    private String nombreUsuario;
+
+    private String fechaCreacion;
+
+    // =========================================================================
+    // GETTERS & SETTERS
+    // =========================================================================
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public String getContenido() {
         return contenido;
@@ -13,19 +34,35 @@ public class Comentario {
         this.contenido = contenido;
     }
 
-    public Integer getId_usuario() {
-        return id_usuario;
+    public Integer getIdUsuario() {
+        return idUsuario;
     }
 
-    public void setId_usuario(Integer id_usuario) {
-        this.id_usuario = id_usuario;
+    public void setIdUsuario(Integer idUsuario) {
+        this.idUsuario = idUsuario;
     }
 
-    public Integer getId_puzzle() {
-        return id_puzzle;
+    public Integer getIdPost() {
+        return idPost;
     }
 
-    public void setId_puzzle(Integer id_puzzle) {
-        this.id_puzzle = id_puzzle;
+    public void setIdPost(Integer idPost) {
+        this.idPost = idPost;
+    }
+
+    public String getNombreUsuario() {
+        return nombreUsuario;
+    }
+
+    public void setNombreUsuario(String nombreUsuario) {
+        this.nombreUsuario = nombreUsuario;
+    }
+
+    public String getFechaCreacion() {
+        return fechaCreacion;
+    }
+
+    public void setFechaCreacion(String fechaCreacion) {
+        this.fechaCreacion = fechaCreacion;
     }
 }
