@@ -155,7 +155,7 @@ public class ChatViewModel extends ViewModel {
 
         }, error -> Log.e("STOMP", "Error lifecycle", error));
     }
-    public void enviarMensaje(String email, int idConversacion, String contenido) {
+    public void enviarMensaje(int idUsuario, int idConversacion, String contenido) {
 
         if (stompClient == null || !stompClient.isConnected()) {
             Log.e("STOMP", "No conectado");
@@ -163,7 +163,7 @@ public class ChatViewModel extends ViewModel {
         }
 
         String json = "{"
-                + "\"email\":\"" + email + "\","
+                + "\"idUsuario\":" + idUsuario + ","
                 + "\"idConversacion\":" + idConversacion + ","
                 + "\"contenido\":\"" + contenido + "\""
                 + "}";
@@ -174,6 +174,21 @@ public class ChatViewModel extends ViewModel {
                         error -> Log.e("STOMP", "Error enviando", error)
                 );
     }
+
+    private String nombreSeleccionado = "";
+
+    public void setNombreSeleccionado(String nombre) {
+        this.nombreSeleccionado = nombre;
+    }
+
+    public String getNombreSeleccionado() {
+        return nombreSeleccionado;
+    }
+
+    public void limpiarConversacionId() {
+        conversacionId.setValue(null);
+    }
+
     public void desconectar() {
         if (stompClient != null) {
             stompClient.disconnect();

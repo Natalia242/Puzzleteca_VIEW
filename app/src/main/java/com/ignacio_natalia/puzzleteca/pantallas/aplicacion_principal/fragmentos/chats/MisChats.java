@@ -91,8 +91,39 @@ public class MisChats extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
         String token = GestorSesion.obtenerToken(requireContext());
         viewModel.cargarUsuarios(token);
+
+        // ✅ Observer registrado UNA sola vez aquí, fuera del click de cada card.
+        // Así se evita que se acumulen múltiples observers cada vez que el usuario
+        // pulsa una card o vuelve a esta pantalla, lo que causaba que el LiveData
+        // con el id anterior disparase la navegación de forma incorrecta.
+        viewModel.getConversacionId().observe(getViewLifecycleOwner(), idConv -> {
+            if (idConv == null) return;
+
+            int idPropio = GestorSesion.obtenerId_usuario(requireContext());
+            String nombreOtro = viewModel.getNombreSeleccionado();
+
+            Bundle args = new Bundle();
+            args.putInt("idConversacion", idConv);
+            args.putInt("idPropio", idPropio);
+            args.putString("nombreOtro", nombreOtro);
+
+            Fragment fragment = new ConversacionChat();
+            fragment.setArguments(args);
+
+            requireActivity()
+                    .getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(AppPrincipal.FRAGMENTO_ID, fragment)
+                    .addToBackStack(null)
+                    .commit();
+
+            // ✅ Limpiar el valor tras consumirlo para que al volver a esta
+            // pantalla el observer no vuelva a disparar con el id antiguo.
+            viewModel.limpiarConversacionId();
+        });
     }
 
     private void renderUsuarios(List<Usuario> usuarios) {
@@ -202,7 +233,8 @@ public class MisChats extends Fragment {
         card.addView(flecha);
         wrapper.addView(card);
 
-        // Click: crear conversación y navegar
+        // ✅ El click solo guarda el nombre del destinatario y lanza la petición.
+        // La navegación la gestiona el observer de onViewCreated, que es único.
         final String nombreFinal = nombreCompleto.trim();
         card.setOnClickListener(v -> {
             GradientDrawable bgPressed = new GradientDrawable();
@@ -211,31 +243,14 @@ public class MisChats extends Fragment {
             card.setBackground(bgPressed);
             card.postDelayed(() -> card.setBackground(bg), 150);
 
-            String emailPropio = GestorSesion.obtenerEmail(requireContext());
+            int idPropio = GestorSesion.obtenerId_usuario(requireContext());
+
+            viewModel.setNombreSeleccionado(nombreFinal);
 
             CrearConversacionRequest req = new CrearConversacionRequest(
-                    Arrays.asList(emailPropio, u.getEmail())
+                    Arrays.asList(idPropio, u.getId())
             );
             viewModel.crearConversacion(req);
-
-            viewModel.getConversacionId().observe(getViewLifecycleOwner(), idConv -> {
-                if (idConv == null) return;
-
-                Bundle args = new Bundle();
-                args.putInt("idConversacion", idConv);
-                args.putString("emailPropio", emailPropio);
-                args.putString("nombreOtro", nombreFinal);
-
-                Fragment fragment = new ConversacionChat();
-                fragment.setArguments(args);
-
-                requireActivity()
-                        .getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(AppPrincipal.FRAGMENTO_ID, fragment)
-                        .addToBackStack(null)
-                        .commit();
-            });
         });
 
         return wrapper;

@@ -25,8 +25,7 @@ public class ConversacionChat extends Fragment {
     private ScrollView scroll;
 
     private int idConversacion;
-    private Integer id_usuario;
-    private String emailPropio;
+    private int idPropio;
     private String nombreOtro;
 
     @Override
@@ -36,16 +35,12 @@ public class ConversacionChat extends Fragment {
 
         if (getArguments() != null) {
             idConversacion = getArguments().getInt("idConversacion", 0);
-            emailPropio    = getArguments().getString("emailPropio", "");
+            idPropio       = getArguments().getInt("idPropio", -1);
             nombreOtro     = getArguments().getString("nombreOtro", "Chat");
         }
 
-        if ((emailPropio == null || emailPropio.isEmpty()) && getContext() != null) {
-            emailPropio = GestorSesion.obtenerEmail(requireContext());
-        }
-
-        if (id_usuario == null && getContext() != null) {
-            id_usuario = GestorSesion.obtenerId_usuario(this.requireContext());
+        if (idPropio == -1 && getContext() != null) {
+            idPropio = GestorSesion.obtenerId_usuario(requireContext());
         }
     }
 
@@ -110,10 +105,8 @@ public class ConversacionChat extends Fragment {
         inputBar.addView(btnEnviar);
         root.addView(inputBar);
 
-        // ================= OBSERVER (SOLO UNO) =================
-        viewModel.getMensajes().observe(getViewLifecycleOwner(), lista -> {
-            renderMensajes(lista);
-        });
+        // ================= OBSERVER =================
+        viewModel.getMensajes().observe(getViewLifecycleOwner(), this::renderMensajes);
 
         // ================= CARGA INICIAL =================
         viewModel.cargarMensajes(idConversacion);
@@ -122,9 +115,8 @@ public class ConversacionChat extends Fragment {
         // ================= ENVIAR =================
         Runnable enviar = () -> {
             String texto = input.getText().toString().trim();
-
             if (!texto.isEmpty()) {
-                viewModel.enviarMensaje(emailPropio, idConversacion, texto);
+                viewModel.enviarMensaje(idPropio, idConversacion, texto); // antes: emailPropio
                 input.setText("");
             }
         };
@@ -163,7 +155,7 @@ public class ConversacionChat extends Fragment {
 
     private View crearMensaje(MensajeChat m) {
 
-        boolean esPropio = id_usuario.equals(m.getIdUsuario());
+        boolean esPropio = idPropio == m.getIdUsuario(); // comparación int directa
 
         LinearLayout fila = new LinearLayout(getContext());
         fila.setGravity(esPropio ? Gravity.END : Gravity.START);

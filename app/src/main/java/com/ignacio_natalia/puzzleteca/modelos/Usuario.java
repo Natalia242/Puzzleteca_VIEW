@@ -6,6 +6,7 @@ public class Usuario {
 
     public enum TipoUsuario {Admin, Bloqueado, Usuario}
 
+    private Integer id;
     private String nombre;
     private String apellido;
     private String email;
@@ -21,6 +22,14 @@ public class Usuario {
     }
 
     // Getters y Setters
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
     public String getNombre() {
         return nombre;
     }
@@ -65,6 +74,7 @@ public class Usuario {
     @Override
     public String toString() {
         return "Usuario{" +
+                "id='" + id + '\'' +
                 "nombre='" + nombre + '\'' +
                 ", apellido='" + apellido + '\'' +
                 ", email='" + email + '\'' +
