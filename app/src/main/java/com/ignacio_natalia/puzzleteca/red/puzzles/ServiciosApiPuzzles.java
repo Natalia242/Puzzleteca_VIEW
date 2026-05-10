@@ -23,6 +23,12 @@ public interface ServiciosApiPuzzles {
             @Query("estado") String estado
     );
 
+    @GET("puzzles/mejorTiempo")
+    Call<Integer> obtenerMejorTiempo(
+            @Header("Authorization") String token
+    );
+
+
     /**
      * Obtiene solo los puzzles del usuario indicado.
      * Útil para el selector de puzzle al crear un post.

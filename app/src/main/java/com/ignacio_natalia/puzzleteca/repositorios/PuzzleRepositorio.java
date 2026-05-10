@@ -25,6 +25,10 @@ public class PuzzleRepositorio {
         api.obtenerPuzzles("Bearer " + token, estado).enqueue(callback);
     }
 
+    public void obtenerMejorTiempo(String token, Callback<Integer> callback) {
+        api.obtenerMejorTiempo("Bearer " + token).enqueue(callback);
+    }
+
     public void misPuzzles(String token, Integer idUsuario, Callback<List<Puzzle>> callback) {
         api.misPuzzles("Bearer " + token, idUsuario).enqueue(callback);
     }

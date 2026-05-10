@@ -19,9 +19,12 @@ import androidx.fragment.app.Fragment;
 
 import com.ignacio_natalia.puzzleteca.R;
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.AppPrincipal;
+import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos.EditarPerfil;
+import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos.MisPuzzles;
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos.chats.MisChats;
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.puzzles.RegistrarPuzzle;
 import com.ignacio_natalia.puzzleteca.pantallas.login.LoginActivity;
+import com.ignacio_natalia.puzzleteca.repositorios.PuzzleRepositorio;
 import com.ignacio_natalia.puzzleteca.repositorios.UsuarioRepositorio;
 import com.ignacio_natalia.puzzleteca.utilidades.GestorSesion;
 import com.ignacio_natalia.puzzleteca.utilidades.UtilidadesSesion;
@@ -42,6 +45,7 @@ public class PanelUsuario extends Fragment {
                              @Nullable Bundle instanciaEstadoGuardado) {
 
         repositorio = new UsuarioRepositorio();
+        PuzzleRepositorio puzzleRepositorio = new PuzzleRepositorio();
 
         ScrollView scroll = new ScrollView(requireContext());
         scroll.setFillViewport(true);
@@ -89,8 +93,25 @@ public class PanelUsuario extends Fragment {
         fila.setOrientation(LinearLayout.HORIZONTAL);
         fila.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-        fila.addView(crearBotonAccion("🧩", "Mis Puzzles"));
-        fila.addView(crearBotonAccion("✏️", "Editar Perfil"));
+
+        LinearLayout botonMisPuzzles = crearBotonAccion("🧩", "Mis Puzzles");
+        botonMisPuzzles.setOnClickListener(vista -> {
+            requireActivity().getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(AppPrincipal.FRAGMENTO_ID, new MisPuzzles())
+                    .addToBackStack(null).commit();
+        });
+
+        LinearLayout botonEditarPerfil = crearBotonAccion("✏️", "Editar Perfil");
+        botonEditarPerfil.setOnClickListener(vista -> {
+            requireActivity().getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(AppPrincipal.FRAGMENTO_ID, new EditarPerfil())
+                    .addToBackStack(null).commit();
+        });
+
+        fila.addView(botonMisPuzzles);
+        fila.addView(botonEditarPerfil);
         layout.addView(fila);
         espacio(layout, 16);
 
@@ -120,7 +141,7 @@ public class PanelUsuario extends Fragment {
         informacionRanking.addView(textoMejorTiempo);
 
         TextView textoTiempo = new TextView(requireContext());
-        textoTiempo.setText("02:15");
+        textoTiempo.setText("--:--");
         textoTiempo.setTextSize(14);
         textoTiempo.setTypeface(null, Typeface.BOLD);
         textoTiempo.setTextColor(Color.WHITE);
@@ -135,6 +156,31 @@ public class PanelUsuario extends Fragment {
         tarjetaRanking.addView(textoTiempo);
         layout.addView(tarjetaRanking);
         espacio(layout, 24);
+
+        // Cargar el mejor tiempo real desde el backend
+        String token = GestorSesion.obtenerToken(requireContext());
+        puzzleRepositorio.obtenerMejorTiempo(token, new retrofit2.Callback<Integer>() {
+            @Override
+            public void onResponse(@NonNull retrofit2.Call<Integer> call,
+                                   @NonNull retrofit2.Response<Integer> response) {
+                if (!isAdded()) return;
+                requireActivity().runOnUiThread(() -> {
+                    if (response.isSuccessful() && response.body() != null) {
+                        int segundos = response.body();
+                        int mm = segundos / 60;
+                        int ss = segundos % 60;
+                        textoTiempo.setText(String.format("%02d:%02d", mm, ss));
+                    } else {
+                        textoTiempo.setText("N/A");
+                    }
+                });
+            }
+            @Override
+            public void onFailure(@NonNull retrofit2.Call<Integer> call, @NonNull Throwable t) {
+                if (!isAdded()) return;
+                requireActivity().runOnUiThread(() -> textoTiempo.setText("--:--"));
+            }
+        });
 
         // ── Botón Crear Nuevo Puzzle ──
         Button botonCrearPuzzle = crearBotonPrimario("➕ Crear Nuevo Puzzle", "#F06292");
