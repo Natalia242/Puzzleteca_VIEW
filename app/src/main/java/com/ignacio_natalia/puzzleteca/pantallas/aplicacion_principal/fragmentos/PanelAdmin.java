@@ -238,25 +238,6 @@ public class PanelAdmin extends Fragment {
 
         espacio(layout, 10);
 
-        // ── ELIMINAR CUENTA (BOTÓN SECUNDARIO) ──
-        Button btnEliminarCuenta = crearBotonSecundario("Eliminar cuenta");
-
-        btnEliminarCuenta.setOnClickListener(vista -> {
-
-            new AlertDialog.Builder(requireContext())
-                    .setTitle("Eliminar cuenta")
-                    .setMessage("Esta acción es irreversible. ¿Deseas continuar?")
-                    .setPositiveButton("Eliminar", (dialog, which) -> {
-
-                        UtilidadesSesion.eliminarCuenta(requireContext(), null);
-
-                    })
-                    .setNegativeButton("Cancelar", null)
-                    .show();
-        });
-
-        layout.addView(btnEliminarCuenta);
-
         scroll.addView(layout);
         return scroll;
     }

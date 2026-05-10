@@ -18,6 +18,7 @@ import androidx.fragment.app.Fragment;
 import com.ignacio_natalia.puzzleteca.modelos.ActualizarUsuarioRequest;
 import com.ignacio_natalia.puzzleteca.repositorios.UsuarioRepositorio;
 import com.ignacio_natalia.puzzleteca.utilidades.GestorSesion;
+import com.ignacio_natalia.puzzleteca.utilidades.UtilidadesSesion;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -125,6 +126,24 @@ public class EditarPerfil extends Fragment {
             requireActivity().getSupportFragmentManager().popBackStack();
         });
         layout.addView(botonCancelar);
+
+        Button btnEliminarCuenta = crearBotonSecundario("Eliminar cuenta");
+
+        btnEliminarCuenta.setOnClickListener(vista -> {
+
+            new AlertDialog.Builder(requireContext())
+                    .setTitle("Eliminar cuenta")
+                    .setMessage("Esta acción es irreversible. ¿Deseas continuar?")
+                    .setPositiveButton("Eliminar", (dialog, which) -> {
+
+                        UtilidadesSesion.eliminarCuenta(requireContext(), null);
+
+                    })
+                    .setNegativeButton("Cancelar", null)
+                    .show();
+        });
+
+        layout.addView(btnEliminarCuenta);
 
         scroll.addView(layout);
         return scroll;
