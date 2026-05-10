@@ -1,5 +1,6 @@
 package com.ignacio_natalia.puzzleteca.red.clientes;
 
+import com.ignacio_natalia.puzzleteca.modelos.ActualizarUsuarioRequest;
 import com.ignacio_natalia.puzzleteca.modelos.ConfirmarCambioContrasenaRequest;
 import com.ignacio_natalia.puzzleteca.modelos.LoginRequest;
 import com.ignacio_natalia.puzzleteca.modelos.LoginRespuesta;
@@ -38,5 +39,8 @@ public interface ServiciosAPI {
 
     @PUT("usuarios/cambiarEstado")
     Call<Void> cambiarEstado(@Query("email") String email, @Query("tipo") String tipo);
+
+    @PUT("usuarios/actualizarUsuario")
+    Call<Void> actualizarUsuario(@Body ActualizarUsuarioRequest request);
 
 }

@@ -1,5 +1,6 @@
 package com.ignacio_natalia.puzzleteca.repositorios;
 
+import com.ignacio_natalia.puzzleteca.modelos.ActualizarUsuarioRequest;
 import com.ignacio_natalia.puzzleteca.modelos.ConfirmarCambioContrasenaRequest;
 import com.ignacio_natalia.puzzleteca.modelos.LoginRequest;
 import com.ignacio_natalia.puzzleteca.modelos.LoginRespuesta;
@@ -56,6 +57,11 @@ public class UsuarioRepositorio {
 
     public void actualizarEstado(String email, String tipoUsuario, Callback<Void> callback) {
         Call<Void> call = servicioApi.cambiarEstado(email, tipoUsuario);
+        call.enqueue(callback);
+    }
+
+    public void actualizarPerfil(ActualizarUsuarioRequest request, Callback<Void> callback) {
+        Call<Void> call = servicioApi.actualizarUsuario(request);
         call.enqueue(callback);
     }
 
