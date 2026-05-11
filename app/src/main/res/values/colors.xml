@@ -8,11 +8,11 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    <color name="pink">#DA90B2</color>
-    <color name="dark_pink">#F06292</color>
-    <color name="jungle_green">#26A69A</color>
-    <color name="yellow">#FFCFA8</color>
-    <color name="blue">#6BA3A3</color>
-    <color name="green">#CBEC9C</color>
-    <color name="surfie_green">#008577</color>
+    <color name="pink">#FFDA90B2</color>
+    <color name="dark_pink">#FFF06292</color>
+    <color name="jungle_green">#FF26A69A</color>
+    <color name="peach">#FFFFCFA8</color>
+    <color name="teal">#FF6BA3A3</color>
+    <color name="green">#FFCBEC9C</color>
+    <color name="surfie_green">#FF008577</color>
 </resources>
