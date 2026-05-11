@@ -17,15 +17,17 @@ import retrofit2.Response;
 
 public class PuzzleViewModel extends ViewModel {
 
-    private final MutableLiveData<List<Puzzle>> puzzles    = new MutableLiveData<>();
+    private final MutableLiveData<List<Puzzle>> puzzles      = new MutableLiveData<>();
     private final MutableLiveData<Boolean>      puzzleCreado = new MutableLiveData<>();
-    private final MutableLiveData<String>       error      = new MutableLiveData<>();
+    private final MutableLiveData<Boolean>      puzzleActualizado = new MutableLiveData<>();
+    private final MutableLiveData<String>       error        = new MutableLiveData<>();
 
     private final PuzzleRepositorio repositorio = new PuzzleRepositorio();
 
-    public LiveData<List<Puzzle>> getPuzzles()      { return puzzles; }
-    public LiveData<Boolean>      getPuzzleCreado() { return puzzleCreado; }
-    public LiveData<String>       getError()        { return error; }
+    public LiveData<List<Puzzle>> getPuzzles()          { return puzzles; }
+    public LiveData<Boolean>      getPuzzleCreado()     { return puzzleCreado; }
+    public LiveData<Boolean>      getPuzzleActualizado(){ return puzzleActualizado; }
+    public LiveData<String>       getError()            { return error; }
 
     public void cargarPuzzles(String token) {
         repositorio.obtenerPuzzles(token, "Publico", new Callback<List<Puzzle>>() {
@@ -76,5 +78,53 @@ public class PuzzleViewModel extends ViewModel {
     public void recargarPuzzles(String token) {
         puzzles.setValue(null);
         cargarPuzzles(token);
+    }
+
+    /**
+     * Actualiza un único atributo del puzzle en el backend.
+     * Los errores de red se publican en getError().
+     */
+    public void actualizarPuzzle(String token, int idUsuario, int idPuzzle,
+                                 String atributo, String cambio) {
+        repositorio.actualizarPuzzle(token, idUsuario, idPuzzle, atributo, cambio,
+                new retrofit2.Callback<Void>() {
+                    @Override
+                    public void onResponse(@androidx.annotation.NonNull retrofit2.Call<Void> call,
+                                           @androidx.annotation.NonNull retrofit2.Response<Void> response) {
+                        if (!response.isSuccessful()) {
+                            error.setValue("Error " + response.code()
+                                    + " al actualizar " + atributo);
+                        }
+                    }
+                    @Override
+                    public void onFailure(@androidx.annotation.NonNull retrofit2.Call<Void> call,
+                                          @androidx.annotation.NonNull Throwable t) {
+                        error.setValue("Fallo de red al actualizar " + atributo + ": " + t.getMessage());
+                    }
+                });
+    }
+
+    /** Cambia el estado del puzzle (Publico/Privado) usando el endpoint específico. */
+    public void cambiarEstadoPuzzle(int idUsuario, int idPuzzle, String nuevoEstado) {
+        repositorio.cambiarEstadoPuzzle(idUsuario, idPuzzle, nuevoEstado,
+                new retrofit2.Callback<Void>() {
+                    @Override
+                    public void onResponse(@androidx.annotation.NonNull retrofit2.Call<Void> call,
+                                           @androidx.annotation.NonNull retrofit2.Response<Void> response) {
+                        if (!response.isSuccessful()) {
+                            error.setValue("Error " + response.code() + " al cambiar el estado");
+                        }
+                    }
+                    @Override
+                    public void onFailure(@androidx.annotation.NonNull retrofit2.Call<Void> call,
+                                          @androidx.annotation.NonNull Throwable t) {
+                        error.setValue("Fallo de red al cambiar estado: " + t.getMessage());
+                    }
+                });
+    }
+
+    /** Llama a este método para indicar que todas las actualizaciones se han enviado. */
+    public void notificarActualizacion() {
+        puzzleActualizado.setValue(true);
     }
 }
