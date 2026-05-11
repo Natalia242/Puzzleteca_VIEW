@@ -17,6 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
+import com.bumptech.glide.Glide;
 import com.ignacio_natalia.puzzleteca.modelos.Puzzle;
 import com.ignacio_natalia.puzzleteca.repositorios.RankingRepositorio;
 import com.ignacio_natalia.puzzleteca.utilidades.GestorSesion;
@@ -62,8 +63,14 @@ public class PuzzleDialogFragment extends DialogFragment {
         imagen.setLayoutParams(new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, dp(200)));
         imagen.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        if (puzzle.getBitmap() != null) {
-            imagen.setImageBitmap(puzzle.getBitmap());
+
+        String url = puzzle.getImagenUrl();
+        if (url != null && !url.isEmpty()) {
+            Glide.with(this)
+                    .load(url)
+                    .placeholder(android.R.drawable.ic_menu_gallery)
+                    .error(android.R.drawable.ic_menu_gallery)
+                    .into(imagen);
         } else {
             imagen.setImageResource(android.R.drawable.ic_menu_gallery);
         }
