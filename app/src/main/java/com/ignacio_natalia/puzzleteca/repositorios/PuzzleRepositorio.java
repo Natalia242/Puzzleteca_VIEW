@@ -62,6 +62,15 @@ public class PuzzleRepositorio {
         }
     }
 
+    public void actualizarPuzzle(String token, int idUsuario, int idPuzzle,
+                                 String atributo, String cambio,
+                                 retrofit2.Callback<Void> callback) {
+        com.ignacio_natalia.puzzleteca.modelos.ActualizarPuzzleRequest dto =
+                new com.ignacio_natalia.puzzleteca.modelos.ActualizarPuzzleRequest(
+                        idUsuario, idPuzzle, atributo, cambio);
+        api.actualizarPuzzle("Bearer " + token, dto).enqueue(callback);
+    }
+
     public void cambiarEstadoPuzzle(Integer id_usuario, Integer id_puzzle, String tipo,
                                     Callback<Void> callback) {
         api.cambiarEstadoPuzzle(id_usuario, id_puzzle, tipo).enqueue(callback);

@@ -6,7 +6,10 @@ import java.util.List;
 
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
+import com.ignacio_natalia.puzzleteca.modelos.ActualizarPuzzleRequest;
+
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Multipart;
@@ -74,6 +77,13 @@ public interface ServiciosApiPuzzles {
             @Part("color")        RequestBody color,
             @Part("estado")       RequestBody estado,
             @Part("idUsuario")    RequestBody idUsuario
+    );
+
+    /** Actualiza un atributo del puzzle (titulo, autor, descripcion, piezas, tiempo, dificultad, color, estado) */
+    @PUT("puzzles/actualizarPuzzle")
+    Call<Void> actualizarPuzzle(
+            @Header("Authorization") String token,
+            @Body ActualizarPuzzleRequest dto
     );
 
     @PUT("puzzles/actualizarEstado")

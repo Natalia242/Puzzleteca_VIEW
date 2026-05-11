@@ -7,15 +7,15 @@ import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 
 import android.view.*;
 import android.widget.*;
 
 import com.ignacio_natalia.puzzleteca.modelos.Puzzle;
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.AppPrincipal;
-import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.puzzles.PuzzleViewModel;
+import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.puzzles.ActualizarPuzzle;
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.puzzles.RegistrarPuzzle;
+import com.ignacio_natalia.puzzleteca.repositorios.PuzzleRepositorio;
 import com.ignacio_natalia.puzzleteca.utilidades.GestorSesion;
 
 import java.util.List;
@@ -54,42 +54,59 @@ public class MisPuzzles extends Fragment {
 
     private void cargarDatos() {
 
-        PuzzleViewModel vm = new ViewModelProvider(requireActivity()).get(PuzzleViewModel.class);
         String token = GestorSesion.obtenerToken(requireContext());
         int idUsuario = GestorSesion.obtenerId_usuario(requireContext());
 
-        vm.getPuzzles().observe(getViewLifecycleOwner(), lista -> {
-            mostrarMisPuzzles(lista, idUsuario);
+        PuzzleRepositorio repositorio = new PuzzleRepositorio();
+        repositorio.misPuzzles(token, idUsuario, new retrofit2.Callback<java.util.List<com.ignacio_natalia.puzzleteca.modelos.Puzzle>>() {
+            @Override
+            public void onResponse(retrofit2.Call<java.util.List<com.ignacio_natalia.puzzleteca.modelos.Puzzle>> call,
+                                   retrofit2.Response<java.util.List<com.ignacio_natalia.puzzleteca.modelos.Puzzle>> response) {
+                if (!isAdded()) return;
+                requireActivity().runOnUiThread(() -> {
+                    if (response.isSuccessful() && response.body() != null) {
+                        mostrarMisPuzzles(response.body(), idUsuario);
+                    } else if (response.code() == 404) {
+                        mostrarMisPuzzles(new java.util.ArrayList<>(), idUsuario);
+                    } else {
+                        Toast.makeText(getContext(), "Error " + response.code() + " al cargar tus puzzles", Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+            @Override
+            public void onFailure(retrofit2.Call<java.util.List<com.ignacio_natalia.puzzleteca.modelos.Puzzle>> call, Throwable t) {
+                if (!isAdded()) return;
+                requireActivity().runOnUiThread(() ->
+                        Toast.makeText(getContext(), "Fallo de red: " + t.getMessage(), Toast.LENGTH_LONG).show());
+            }
         });
-
-        vm.getError().observe(getViewLifecycleOwner(), msg ->
-                Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show());
-
-        vm.cargarPuzzles(token);
     }
 
     private void mostrarMisPuzzles(List<Puzzle> lista, int idUsuario) {
 
         contenedor.removeAllViews();
 
-        // Elimina vistas extra (botones, etc.)
         if (root.getChildCount() > 1) {
             root.removeViews(1, root.getChildCount() - 1);
         }
 
-        boolean hayPuzzles = false;
-
-        for (Puzzle p : lista) {
-            if (p.getIdUsuario() != null && p.getIdUsuario() == idUsuario) {
-                contenedor.addView(crearTarjeta(p));
-                hayPuzzles = true;
-            }
-        }
-
-        if (!hayPuzzles) {
+        if (lista == null || lista.isEmpty()) {
             mostrarVistaVacia();
         } else {
-            mostrarBotonFlotante();
+            List<Puzzle> visibles = new java.util.ArrayList<>();
+            for (Puzzle p : lista) {
+                if (p.getEstado() != Puzzle.Estados.Bloqueado) {
+                    visibles.add(p);
+                }
+            }
+            if (visibles.isEmpty()) {
+                mostrarVistaVacia();
+            } else {
+                for (Puzzle p : visibles) {
+                    contenedor.addView(crearTarjeta(p));
+                }
+                mostrarBotonFlotante();
+            }
         }
     }
 
@@ -228,13 +245,31 @@ public class MisPuzzles extends Fragment {
         fondo.setStroke(3, Color.parseColor("#A5D6A7"));
         tarjeta.setBackground(fondo);
 
+        // Fila: título + icono editar
+        LinearLayout filaTitulo = new LinearLayout(getContext());
+        filaTitulo.setOrientation(LinearLayout.HORIZONTAL);
+        filaTitulo.setGravity(Gravity.CENTER_VERTICAL);
+        filaTitulo.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+
         // Título
         TextView titulo = new TextView(getContext());
         titulo.setText(puzzle.getTitulo());
         titulo.setTextSize(17);
         titulo.setTypeface(null, Typeface.BOLD);
         titulo.setTextColor(Color.parseColor("#37474F"));
-        tarjeta.addView(titulo);
+        titulo.setLayoutParams(new LinearLayout.LayoutParams(
+                0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
+
+        // Icono ✏️ editar
+        TextView iconoEditar = new TextView(getContext());
+        iconoEditar.setText("✏️");
+        iconoEditar.setTextSize(16);
+        iconoEditar.setPadding(8, 0, 0, 0);
+
+        filaTitulo.addView(titulo);
+        filaTitulo.addView(iconoEditar);
+        tarjeta.addView(filaTitulo);
 
         // Descripción
         TextView descripcion = new TextView(getContext());
@@ -270,8 +305,31 @@ public class MisPuzzles extends Fragment {
         estado.setTextColor(Color.parseColor("#EF5350"));
 
         fila.addView(estado);
-
         tarjeta.addView(fila);
+
+        // Hint "Toca para editar"
+        TextView hint = new TextView(getContext());
+        hint.setText("Toca para editar");
+        hint.setTextSize(11);
+        hint.setTextColor(Color.parseColor("#BDBDBD"));
+        LinearLayout.LayoutParams hintParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        hintParams.setMargins(0, 8, 0, 0);
+        hint.setLayoutParams(hintParams);
+        tarjeta.addView(hint);
+
+        // Click → navegar a ActualizarPuzzle
+        tarjeta.setClickable(true);
+        tarjeta.setFocusable(true);
+        tarjeta.setOnClickListener(v -> {
+            Fragment fragment = ActualizarPuzzle.newInstance(puzzle);
+            requireActivity()
+                    .getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(AppPrincipal.FRAGMENTO_ID, fragment)
+                    .addToBackStack(null)
+                    .commit();
+        });
 
         return tarjeta;
     }
