@@ -2,15 +2,14 @@ package com.ignacio_natalia.puzzleteca.modelos;
 
 import android.graphics.Bitmap;
 
-public class Puzzle {
+import androidx.annotation.NonNull;
 
-    public enum Estados {
-        Publico, Privado, Bloqueado
-    }
+import java.io.Serializable;
 
-    public enum Dificultades {
-        Facil, Media, Dificil, Extremo
-    }
+public class Puzzle implements Serializable {
+
+    public enum Estados {Publico, Privado, Bloqueado}
+    public enum Dificultades {Facil, Media, Dificil, Extremo}
 
     private Integer id;
     private String titulo;
@@ -24,11 +23,11 @@ public class Puzzle {
     private Integer idUsuario;
     private Estados estado;
     private String imagenBase64;
-    private Bitmap bitmap;
-
+    /** URL pública de la imagen (nueva estrategia: fichero en servidor, no base64) */
+    private String imagenUrl;
+    private transient Bitmap bitmap;
 
     // ---------- GETTERS ----------
-
     public Integer getId() { return id; }
 
     public String getTitulo() { return titulo; }
@@ -42,11 +41,13 @@ public class Puzzle {
     public Integer getIdUsuario() { return idUsuario; }
     public Estados getEstado() { return estado; }
     public String getImagenBase64() { return imagenBase64; }
+    public String getImagenUrl() { return imagenUrl; }
     public Bitmap getBitmap() { return bitmap; }
     public boolean isPublico() {
         return estado == Estados.Publico;
     }
 
+    // ---------- SETTERS ----------
     public void setId(Integer id) { this.id = id; }
 
     public void setTitulo(String titulo) { this.titulo = titulo; }
@@ -60,9 +61,9 @@ public class Puzzle {
     public void setValoracion(Integer valoracion) { this.valoracion = valoracion; }
     public void setIdUsuario(Integer idUsuario) { this.idUsuario = idUsuario; }
     public void setEstado(Estados estado) { this.estado = estado; }
-    public void setImagenBase64(String imagenBase64) { this.imagenBase64 = imagenBase64; }
-    public void setBitmap(Bitmap bitmap) { this.bitmap = bitmap; }
+    public void setImagenUrl(String imagenUrl) { this.imagenUrl = imagenUrl; }
 
+    @NonNull
     @Override
     public String toString() {
         return "Puzzle{" +
@@ -77,8 +78,7 @@ public class Puzzle {
                 ", valoracion=" + valoracion +
                 ", idUsuario=" + idUsuario +
                 ", estado=" + estado +
-                ", imagenBase64='" + imagenBase64 + '\'' +
-                ", bitmap=" + bitmap +
                 '}';
     }
+
 }

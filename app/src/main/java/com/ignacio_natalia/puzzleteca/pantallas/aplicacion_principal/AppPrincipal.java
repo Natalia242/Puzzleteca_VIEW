@@ -20,6 +20,7 @@ import android.widget.*;
 import com.ignacio_natalia.puzzleteca.R;
 import com.ignacio_natalia.puzzleteca.modelos.Puzzle;
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos.MisPuzzles;
+import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos.PuzzleDialogFragment;
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos.foro.Foro;
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos.PanelAdmin;
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos.PanelUsuario;
@@ -43,6 +44,7 @@ public class AppPrincipal extends AppCompatActivity {
     private LinearLayout botonInicio, botonPuzzles, botonRanking, botonForo, botonPerfil;
     // Indicador deslizante
     private View indicadorActivo;
+    PuzzleViewModel puzzleViewModel;
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -124,10 +126,10 @@ public class AppPrincipal extends AppCompatActivity {
         root.addView(construirBarraNavegacion());
 
         setContentView(root);
-        tituloPantalla.setImageResource(R.drawable.titulo_inicio);
+        tituloPantalla.setImageResource(R.drawable.titulo_inicio_recortado);
 
         // ── ViewModel + carga ──
-        PuzzleViewModel puzzleViewModel = new ViewModelProvider(this).get(PuzzleViewModel.class);
+        puzzleViewModel = new ViewModelProvider(this).get(PuzzleViewModel.class);
         String token = GestorSesion.obtenerToken(this);
         puzzleViewModel.getPuzzles().observe(this, this::mostrarPuzzles);
         puzzleViewModel.getError().observe(this, msg ->
@@ -136,6 +138,15 @@ public class AppPrincipal extends AppCompatActivity {
 
         // Seleccionar Inicio por defecto tras layout
         root.post(() -> seleccionarTab(botonInicio, null));
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (puzzleViewModel != null) {
+            String token = GestorSesion.obtenerToken(this);
+            puzzleViewModel.cargarPuzzles(token);
+        }
     }
 
     // ── Navegación ────────────────────────────────────────────────────────────
@@ -147,6 +158,14 @@ public class AppPrincipal extends AppCompatActivity {
 
     private void actualizarTituloPantalla(int drawableRes) {
         tituloPantalla.setImageResource(drawableRes);
+    }
+
+    public void ocultarTitulo() {
+        tituloPantalla.setVisibility(View.GONE);
+    }
+
+    public void mostrarTitulo() {
+        tituloPantalla.setVisibility(View.VISIBLE);
     }
 
     private void mostrarFragmento(Fragment fragmento) {
@@ -162,7 +181,7 @@ public class AppPrincipal extends AppCompatActivity {
 
     // ── Nav bar ───────────────────────────────────────────────────────────────
     private LinearLayout construirBarraNavegacion() {
-        
+
         // Contenedor raíz vertical (indicador + barra)
         LinearLayout root = new LinearLayout(this);
         root.setOrientation(LinearLayout.VERTICAL);
@@ -245,11 +264,11 @@ public class AppPrincipal extends AppCompatActivity {
         root.addView(barraNavegacion);
 
         return root;
-        
+
     }
 
     private LinearLayout crearTab(Drawable icono, String etiqueta) {
-        
+
         LinearLayout tab = new LinearLayout(this);
         tab.setOrientation(LinearLayout.VERTICAL);
         tab.setGravity(Gravity.CENTER);
@@ -271,18 +290,18 @@ public class AppPrincipal extends AppCompatActivity {
         texto.setTextSize(10f);
         texto.setTextColor(Color.parseColor("#90A4AE"));
         texto.setGravity(Gravity.CENTER);
-        
+
         LinearLayout.LayoutParams parametrosTexto = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        
+
         parametrosTexto.topMargin = dpToPx(3);
         texto.setLayoutParams(parametrosTexto);
 
         tab.addView(imagen);
         tab.addView(texto);
-        
+
         return tab;
-        
+
     }
 
     // ── Lógica de selección de tab ────────────────────────────────────────────
@@ -294,36 +313,36 @@ public class AppPrincipal extends AppCompatActivity {
     }
 
     private void marcarTab(LinearLayout tab) {
-        
+
         int colorActivo   = Color.parseColor("#F06292");
         int colorInactivo = Color.parseColor("#90A4AE");
 
         for (LinearLayout boton : new LinearLayout[] {botonInicio, botonPuzzles, botonForo, botonRanking, botonPerfil}) {
-            
+
             boolean activo = boton == tab;
 
             if (boton.getChildAt(0) instanceof ImageView) {
-                
+
                 ImageView imagen = (ImageView) boton.getChildAt(0);
-                
+
                 if (boton == botonRanking) {
-                    
+
                     if (activo) {
                         imagen.clearColorFilter();
                     } else {
                         imagen.setColorFilter(Color.parseColor("#90A4AE"));
                     }
-                    
+
                 } else {
                     imagen.setColorFilter(activo ? colorActivo : colorInactivo);
                 }
-                
+
                 imagen.animate()
                         .scaleX(activo ? 1.15f : 1f)
                         .scaleY(activo ? 1.15f : 1f)
                         .setDuration(180)
                         .start();
-                
+
             }
 
             if (boton.getChildAt(1) instanceof TextView) {
@@ -335,7 +354,7 @@ public class AppPrincipal extends AppCompatActivity {
     }
 
     private void animarIndicador(LinearLayout tab) {
-        
+
         tab.post(() -> {
             //int[] tabs = {0, 1, 2, 3, 4};  // 5 tabs
             int indiceTab = getTabIndex(tab);
@@ -349,7 +368,7 @@ public class AppPrincipal extends AppCompatActivity {
                     .setInterpolator(new DecelerateInterpolator())
                     .start();
         });
-        
+
     }
 
     private int getTabIndex(LinearLayout tab) {
@@ -409,9 +428,7 @@ public class AppPrincipal extends AppCompatActivity {
         contenedorPuzzles.removeAllViews();
 
         for (Puzzle p : lista) {
-            if (p.isPublico()) {
-                contenedorPuzzles.addView(crearTarjeta(p));
-            }
+            contenedorPuzzles.addView(crearTarjeta(p));
         }
 
     }
@@ -464,6 +481,12 @@ public class AppPrincipal extends AppCompatActivity {
 
         fila.addView(textoDificultad);
         tarjeta.addView(fila);
+
+        // Abrir dialog de detalle y valoración al pulsar la tarjeta
+        tarjeta.setOnClickListener(v ->
+                PuzzleDialogFragment.newInstance(puzzle)
+                        .show(getSupportFragmentManager(), "puzzle_dialog")
+        );
 
         return tarjeta;
 

@@ -1,21 +1,18 @@
 package com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos.foro;
 
 import android.app.Application;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.util.Base64;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.ignacio_natalia.puzzleteca.R;
-import com.ignacio_natalia.puzzleteca.modelos.Comentario;
-import com.ignacio_natalia.puzzleteca.modelos.Puzzle;
-import com.ignacio_natalia.puzzleteca.repositorios.ComentarioRepositorio;
-import com.ignacio_natalia.puzzleteca.repositorios.PuzzleRepositorio;
+import com.ignacio_natalia.puzzleteca.modelos.Post;
+import com.ignacio_natalia.puzzleteca.red.posts.PaginacionPost;
+import com.ignacio_natalia.puzzleteca.repositorios.PostRepositorio;
 
-import java.util.HashMap;
+import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -23,142 +20,154 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+/**
+ * ViewModel exclusivo del Foro de Posts.
+ * No tiene ninguna dependencia con Puzzle ni con comentarios de puzzles.
+ *
+ * Soporta paginación infinita: cada llamada a cargarMasPosts()
+ * añade la siguiente página a la lista acumulada.
+ */
 public class ForoViewModel extends AndroidViewModel {
 
-    private final MutableLiveData<List<Puzzle>> puzzles = new MutableLiveData<>();
-    private final MutableLiveData<String> error = new MutableLiveData<>();
+    private final MutableLiveData<List<Post>> posts         = new MutableLiveData<>(new ArrayList<>());
+    private final MutableLiveData<Boolean>    cargando      = new MutableLiveData<>(false);
+    private final MutableLiveData<String>     error         = new MutableLiveData<>();
+    private final MutableLiveData<Boolean>    postCreado    = new MutableLiveData<>();
+    private final MutableLiveData<Boolean>    hayMasPaginas = new MutableLiveData<>(true);
 
-    private final PuzzleRepositorio repositorio = new PuzzleRepositorio();
-    private final ComentarioRepositorio comentarioRepositorio = new ComentarioRepositorio();
+    private int paginaActual = 0;
+    private static final int TAMANNO_PAGINA = 20;
 
-    // ===================== COMENTARIOS POR PUZZLE =====================
-    private final Map<Integer, MutableLiveData<List<Comentario>>> comentariosPorPuzzle = new HashMap<>();
+    private final PostRepositorio repositorio = new PostRepositorio();
 
-    public ForoViewModel(Application application) {
+    public ForoViewModel(@NonNull Application application) {
         super(application);
     }
 
-    public LiveData<List<Puzzle>> getPuzzles() {
-        return puzzles;
+    public LiveData<List<Post>> getPosts()       { return posts; }
+    public LiveData<Boolean> getCargando()       { return cargando; }
+    public LiveData<String> getError()           { return error; }
+    public LiveData<Boolean> getPostCreado()     { return postCreado; }
+    public LiveData<Boolean> getHayMasPaginas()  { return hayMasPaginas; }
+
+    /** Recarga desde cero (refresh) */
+    public void cargarPosts(String token) {
+        paginaActual = 0;
+        posts.setValue(new ArrayList<>());
+        hayMasPaginas.setValue(true);
+        fetchPagina(token, 0);
     }
 
-    public LiveData<String> getError() {
-        return error;
+    /** Carga la siguiente página (scroll infinito) */
+    public void cargarMasPosts(String token) {
+        Boolean hayMas = hayMasPaginas.getValue();
+        Boolean estaCargando = cargando.getValue();
+        if (Boolean.FALSE.equals(hayMas) || Boolean.TRUE.equals(estaCargando)) return;
+        fetchPagina(token, paginaActual);
     }
 
-    public LiveData<List<Comentario>> getComentariosPorPuzzle(Integer idPuzzle) {
-        if (!comentariosPorPuzzle.containsKey(idPuzzle)) {
-            comentariosPorPuzzle.put(idPuzzle, new MutableLiveData<>());
-        }
-        return comentariosPorPuzzle.get(idPuzzle);
-    }
-
-    public void cargarComentarios(String token, Integer idPuzzle) {
-
-        comentarioRepositorio.obtenerComentarios(token, idPuzzle, new Callback<List<Comentario>>() {
+    private void fetchPagina(String token, int pagina) {
+        cargando.setValue(true);
+        repositorio.obtenerFeed(token, pagina, TAMANNO_PAGINA, new Callback<PaginacionPost>() {
             @Override
-            public void onResponse(Call<List<Comentario>> call, Response<List<Comentario>> response) {
-
+            public void onResponse(@NonNull Call<PaginacionPost> call,
+                                   @NonNull Response<PaginacionPost> response) {
+                cargando.setValue(false);
                 if (response.isSuccessful() && response.body() != null) {
-
-                    if (!comentariosPorPuzzle.containsKey(idPuzzle)) {
-                        comentariosPorPuzzle.put(idPuzzle, new MutableLiveData<>());
-                    }
-
-                    comentariosPorPuzzle.get(idPuzzle).setValue(response.body());
-
+                    PaginacionPost page = response.body();
+                    List<Post> actuales = posts.getValue();
+                    if (actuales == null) actuales = new ArrayList<>();
+                    List<Post> nuevos = page.getContent();
+                    if (nuevos != null) actuales.addAll(nuevos);
+                    posts.setValue(actuales);
+                    hayMasPaginas.setValue(!page.isLast());
+                    paginaActual++;
+                } else if (response.code() == 404) {
+                    hayMasPaginas.setValue(false);
                 } else {
-                    error.setValue("Error " + response.code() + " al cargar comentarios");
+                    error.setValue("Error " + response.code() + " al cargar el foro");
                 }
             }
 
             @Override
-            public void onFailure(Call<List<Comentario>> call, Throwable t) {
-                error.setValue("Fallo de conexión: " + t.getMessage());
+            public void onFailure(@NonNull Call<PaginacionPost> call, @NonNull Throwable t) {
+                cargando.setValue(false);
+                error.setValue("Sin conexión: " + t.getMessage());
             }
         });
     }
 
-    public void crearComentario(Comentario comentario, String token) {
+    public void crearPost(String token, Integer idUsuario, String contenido, File imagen, String mimeType) {
+        if ((contenido == null || contenido.isBlank()) && imagen == null) {
+            error.setValue("El post debe tener texto o imagen");
+            return;
+        }
 
-        comentarioRepositorio.crearComentario(comentario, new Callback<Void>() {
+
+        cargando.setValue(true);
+        repositorio.crearPost(token, idUsuario, contenido, imagen, mimeType, new Callback<Post>() {
             @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
+            public void onResponse(@NonNull Call<Post> call,
+                                   @NonNull Response<Post> response) {
+                cargando.setValue(false);
+
+                if (response.isSuccessful() && response.body() != null) {
+
+                    List<Post> actuales = posts.getValue();
+                    if (actuales == null) actuales = new ArrayList<>();
+                    actuales.add(0, response.body());
+                    posts.setValue(actuales);
+                    postCreado.setValue(true);
+
+                } else {
+                    error.setValue("Error " + response.code() + " al crear el post");
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Post> call, @NonNull Throwable t) {
+                cargando.setValue(false);
+                error.setValue("Sin conexión: " + t.getMessage());
+            }
+        });
+    }
+
+    public void eliminarPost(String token, Integer idPost, Integer idUsuario) {
+        repositorio.eliminarPost(token, idPost, idUsuario, new Callback<Map<String, String>>() {
+            @Override
+            public void onResponse(@NonNull Call<Map<String, String>> call,
+                                   @NonNull Response<Map<String, String>> response) {
                 if (response.isSuccessful()) {
-
-                    // recargar comentarios del puzzle correspondiente
-                    cargarComentarios(token, comentario.getId_puzzle());
-
-                } else {
-                    error.setValue("Error " + response.code() + " al crear comentario");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Void> call, Throwable t) {
-                error.setValue("Fallo de conexión: " + t.getMessage());
-            }
-        });
-    }
-
-    public void cargarPuzzles(String token) {
-
-        repositorio.obtenerPuzzles(token, new Callback<>() {
-            @Override
-            public void onResponse(Call<List<Puzzle>> call, Response<List<Puzzle>> response) {
-
-                if (response.isSuccessful() && response.body() != null) {
-
-                    for (Puzzle puzzle : response.body()) {
-
-                        String base64 = puzzle.getImagenBase64();
-                        Bitmap bitmap;
-
-                        if (base64 != null && !base64.isEmpty()) {
-
-                            try {
-                                bitmap = decodarBase64(base64);
-
-                            } catch (Exception e) {
-                                bitmap = BitmapFactory.decodeResource(
-                                        getApplication().getResources(),
-                                        R.drawable.foto_predeterminada
-
-                                );
-                            }
-
-                        } else {
-                            bitmap = BitmapFactory.decodeResource(
-                                    getApplication().getResources(),
-                                    R.drawable.foto_predeterminada
-                            );
-                        }
-
-                        puzzle.setBitmap(bitmap);
+                    List<Post> actuales = posts.getValue();
+                    if (actuales != null) {
+                        actuales.removeIf(p -> p.getId().equals(idPost));
+                        posts.setValue(actuales);
                     }
-
-                    puzzles.setValue(response.body());
-
-
                 } else {
-                    error.setValue("Error " + response.code());
+                    error.setValue("Error " + response.code() + " al eliminar el post");
                 }
             }
 
             @Override
-            public void onFailure(Call<List<Puzzle>> call, Throwable t) {
-                error.setValue("Fallo de conexión: " + t.getMessage());
+            public void onFailure(@NonNull Call<Map<String, String>> call, @NonNull Throwable t) {
+                error.setValue("Sin conexión: " + t.getMessage());
             }
         });
     }
 
-    public Bitmap decodarBase64(String imagenBase64) throws Exception {
-
-        if (imagenBase64.contains(",")) {
-            imagenBase64 = imagenBase64.split(",")[1];
-        }
-
-        byte[] bytes = Base64.decode(imagenBase64, Base64.DEFAULT);
-        return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+    public void toggleLike(String token, Integer idPost, boolean liked) {
+        repositorio.toggleLike(token, idPost, liked, new Callback<Map<String, Boolean>>() {
+            @Override
+            public void onResponse(@NonNull Call<Map<String, Boolean>> call,
+                                   @NonNull Response<Map<String, Boolean>> response) {
+                if (!response.isSuccessful()) {
+                    error.setValue("Error " + response.code() + " al dar like");
+                }
+            }
+            @Override
+            public void onFailure(@NonNull Call<Map<String, Boolean>> call, @NonNull Throwable t) {
+                error.setValue("Sin conexión: " + t.getMessage());
+            }
+        });
     }
 }

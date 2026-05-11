@@ -1,5 +1,6 @@
 package com.ignacio_natalia.puzzleteca.red.clientes;
 
+import com.ignacio_natalia.puzzleteca.modelos.ActualizarUsuarioRequest;
 import com.ignacio_natalia.puzzleteca.modelos.ConfirmarCambioContrasenaRequest;
 import com.ignacio_natalia.puzzleteca.modelos.LoginRequest;
 import com.ignacio_natalia.puzzleteca.modelos.LoginRespuesta;
@@ -19,24 +20,27 @@ import retrofit2.http.Query;
 
 public interface ServiciosAPI {
 
-    @GET("listarUsuarios")
+    @GET("usuarios/listarUsuarios")
     Call<List<Usuario>> obtenerUsuarios(@Header("Authorization") String token);
 
-    @POST("login")
+    @POST("usuarios/login")
     Call<LoginRespuesta> login(@Body LoginRequest request);
 
-    @POST("registrar")
+    @POST("usuarios/registrar")
     Call<Void> crearUsuario(@Body Usuario usuario);
 
-    @POST("recuperarPassword/solicitarCodigo")
+    @POST("usuarios/recuperarPassword/solicitarCodigo")
     Call<Void> solicitarCodigo(@Body SolicitarCodigoRequest request);
 
-    @POST("recuperarPassword/confirmar")
+    @POST("usuarios/recuperarPassword/confirmar")
     Call<Void> confirmarCambioContrasena(@Body ConfirmarCambioContrasenaRequest request);
-    @DELETE("eliminarCuenta")
+    @DELETE("usuarios/eliminarCuenta")
     Call<Void> eliminarCuenta(@Query("email") String email);
 
-    @PUT("cambiarEstado")
+    @PUT("usuarios/cambiarEstado")
     Call<Void> cambiarEstado(@Query("email") String email, @Query("tipo") String tipo);
+
+    @PUT("usuarios/actualizarUsuario")
+    Call<Void> actualizarUsuario(@Body ActualizarUsuarioRequest request);
 
 }

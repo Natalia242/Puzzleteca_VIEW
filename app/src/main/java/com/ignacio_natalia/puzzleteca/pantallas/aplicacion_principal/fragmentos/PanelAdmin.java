@@ -22,6 +22,8 @@ import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos.
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos.gestionesAdministrador.puzzles.GestionPuzzles;
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos.gestionesAdministrador.usuarios.GestionUsuarios;
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.puzzles.RegistrarPuzzle;
+import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos.EditarPerfil;
+import com.ignacio_natalia.puzzleteca.repositorios.PuzzleRepositorio;
 import com.ignacio_natalia.puzzleteca.utilidades.GestorSesion;
 import com.ignacio_natalia.puzzleteca.utilidades.UtilidadesSesion;
 
@@ -77,7 +79,11 @@ public class PanelAdmin extends Fragment {
 
         LinearLayout opEditarPerfil = crearOpcion("✏️", "Editar Perfil");
         opEditarPerfil.setOnClickListener(v -> {
-            // HACER: Editar perfil
+            requireActivity().getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(AppPrincipal.FRAGMENTO_ID, new EditarPerfil())
+                    .addToBackStack(null)
+                    .commit();
         });
         layout.addView(opEditarPerfil);
 
@@ -112,12 +118,11 @@ public class PanelAdmin extends Fragment {
         columnaDerecha.setGravity(Gravity.END);
 
         TextView textoValoracion = new TextView(requireContext());
-        textoValoracion.setText("4.5");
         textoValoracion.setTextSize(13);
         textoValoracion.setTextColor(Color.parseColor("#78909C"));
 
         TextView textoTiempo = new TextView(requireContext());
-        textoTiempo.setText("02:10");
+        textoTiempo.setText("--:--");
         textoTiempo.setTextSize(13);
         textoTiempo.setTypeface(null, Typeface.BOLD);
         textoTiempo.setTextColor(Color.WHITE);
@@ -136,6 +141,32 @@ public class PanelAdmin extends Fragment {
 
         tarjetaMejorPuzzle.addView(filaMejorPuzzle);
         layout.addView(tarjetaMejorPuzzle);
+
+        // Cargar el mejor tiempo real desde el backend
+        String token = GestorSesion.obtenerToken(requireContext());
+        new PuzzleRepositorio().obtenerMejorTiempo(token, new retrofit2.Callback<Integer>() {
+            @Override
+            public void onResponse(@androidx.annotation.NonNull retrofit2.Call<Integer> call,
+                                   @androidx.annotation.NonNull retrofit2.Response<Integer> response) {
+                if (!isAdded()) return;
+                requireActivity().runOnUiThread(() -> {
+                    if (response.isSuccessful() && response.body() != null) {
+                        int segundos = response.body();
+                        int mm = segundos / 60;
+                        int ss = segundos % 60;
+                        textoTiempo.setText(String.format("%02d:%02d", mm, ss));
+                    } else {
+                        textoTiempo.setText("N/A");
+                    }
+                });
+            }
+            @Override
+            public void onFailure(@androidx.annotation.NonNull retrofit2.Call<Integer> call,
+                                  @androidx.annotation.NonNull Throwable t) {
+                if (!isAdded()) return;
+                requireActivity().runOnUiThread(() -> textoTiempo.setText("--:--"));
+            }
+        });
 
         LinearLayout opMisChats = crearOpcion("💬", "Mis Chats");
         opMisChats.setOnClickListener(vista -> {
@@ -206,25 +237,6 @@ public class PanelAdmin extends Fragment {
         layout.addView(btnCerrarSesion);
 
         espacio(layout, 10);
-
-        // ── ELIMINAR CUENTA (BOTÓN SECUNDARIO) ──
-        Button btnEliminarCuenta = crearBotonSecundario("Eliminar cuenta");
-
-        btnEliminarCuenta.setOnClickListener(vista -> {
-
-            new AlertDialog.Builder(requireContext())
-                    .setTitle("Eliminar cuenta")
-                    .setMessage("Esta acción es irreversible. ¿Deseas continuar?")
-                    .setPositiveButton("Eliminar", (dialog, which) -> {
-
-                        UtilidadesSesion.eliminarCuenta(requireContext(), null);
-
-                    })
-                    .setNegativeButton("Cancelar", null)
-                    .show();
-        });
-
-        layout.addView(btnEliminarCuenta);
 
         scroll.addView(layout);
         return scroll;
