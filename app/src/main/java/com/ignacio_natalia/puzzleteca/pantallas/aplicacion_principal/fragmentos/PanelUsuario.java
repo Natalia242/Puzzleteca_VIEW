@@ -211,17 +211,6 @@ public class PanelUsuario extends Fragment {
         layout.addView(botonCerrarSesion);
         espacio(layout, 14);
 
-        Button botonEliminarCuenta = crearBotonSecundario("🚪Eliminar Cuenta   ›");
-
-        botonEliminarCuenta.setOnClickListener(vista -> {
-
-            UtilidadesSesion.mostrarDialogoEliminarCuenta(requireContext(), () -> {
-                UtilidadesSesion.eliminarCuenta(requireContext(), null);
-            });
-        });
-
-        layout.addView(botonEliminarCuenta);
-
         scroll.addView(layout);
         return scroll;
     }
