@@ -126,7 +126,7 @@ public class AppPrincipal extends AppCompatActivity {
         root.addView(construirBarraNavegacion());
 
         setContentView(root);
-        tituloPantalla.setImageResource(R.drawable.titulo_inicio);
+        tituloPantalla.setImageResource(R.drawable.titulo_inicio_recortado);
 
         // ── ViewModel + carga ──
         puzzleViewModel = new ViewModelProvider(this).get(PuzzleViewModel.class);
@@ -158,6 +158,14 @@ public class AppPrincipal extends AppCompatActivity {
 
     private void actualizarTituloPantalla(int drawableRes) {
         tituloPantalla.setImageResource(drawableRes);
+    }
+
+    public void ocultarTitulo() {
+        tituloPantalla.setVisibility(View.GONE);
+    }
+
+    public void mostrarTitulo() {
+        tituloPantalla.setVisibility(View.VISIBLE);
     }
 
     private void mostrarFragmento(Fragment fragmento) {

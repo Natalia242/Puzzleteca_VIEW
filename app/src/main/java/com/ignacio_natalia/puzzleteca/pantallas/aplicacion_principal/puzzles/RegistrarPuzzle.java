@@ -25,6 +25,7 @@ import com.google.android.material.slider.LabelFormatter;
 import com.google.android.material.slider.Slider;
 import com.ignacio_natalia.puzzleteca.R;
 import com.ignacio_natalia.puzzleteca.modelos.Puzzle;
+import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.AppPrincipal;
 import com.ignacio_natalia.puzzleteca.utilidades.GestorSesion;
 
 import java.io.File;
@@ -339,6 +340,22 @@ public class RegistrarPuzzle extends Fragment {
                 Toast.makeText(getContext(), e, Toast.LENGTH_SHORT).show());
 
         return scroll;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        AppPrincipal activity = (AppPrincipal) requireActivity();
+        activity.ocultarTitulo();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        AppPrincipal activity = (AppPrincipal) requireActivity();
+        activity.mostrarTitulo();
     }
 
     private int calcularDificultad(int piezas, boolean color) {
