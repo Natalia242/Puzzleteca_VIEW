@@ -35,6 +35,9 @@ public class Post {
 
     @SerializedName("nombreUsuario")
     private String nombreUsuario;
+    @SerializedName("puzzle")
+    private Puzzle puzzle;
+
 
     // ---------- GETTERS ----------
     public Integer getId()             { return id; }
@@ -46,6 +49,9 @@ public class Post {
     public Integer getIdUsuario()      { return idUsuario; }
     public String getNombreUsuario()   { return nombreUsuario; }
 
+    public Puzzle getPuzzle() { return puzzle; }
+
+
     // ---------- SETTERS ----------
     public void setId(Integer id)                        { this.id = id; }
     public void setContenido(String contenido)           { this.contenido = contenido; }
@@ -55,4 +61,7 @@ public class Post {
     public void setTotalComentarios(Integer total)       { this.totalComentarios = total; }
     public void setIdUsuario(Integer idUsuario)          { this.idUsuario = idUsuario; }
     public void setNombreUsuario(String nombreUsuario)   { this.nombreUsuario = nombreUsuario; }
+
+    public void setPuzzle(Puzzle puzzle) { this.puzzle = puzzle; }
+
 }

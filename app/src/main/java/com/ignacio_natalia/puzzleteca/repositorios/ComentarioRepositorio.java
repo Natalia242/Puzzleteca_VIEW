@@ -1,34 +1,68 @@
 package com.ignacio_natalia.puzzleteca.repositorios;
 
 import com.ignacio_natalia.puzzleteca.modelos.Comentario;
-import com.ignacio_natalia.puzzleteca.modelos.Puzzle;
 import com.ignacio_natalia.puzzleteca.red.comentarios.ComentarioApi;
 import com.ignacio_natalia.puzzleteca.red.comentarios.ServicioApiComentario;
-
-import java.util.List;
+import com.ignacio_natalia.puzzleteca.utilidades.PaginacionComentarios;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 
 public class ComentarioRepositorio {
 
-    private ServicioApiComentario servicioApiComentario;
+    private final ServicioApiComentario servicioApiComentario;
 
     public ComentarioRepositorio() {
-        servicioApiComentario = ComentarioApi.getComentario().create(ServicioApiComentario.class);
+        servicioApiComentario =
+                ComentarioApi.getComentario().create(ServicioApiComentario.class);
     }
 
-    public void obtenerComentarios(String token, Integer idPuzzle, Callback<List<Comentario>> callback) {
+    public void obtenerComentariosPost(
+            String token,
+            Integer idPost,
+            int page,
+            int size,
+            Callback<PaginacionComentarios> callback
+    ) {
 
-        Call<List<Comentario>> call =
-                servicioApiComentario.obtenerComentarioPorPuzzle("Bearer " + token, idPuzzle);
+        Call<PaginacionComentarios> call =
+                servicioApiComentario.obtenerComentariosPorPost(
+                        "Bearer " + token,
+                        idPost,
+                        page,
+                        size
+                );
 
         call.enqueue(callback);
     }
 
-    public void crearComentario(Comentario comentario, Callback<Void> callback) {
-        Call<Void> call = servicioApiComentario.crearComentario(comentario);
+    public void crearComentario(
+            String token,
+            Comentario comentario,
+            Callback<Comentario> callback
+    ) {
+
+        Call<Comentario> call =
+                servicioApiComentario.crearComentario(
+                        "Bearer " + token,
+                        comentario
+                );
+
         call.enqueue(callback);
     }
 
+    public void eliminarComentario(
+            String token,
+            Integer idComentario,
+            Callback<Void> callback
+    ) {
+
+        Call<Void> call =
+                servicioApiComentario.eliminarComentario(
+                        "Bearer " + token,
+                        idComentario
+                );
+
+        call.enqueue(callback);
+    }
 }
