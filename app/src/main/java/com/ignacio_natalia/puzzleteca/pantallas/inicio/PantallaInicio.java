@@ -101,9 +101,10 @@ public class PantallaInicio extends AppCompatActivity {
         textoInvitado.setPadding(20, 30, 20, 0);
 
         textoInvitado.setOnClickListener(vista -> {
-//             Navegar a la pantalla principal
-//             Intent intent = new Intent(PantallaInicio.this, MainActivity.class);
-//             startActivity(intent);
+            com.ignacio_natalia.puzzleteca.utilidades.GestorSesion.iniciarSesionInvitado(PantallaInicio.this);
+            Intent intent = new Intent(PantallaInicio.this,
+                    com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.AppPrincipal.class);
+            startActivity(intent);
         });
 
         // Separador
