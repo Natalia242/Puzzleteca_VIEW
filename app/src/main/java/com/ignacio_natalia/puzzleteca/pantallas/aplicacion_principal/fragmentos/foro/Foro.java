@@ -19,7 +19,6 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -28,15 +27,19 @@ import com.ignacio_natalia.puzzleteca.R;
 import com.ignacio_natalia.puzzleteca.modelos.Post;
 import com.ignacio_natalia.puzzleteca.modelos.Puzzle;
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.AppPrincipal;
+import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos.PuzzleDialogFragment;
 import com.ignacio_natalia.puzzleteca.pantallas.inicio.PantallaInicio;
+import com.ignacio_natalia.puzzleteca.repositorios.PostRepositorio;
 import com.ignacio_natalia.puzzleteca.repositorios.PuzzleRepositorio;
 import com.ignacio_natalia.puzzleteca.utilidades.GestorSesion;
+import com.ignacio_natalia.puzzleteca.modelos.Comentario;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Fragment del Foro.
@@ -67,6 +70,8 @@ public class Foro extends Fragment {
 
     // ── Puzzles del usuario (para el selector) ────────────────────────────────
     private final PuzzleRepositorio puzzleRepositorio = new PuzzleRepositorio();
+
+    private final PostRepositorio postRepositorio = new PostRepositorio();
     private List<Puzzle> misPuzzles = new ArrayList<>();
 
     @Override
@@ -111,6 +116,8 @@ public class Foro extends Fragment {
                              @Nullable Bundle savedInstanceState) {
 
         viewModel = new ViewModelProvider(this).get(ForoViewModel.class);
+        boolean invitado = GestorSesion.esInvitado(requireContext());
+
 
         LinearLayout raiz = new LinearLayout(requireContext());
         raiz.setOrientation(LinearLayout.VERTICAL);
@@ -134,28 +141,30 @@ public class Foro extends Fragment {
         titulo.setLayoutParams(tituloParams);
         cabecera.addView(titulo);
 
-        boolean invitado = GestorSesion.esInvitado(requireContext());
 
         if (!invitado) {
+
             Button btnCrear = new Button(requireContext());
             btnCrear.setText("+ Post");
             btnCrear.setAllCaps(false);
             btnCrear.setTextSize(14);
             btnCrear.setTextColor(Color.WHITE);
             btnCrear.setTypeface(null, Typeface.BOLD);
+
             GradientDrawable fondoBtn = new GradientDrawable();
             fondoBtn.setColor(COLOR_PRIMARIO);
             fondoBtn.setCornerRadius(dp(50));
+
             btnCrear.setBackground(fondoBtn);
             btnCrear.setPadding(dp(20), dp(10), dp(20), dp(10));
             btnCrear.setElevation(6f);
-            btnCrear.setOnClickListener(v -> cargarMisPuzzlesYMostrarDialog());
-            cabecera.addView(btnCrear);
-        }
-        raiz.addView(cabecera);
 
-        // Banner de acceso restringido para invitados (debajo de la cabecera)
-        if (invitado) {
+            btnCrear.setOnClickListener(v -> cargarMisPuzzlesYMostrarDialog());
+
+            cabecera.addView(btnCrear);
+
+        } else {
+
             LinearLayout banner = new LinearLayout(requireContext());
             banner.setOrientation(LinearLayout.HORIZONTAL);
             banner.setGravity(Gravity.CENTER_VERTICAL);
@@ -165,25 +174,30 @@ public class Foro extends Fragment {
             fondoBanner.setColor(Color.parseColor("#FFF3E0"));
             fondoBanner.setCornerRadius(dp(12));
             fondoBanner.setStroke(dp(1), Color.parseColor("#FFCC80"));
+
             banner.setBackground(fondoBanner);
 
-            LinearLayout.LayoutParams bannerParams = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            LinearLayout.LayoutParams bannerParams =
+                    new LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.WRAP_CONTENT,
+                            LinearLayout.LayoutParams.WRAP_CONTENT);
+
             bannerParams.setMargins(dp(14), dp(4), dp(14), dp(8));
+
             banner.setLayoutParams(bannerParams);
 
             TextView textoBanner = new TextView(requireContext());
             textoBanner.setText("🔒 ");
             textoBanner.setTextSize(14);
             textoBanner.setTextColor(Color.parseColor("#E65100"));
-            textoBanner.setLayoutParams(new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+
             banner.addView(textoBanner);
 
             TextView textoInfo = new TextView(requireContext());
             textoInfo.setText("Para publicar, ");
             textoInfo.setTextSize(14);
             textoInfo.setTextColor(Color.parseColor("#E65100"));
+
             banner.addView(textoInfo);
 
             TextView linkLogin = new TextView(requireContext());
@@ -191,16 +205,29 @@ public class Foro extends Fragment {
             linkLogin.setTextSize(14);
             linkLogin.setTypeface(null, Typeface.BOLD);
             linkLogin.setTextColor(COLOR_PRIMARIO);
-            linkLogin.setPaintFlags(linkLogin.getPaintFlags() | android.graphics.Paint.UNDERLINE_TEXT_FLAG);
+
+            linkLogin.setPaintFlags(
+                    linkLogin.getPaintFlags()
+                            | android.graphics.Paint.UNDERLINE_TEXT_FLAG
+            );
+
             linkLogin.setOnClickListener(v -> {
                 Intent intent = new Intent(requireContext(), PantallaInicio.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
+                intent.setFlags(
+                        Intent.FLAG_ACTIVITY_CLEAR_TOP
+                                | Intent.FLAG_ACTIVITY_SINGLE_TOP
+                );
+
                 startActivity(intent);
             });
+
             banner.addView(linkLogin);
 
-            raiz.addView(banner);
+            cabecera.addView(banner);
         }
+
+        raiz.addView(cabecera);
 
         progressBar = new ProgressBar(requireContext());
         progressBar.setVisibility(View.GONE);
@@ -367,8 +394,6 @@ public class Foro extends Fragment {
             Puzzle puzzleSeleccionado = null;
             if (sp != null && sp.getSelectedItemPosition() > 0) {
                 puzzleSeleccionado = misPuzzles.get(sp.getSelectedItemPosition() - 1);
-                String infoPuzzle = construirInfoPuzzle(puzzleSeleccionado);
-                texto = texto.isEmpty() ? infoPuzzle : texto + "\n\n" + infoPuzzle;
             }
 
             if (texto.isEmpty() && imagenSeleccionada == null
@@ -380,7 +405,10 @@ public class Foro extends Fragment {
                 return;
             }
 
+            // Añadir datos del puzzle al contenido si se seleccionó uno
+
             final String textoFinal = texto;
+            final Integer idPuzzleFinal = puzzleSeleccionado != null ? puzzleSeleccionado.getId() : null;
 
             // Si el usuario NO ha seleccionado su propia imagen pero el puzzle tiene una,
             // la descargamos en background y luego enviamos el post.
@@ -393,23 +421,18 @@ public class Foro extends Fragment {
                 progressBar.setVisibility(View.VISIBLE);
 
                 new Thread(() -> {
-
                     ImagenDescargada img = descargarImagenComoFile(urlImagen);
-
                     requireActivity().runOnUiThread(() -> {
                         progressBar.setVisibility(View.GONE);
-                        viewModel.crearPost(
-                                token,
-                                idUsuario,
-                                textoFinal,
+                        viewModel.crearPost(token, idUsuario, textoFinal,
                                 img != null ? img.file : null,
-                                img != null ? img.mime : null
-                        );
+                                img != null ? img.mime : null);
                     });
                 }).start();
 
             } else {
-                viewModel.crearPost(token, idUsuario, textoFinal, imagenSeleccionada, mimeSeleccionado);
+                viewModel.crearPost(token, idUsuario, textoFinal,
+                        imagenSeleccionada, mimeSeleccionado);
             }
         });
 
@@ -424,26 +447,6 @@ public class Foro extends Fragment {
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(COLOR_PRIMARIO);
         dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(COLOR_TEXTO_LEVE);
     }
-
-    /**
-     * Construye un bloque de texto descriptivo con la info del puzzle seleccionado.
-     */
-    private String construirInfoPuzzle(Puzzle p) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("🧩 Puzzle: ").append(p.getTitulo() != null ? p.getTitulo() : "Sin título");
-        if (p.getAutor() != null && !p.getAutor().isBlank())
-            sb.append("\n✍️ Autor: ").append(p.getAutor());
-        if (p.getPiezas() != null)
-            sb.append("\n🔢 Piezas: ").append(p.getPiezas());
-        if (p.getDificultad() != null)
-            sb.append("\n⚡ Dificultad: ").append(p.getDificultad().name());
-        if (p.getTiempo() != null)
-            sb.append("\n⏱️ Tiempo: ").append(p.getTiempo()).append("h");
-        if (p.getDescripcion() != null && !p.getDescripcion().isBlank())
-            sb.append("\n📝 ").append(p.getDescripcion());
-        return sb.toString();
-    }
-
     private void actualizarPreviewDialog(Uri uri) {
         if (previewDialog == null) return;
         previewDialog.setImageURI(uri);
@@ -588,10 +591,319 @@ public class Foro extends Fragment {
 
         LinearLayout acciones = new LinearLayout(requireContext());
         acciones.setOrientation(LinearLayout.HORIZONTAL);
-        acciones.setPadding(dp(14), dp(10), dp(14), dp(14));
+        acciones.setPadding(dp(14), dp(10), dp(14), dp(8));
         acciones.setGravity(Gravity.CENTER_VERTICAL);
+
         acciones.addView(crearBotonLikes(post));
+
+// =========================================================================
+// BOTÓN COMENTARIOS
+// =========================================================================
+
+        LinearLayout btnComentarios = new LinearLayout(requireContext());
+        btnComentarios.setOrientation(LinearLayout.HORIZONTAL);
+        btnComentarios.setGravity(Gravity.CENTER_VERTICAL);
+
+        GradientDrawable fondoComentarios = new GradientDrawable();
+        fondoComentarios.setColor(Color.parseColor("#F5F5F5"));
+        fondoComentarios.setCornerRadius(dp(20));
+
+        btnComentarios.setBackground(fondoComentarios);
+
+        LinearLayout.LayoutParams btnComParams =
+                new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.WRAP_CONTENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT
+                );
+
+        btnComParams.setMargins(dp(10), 0, 0, 0);
+
+        btnComentarios.setLayoutParams(btnComParams);
+
+        btnComentarios.setPadding(dp(12), dp(6), dp(12), dp(6));
+
+        TextView iconComentario = new TextView(requireContext());
+        iconComentario.setText("💬");
+        iconComentario.setTextSize(14);
+
+        TextView txtComentario = new TextView(requireContext());
+        txtComentario.setText("Comentarios");
+        txtComentario.setTextSize(13);
+        txtComentario.setTypeface(null, Typeface.BOLD);
+        txtComentario.setTextColor(COLOR_TEXTO_LEVE);
+        txtComentario.setPadding(dp(6), 0, 0, 0);
+
+        btnComentarios.addView(iconComentario);
+        btnComentarios.addView(txtComentario);
+
+        acciones.addView(btnComentarios);
+
         tarjeta.addView(acciones);
+
+// =========================================================================
+// CONTENEDOR COMENTARIOS
+// =========================================================================
+
+        LinearLayout comentariosContainer = new LinearLayout(requireContext());
+        comentariosContainer.setOrientation(LinearLayout.VERTICAL);
+        comentariosContainer.setPadding(dp(14), dp(4), dp(14), dp(12));
+        comentariosContainer.setVisibility(View.GONE);
+
+        tarjeta.addView(comentariosContainer);
+
+// =========================================================================
+// INPUT COMENTARIO
+// =========================================================================
+
+        LinearLayout escribirLayout = new LinearLayout(requireContext());
+        escribirLayout.setOrientation(LinearLayout.HORIZONTAL);
+        escribirLayout.setGravity(Gravity.CENTER_VERTICAL);
+
+        EditText inputComentario = new EditText(requireContext());
+
+        LinearLayout.LayoutParams inputParams =
+                new LinearLayout.LayoutParams(
+                        0,
+                        LinearLayout.LayoutParams.WRAP_CONTENT,
+                        1f
+                );
+
+        inputComentario.setLayoutParams(inputParams);
+
+        inputComentario.setHint("Escribe un comentario...");
+        inputComentario.setTextSize(13);
+
+        GradientDrawable fondoInputComentario = new GradientDrawable();
+        fondoInputComentario.setColor(Color.parseColor("#FAFAFA"));
+        fondoInputComentario.setCornerRadius(dp(16));
+        fondoInputComentario.setStroke(dp(1), Color.parseColor("#E0E0E0"));
+
+        inputComentario.setBackground(fondoInputComentario);
+        inputComentario.setPadding(dp(12), dp(8), dp(12), dp(8));
+
+        Button btnEnviarComentario = new Button(requireContext());
+        btnEnviarComentario.setText("Enviar");
+        btnEnviarComentario.setAllCaps(false);
+        btnEnviarComentario.setTextColor(Color.WHITE);
+
+        GradientDrawable fondoEnviar = new GradientDrawable();
+        fondoEnviar.setColor(COLOR_PRIMARIO);
+        fondoEnviar.setCornerRadius(dp(20));
+
+        btnEnviarComentario.setBackground(fondoEnviar);
+
+        LinearLayout.LayoutParams enviarParams =
+                new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.WRAP_CONTENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT
+                );
+
+        enviarParams.setMargins(dp(8), 0, 0, 0);
+
+        btnEnviarComentario.setLayoutParams(enviarParams);
+
+        escribirLayout.addView(inputComentario);
+        escribirLayout.addView(btnEnviarComentario);
+
+        comentariosContainer.addView(escribirLayout);
+
+// =========================================================================
+// LISTA COMENTARIOS
+// =========================================================================
+
+        LinearLayout listaComentarios = new LinearLayout(requireContext());
+        listaComentarios.setOrientation(LinearLayout.VERTICAL);
+
+        LinearLayout.LayoutParams listaParams =
+                new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT
+                );
+
+        listaParams.setMargins(0, dp(10), 0, 0);
+
+        listaComentarios.setLayoutParams(listaParams);
+
+        comentariosContainer.addView(listaComentarios);
+
+// =========================================================================
+// OBSERVER COMENTARIOS
+// =========================================================================
+
+        viewModel.getComentariosPorPost().observe(getViewLifecycleOwner(), mapa -> {
+
+            if (mapa == null) return;
+
+            List<Comentario> comentarios = mapa.get(post.getId());
+
+            listaComentarios.removeAllViews();
+
+            if (comentarios == null || comentarios.isEmpty()) {
+
+                TextView vacio = new TextView(requireContext());
+                vacio.setText("Todavía no hay comentarios");
+                vacio.setTextColor(COLOR_TEXTO_LEVE);
+                vacio.setTextSize(12);
+
+                listaComentarios.addView(vacio);
+
+                return;
+            }
+
+            for (Comentario comentario : comentarios) {
+
+                LinearLayout item = new LinearLayout(requireContext());
+                item.setOrientation(LinearLayout.VERTICAL);
+
+                GradientDrawable fondoComentario = new GradientDrawable();
+                fondoComentario.setColor(Color.parseColor("#FAFAFA"));
+                fondoComentario.setCornerRadius(dp(12));
+
+                item.setBackground(fondoComentario);
+
+                LinearLayout.LayoutParams itemParams =
+                        new LinearLayout.LayoutParams(
+                                LinearLayout.LayoutParams.MATCH_PARENT,
+                                LinearLayout.LayoutParams.WRAP_CONTENT
+                        );
+
+                itemParams.setMargins(0, 0, 0, dp(8));
+
+                item.setLayoutParams(itemParams);
+
+                item.setPadding(dp(10), dp(8), dp(10), dp(8));
+
+                TextView autorComentario = new TextView(requireContext());
+
+                String autor =
+                        comentario.getNombreUsuario() != null
+                                ? comentario.getNombreUsuario()
+                                : "Usuario";
+
+                autorComentario.setText(autor);
+
+                autorComentario.setTypeface(null, Typeface.BOLD);
+                autorComentario.setTextSize(12);
+                autorComentario.setTextColor(COLOR_SECUNDARIO);
+
+                item.addView(autorComentario);
+
+                TextView contenidoComentario = new TextView(requireContext());
+
+                contenidoComentario.setText(comentario.getContenido());
+
+                contenidoComentario.setTextSize(13);
+                contenidoComentario.setTextColor(COLOR_TEXTO);
+
+                LinearLayout.LayoutParams contenidoParams =
+                        new LinearLayout.LayoutParams(
+                                LinearLayout.LayoutParams.MATCH_PARENT,
+                                LinearLayout.LayoutParams.WRAP_CONTENT
+                        );
+
+                contenidoParams.setMargins(0, dp(2), 0, 0);
+
+                contenidoComentario.setLayoutParams(contenidoParams);
+
+                item.addView(contenidoComentario);
+
+                listaComentarios.addView(item);
+            }
+        });
+
+// =========================================================================
+// MOSTRAR / OCULTAR COMENTARIOS
+// =========================================================================
+
+        final boolean[] comentariosVisibles = {false};
+
+        btnComentarios.setOnClickListener(v -> {
+
+            comentariosVisibles[0] = !comentariosVisibles[0];
+
+            comentariosContainer.setVisibility(
+                    comentariosVisibles[0]
+                            ? View.VISIBLE
+                            : View.GONE
+            );
+
+            if (comentariosVisibles[0]) {
+
+                viewModel.cargarComentarios(
+                        obtenerToken(),
+                        post.getId()
+                );
+            }
+        });
+
+// =========================================================================
+// ENVIAR COMENTARIO
+// =========================================================================
+
+        btnEnviarComentario.setOnClickListener(v -> {
+
+            String texto = inputComentario.getText().toString().trim();
+
+            if (texto.isEmpty()) {
+                Toast.makeText(
+                        requireContext(),
+                        "Escribe un comentario",
+                        Toast.LENGTH_SHORT
+                ).show();
+                return;
+            }
+
+            Comentario comentario = new Comentario();
+
+            comentario.setContenido(texto);
+
+            comentario.setIdUsuario(
+                    GestorSesion.obtenerId_usuario(requireContext())
+            );
+
+            comentario.setIdPost(post.getId());
+
+            viewModel.crearComentario(
+                    obtenerToken(),
+                    comentario
+            );
+
+            inputComentario.setText("");
+        });
+
+        tarjeta.setOnClickListener(v -> {
+            if (post.getId() == null) return;
+
+            String token = obtenerToken();
+            // Mostramos un loading mientras cargamos
+            progressBar.setVisibility(View.VISIBLE);
+
+            // Llamada al backend para obtener el post con el puzzle
+            // Necesitas inyectar PostRepositorio en Foro
+            postRepositorio.obtenerPost(token, post.getId(), new retrofit2.Callback<Post>() {
+                @Override
+                public void onResponse(@NonNull retrofit2.Call<Post> call,
+                                       @NonNull retrofit2.Response<Post> response) {
+                    progressBar.setVisibility(View.GONE);
+                    if (!response.isSuccessful() || response.body() == null) return;
+
+                    Post postCompleto = response.body();
+                    Puzzle puzzle = postCompleto.getPuzzle();
+
+                    if (puzzle == null) return; // post sin puzzle vinculado
+
+                    PuzzleDialogFragment dialog = PuzzleDialogFragment.newInstance(puzzle);
+                    dialog.show(getParentFragmentManager(), "puzzle_dialog");
+                }
+
+                @Override
+                public void onFailure(@NonNull retrofit2.Call<Post> call,
+                                      @NonNull Throwable t) {
+                    progressBar.setVisibility(View.GONE);
+                    Toast.makeText(requireContext(), "Error al cargar el puzzle", Toast.LENGTH_SHORT).show();
+                }
+            });
+        });
 
         return tarjeta;
     }
@@ -622,7 +934,6 @@ public class Foro extends Fragment {
         actualizarLikeUI(icon, txt, liked[0], count[0]);
 
         layout.setOnClickListener(v -> {
-            if (GestorSesion.esInvitado(requireContext())) return;
             liked[0] = !liked[0];
             count[0] += liked[0] ? 1 : -1;
             actualizarLikeUI(icon, txt, liked[0], count[0]);
