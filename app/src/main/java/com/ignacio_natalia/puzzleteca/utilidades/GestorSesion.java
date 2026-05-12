@@ -38,8 +38,8 @@ public class GestorSesion {
     }
 
     public static int obtenerId_usuario(Context context) {
-         return context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-                 .getInt(KEY_ID_USUARIO, -1);
+        return context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+                .getInt(KEY_ID_USUARIO, -1);
     }
 
     public static void guardarEmail(Context context, String email) {
@@ -53,6 +53,20 @@ public class GestorSesion {
     }
     public static boolean esAdmin(Context context) {
         return "Admin".equals(obtenerRol(context));
+    }
+
+    public static boolean esInvitado(Context context) {
+        return "Invitado".equals(obtenerRol(context));
+    }
+
+    public static void iniciarSesionInvitado(Context context) {
+        context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+                .edit()
+                .putString(KEY_ROL, "Invitado")
+                .remove(KEY_TOKEN)
+                .remove(KEY_ID_USUARIO)
+                .remove(KEY_EMAIL)
+                .apply();
     }
 
     public static void cerrarSesion(Context context) {

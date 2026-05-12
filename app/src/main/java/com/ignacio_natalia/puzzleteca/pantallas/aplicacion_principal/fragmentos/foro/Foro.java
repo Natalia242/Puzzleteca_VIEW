@@ -28,6 +28,7 @@ import com.ignacio_natalia.puzzleteca.modelos.Post;
 import com.ignacio_natalia.puzzleteca.modelos.Puzzle;
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.AppPrincipal;
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos.PuzzleDialogFragment;
+import com.ignacio_natalia.puzzleteca.pantallas.inicio.PantallaInicio;
 import com.ignacio_natalia.puzzleteca.repositorios.PostRepositorio;
 import com.ignacio_natalia.puzzleteca.repositorios.PuzzleRepositorio;
 import com.ignacio_natalia.puzzleteca.utilidades.GestorSesion;
@@ -115,6 +116,8 @@ public class Foro extends Fragment {
                              @Nullable Bundle savedInstanceState) {
 
         viewModel = new ViewModelProvider(this).get(ForoViewModel.class);
+        boolean invitado = GestorSesion.esInvitado(requireContext());
+
 
         LinearLayout raiz = new LinearLayout(requireContext());
         raiz.setOrientation(LinearLayout.VERTICAL);
@@ -138,20 +141,92 @@ public class Foro extends Fragment {
         titulo.setLayoutParams(tituloParams);
         cabecera.addView(titulo);
 
-        Button btnCrear = new Button(requireContext());
-        btnCrear.setText("+ Post");
-        btnCrear.setAllCaps(false);
-        btnCrear.setTextSize(14);
-        btnCrear.setTextColor(Color.WHITE);
-        btnCrear.setTypeface(null, Typeface.BOLD);
-        GradientDrawable fondoBtn = new GradientDrawable();
-        fondoBtn.setColor(COLOR_PRIMARIO);
-        fondoBtn.setCornerRadius(dp(50));
-        btnCrear.setBackground(fondoBtn);
-        btnCrear.setPadding(dp(20), dp(10), dp(20), dp(10));
-        btnCrear.setElevation(6f);
-        btnCrear.setOnClickListener(v -> cargarMisPuzzlesYMostrarDialog());
-        cabecera.addView(btnCrear);
+
+        if (!invitado) {
+
+            Button btnCrear = new Button(requireContext());
+            btnCrear.setText("+ Post");
+            btnCrear.setAllCaps(false);
+            btnCrear.setTextSize(14);
+            btnCrear.setTextColor(Color.WHITE);
+            btnCrear.setTypeface(null, Typeface.BOLD);
+
+            GradientDrawable fondoBtn = new GradientDrawable();
+            fondoBtn.setColor(COLOR_PRIMARIO);
+            fondoBtn.setCornerRadius(dp(50));
+
+            btnCrear.setBackground(fondoBtn);
+            btnCrear.setPadding(dp(20), dp(10), dp(20), dp(10));
+            btnCrear.setElevation(6f);
+
+            btnCrear.setOnClickListener(v -> cargarMisPuzzlesYMostrarDialog());
+
+            cabecera.addView(btnCrear);
+
+        } else {
+
+            LinearLayout banner = new LinearLayout(requireContext());
+            banner.setOrientation(LinearLayout.HORIZONTAL);
+            banner.setGravity(Gravity.CENTER_VERTICAL);
+            banner.setPadding(dp(16), dp(10), dp(16), dp(10));
+
+            GradientDrawable fondoBanner = new GradientDrawable();
+            fondoBanner.setColor(Color.parseColor("#FFF3E0"));
+            fondoBanner.setCornerRadius(dp(12));
+            fondoBanner.setStroke(dp(1), Color.parseColor("#FFCC80"));
+
+            banner.setBackground(fondoBanner);
+
+            LinearLayout.LayoutParams bannerParams =
+                    new LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.WRAP_CONTENT,
+                            LinearLayout.LayoutParams.WRAP_CONTENT);
+
+            bannerParams.setMargins(dp(14), dp(4), dp(14), dp(8));
+
+            banner.setLayoutParams(bannerParams);
+
+            TextView textoBanner = new TextView(requireContext());
+            textoBanner.setText("🔒 ");
+            textoBanner.setTextSize(14);
+            textoBanner.setTextColor(Color.parseColor("#E65100"));
+
+            banner.addView(textoBanner);
+
+            TextView textoInfo = new TextView(requireContext());
+            textoInfo.setText("Para publicar, ");
+            textoInfo.setTextSize(14);
+            textoInfo.setTextColor(Color.parseColor("#E65100"));
+
+            banner.addView(textoInfo);
+
+            TextView linkLogin = new TextView(requireContext());
+            linkLogin.setText("inicia sesión");
+            linkLogin.setTextSize(14);
+            linkLogin.setTypeface(null, Typeface.BOLD);
+            linkLogin.setTextColor(COLOR_PRIMARIO);
+
+            linkLogin.setPaintFlags(
+                    linkLogin.getPaintFlags()
+                            | android.graphics.Paint.UNDERLINE_TEXT_FLAG
+            );
+
+            linkLogin.setOnClickListener(v -> {
+                Intent intent = new Intent(requireContext(), PantallaInicio.class);
+
+                intent.setFlags(
+                        Intent.FLAG_ACTIVITY_CLEAR_TOP
+                                | Intent.FLAG_ACTIVITY_SINGLE_TOP
+                );
+
+                startActivity(intent);
+            });
+
+            banner.addView(linkLogin);
+
+            cabecera.addView(banner);
+        }
+
         raiz.addView(cabecera);
 
         progressBar = new ProgressBar(requireContext());

@@ -222,12 +222,16 @@ public class AppPrincipal extends AppCompatActivity {
                 })
         );
 
-        botonPuzzles.setOnClickListener(vista ->
-                seleccionarTab(botonPuzzles, () -> {
-                    actualizarTituloPantalla(R.drawable.titulo_mis_puzzles_recortado);
-                    mostrarFragmento(new MisPuzzles());
-                })
-        );
+        botonPuzzles.setOnClickListener(vista -> {
+            if (esInvitado()) {
+                mostrarMensajeAccesoRestringido();
+                return;
+            }
+            seleccionarTab(botonPuzzles, () -> {
+                actualizarTituloPantalla(R.drawable.titulo_mis_puzzles_recortado);
+                mostrarFragmento(new MisPuzzles());
+            });
+        });
 
         botonRanking.setOnClickListener(vista ->
                 seleccionarTab(botonRanking, () -> {
@@ -244,6 +248,10 @@ public class AppPrincipal extends AppCompatActivity {
         );
 
         botonPerfil.setOnClickListener(vista -> {
+            if (esInvitado()) {
+                mostrarMensajeAccesoRestringido();
+                return;
+            }
             String rol = GestorSesion.obtenerRol(this);
             seleccionarTab(botonPerfil, () -> {
                 actualizarTituloPantalla(0);
@@ -493,6 +501,16 @@ public class AppPrincipal extends AppCompatActivity {
     }
 
     // ── Utilidades ────────────────────────────────────────────────────────────
+
+    private boolean esInvitado() {
+        return GestorSesion.esInvitado(this);
+    }
+
+    private void mostrarMensajeAccesoRestringido() {
+        Toast.makeText(this,
+                "Inicia sesión o regístrate para acceder a esta sección",
+                Toast.LENGTH_SHORT).show();
+    }
 
     private int dpToPx(int dp) {
         return Math.round(dp * getResources().getDisplayMetrics().density);
