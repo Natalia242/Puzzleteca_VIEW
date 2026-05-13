@@ -13,6 +13,7 @@ public class GestorSesion {
     private static final String KEY_ROL = "TIPO_USUARIO";
     private static final String KEY_ID_USUARIO = "ID_USUARIO";
     private static final String KEY_EMAIL = "EMAIL";
+    private static final String KEY_NOMBRE = "NOMBRE";
 
     public static void guardarToken(Context context, String token) {
         context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
@@ -40,6 +41,16 @@ public class GestorSesion {
     public static int obtenerId_usuario(Context context) {
         return context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
                 .getInt(KEY_ID_USUARIO, -1);
+    }
+
+    public static void guardarNombre(Context context, String nombre) {
+        context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+                .edit().putString(KEY_NOMBRE, nombre).apply();
+    }
+
+    public static String obtenerNombre(Context context) {
+        return context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+                .getString(KEY_NOMBRE, "Usuario");
     }
 
     public static void guardarEmail(Context context, String email) {
@@ -75,6 +86,7 @@ public class GestorSesion {
                 .remove(KEY_TOKEN)
                 .remove(KEY_ROL)
                 .remove(KEY_ID_USUARIO)
+                .remove(KEY_NOMBRE)
                 .apply();
     }
 

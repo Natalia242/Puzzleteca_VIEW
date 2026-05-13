@@ -1,7 +1,6 @@
 package com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos;
 
 import android.annotation.SuppressLint;
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
@@ -14,28 +13,19 @@ import android.widget.*;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
-import com.ignacio_natalia.puzzleteca.R;
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.AppPrincipal;
-import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos.EditarPerfil;
-import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos.MisPuzzles;
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos.chats.MisChats;
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.puzzles.RegistrarPuzzle;
-import com.ignacio_natalia.puzzleteca.pantallas.login.LoginActivity;
-import com.ignacio_natalia.puzzleteca.repositorios.PuzzleRepositorio;
-import com.ignacio_natalia.puzzleteca.repositorios.UsuarioRepositorio;
+import com.ignacio_natalia.puzzleteca.modelos.RankingUsuario;
+import com.ignacio_natalia.puzzleteca.repositorios.RankingRepositorio;
 import com.ignacio_natalia.puzzleteca.utilidades.GestorSesion;
 import com.ignacio_natalia.puzzleteca.utilidades.UtilidadesSesion;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import java.util.List;
 
 public class PanelUsuario extends Fragment {
-
-    private UsuarioRepositorio repositorio;
 
     @SuppressLint("SetTextI18n")
     @Nullable
@@ -44,8 +34,9 @@ public class PanelUsuario extends Fragment {
                              @Nullable ViewGroup contenedor,
                              @Nullable Bundle instanciaEstadoGuardado) {
 
-        repositorio = new UsuarioRepositorio();
-        PuzzleRepositorio puzzleRepositorio = new PuzzleRepositorio();
+        String token     = GestorSesion.obtenerToken(requireContext());
+        String nombre    = GestorSesion.obtenerNombre(requireContext());
+        int    idUsuario = GestorSesion.obtenerId_usuario(requireContext());
 
         ScrollView scroll = new ScrollView(requireContext());
         scroll.setFillViewport(true);
@@ -54,261 +45,289 @@ public class PanelUsuario extends Fragment {
         layout.setOrientation(LinearLayout.VERTICAL);
         layout.setPadding(50, 50, 50, 50);
 
-        // ── Título ──
-        TextView textoTitulo = new TextView(requireContext());
-        textoTitulo.setText("Panel Usuario");
-        textoTitulo.setTextSize(20);
-        textoTitulo.setTypeface(null, Typeface.BOLD);
-        textoTitulo.setTextColor(Color.parseColor("#37474F"));
-        textoTitulo.setGravity(Gravity.CENTER);
-        layout.addView(textoTitulo);
-        espacio(layout, 30);
+        // ── Cabecera con saludo ──────────────────────────────────────
+        LinearLayout cabecera = new LinearLayout(requireContext());
+        cabecera.setOrientation(LinearLayout.HORIZONTAL);
+        cabecera.setGravity(Gravity.CENTER_VERTICAL);
+        LinearLayout.LayoutParams paramsCab = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        paramsCab.setMargins(0, 0, 0, 30);
+        cabecera.setLayoutParams(paramsCab);
 
-        // ── Tarjeta bienvenida ──
-        LinearLayout tarjeta = crearTarjeta();
-        tarjeta.setPadding(50, 40, 50, 40);
-        tarjeta.setOrientation(LinearLayout.VERTICAL);
-
-        TextView textoSaludo = new TextView(requireContext());
-        textoSaludo.setText("👤 Hola, " + GestorSesion.obtenerRol(requireContext()));
-        textoSaludo.setTextSize(17);
-        textoSaludo.setTypeface(null, Typeface.BOLD);
-        textoSaludo.setTextColor(Color.parseColor("#37474F"));
-        tarjeta.addView(textoSaludo);
-        layout.addView(tarjeta);
-        espacio(layout, 20);
-
-        Button botonMisChats = crearBotonPrimario("💬 Mis Chats", "#26A69A");
-        botonMisChats.setOnClickListener(vista -> {
-            requireActivity().getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(AppPrincipal.FRAGMENTO_ID, new MisChats())
-                    .addToBackStack(null).commit();
-        });
-        layout.addView(botonMisChats);
-        espacio(layout, 14);
-
-        // ── Fila: Mis Puzzles + Editar Perfil ──
-        LinearLayout fila = new LinearLayout(requireContext());
-        fila.setOrientation(LinearLayout.HORIZONTAL);
-        fila.setLayoutParams(new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-
-        LinearLayout botonMisPuzzles = crearBotonAccion("🧩", "Mis Puzzles");
-        botonMisPuzzles.setOnClickListener(vista -> {
-            requireActivity().getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(AppPrincipal.FRAGMENTO_ID, new MisPuzzles())
-                    .addToBackStack(null).commit();
-        });
-
-        LinearLayout botonEditarPerfil = crearBotonAccion("✏️", "Editar Perfil");
-        botonEditarPerfil.setOnClickListener(vista -> {
-            requireActivity().getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(AppPrincipal.FRAGMENTO_ID, new EditarPerfil())
-                    .addToBackStack(null).commit();
-        });
-
-        fila.addView(botonMisPuzzles);
-        fila.addView(botonEditarPerfil);
-        layout.addView(fila);
-        espacio(layout, 16);
-
-        // ── Tarjeta Ranking ──
-        LinearLayout tarjetaRanking = crearTarjeta();
-        tarjetaRanking.setOrientation(LinearLayout.HORIZONTAL);
-        tarjetaRanking.setGravity(Gravity.CENTER_VERTICAL);
-        tarjetaRanking.setPadding(50, 30, 50, 30);
-
-        LinearLayout informacionRanking = new LinearLayout(requireContext());
-        informacionRanking.setOrientation(LinearLayout.VERTICAL);
-        informacionRanking.setLayoutParams(new LinearLayout.LayoutParams(
+        LinearLayout textosCabecera = new LinearLayout(requireContext());
+        textosCabecera.setOrientation(LinearLayout.VERTICAL);
+        textosCabecera.setLayoutParams(new LinearLayout.LayoutParams(
                 0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
 
-        TextView textoRanking = new TextView(requireContext());
-        textoRanking.setText("🏆 Ranking");
-        textoRanking.setTextSize(15);
-        textoRanking.setTypeface(null, Typeface.BOLD);
-        textoRanking.setTextColor(Color.parseColor("#37474F"));
+        TextView textoSaludo = new TextView(requireContext());
+        textoSaludo.setText("¡Hola, " + nombre + "! 👋");
+        textoSaludo.setTextSize(22);
+        textoSaludo.setTypeface(null, Typeface.BOLD);
+        textoSaludo.setTextColor(Color.parseColor("#37474F"));
 
-        TextView textoMejorTiempo = new TextView(requireContext());
-        textoMejorTiempo.setText("Mejor tiempo:");
-        textoMejorTiempo.setTextSize(12);
-        textoMejorTiempo.setTextColor(Color.parseColor("#78909C"));
+        TextView textoBienvenida = new TextView(requireContext());
+        textoBienvenida.setText("¿Qué puzzle resolvemos hoy?");
+        textoBienvenida.setTextSize(13);
+        textoBienvenida.setTextColor(Color.parseColor("#90A4AE"));
 
-        informacionRanking.addView(textoRanking);
-        informacionRanking.addView(textoMejorTiempo);
+        textosCabecera.addView(textoSaludo);
+        textosCabecera.addView(textoBienvenida);
 
-        TextView textoTiempo = new TextView(requireContext());
-        textoTiempo.setText("--:--");
-        textoTiempo.setTextSize(14);
-        textoTiempo.setTypeface(null, Typeface.BOLD);
-        textoTiempo.setTextColor(Color.WHITE);
-        textoTiempo.setPadding(30, 14, 30, 14);
+        // Avatar circular con inicial
+        TextView avatar = new TextView(requireContext());
+        avatar.setText(nombre.isEmpty() ? "U" : nombre.substring(0, 1).toUpperCase());
+        avatar.setTextSize(20);
+        avatar.setTypeface(null, Typeface.BOLD);
+        avatar.setTextColor(Color.WHITE);
+        avatar.setGravity(Gravity.CENTER);
+        int tamAvatar = dpToPx(48);
+        LinearLayout.LayoutParams paramsAv = new LinearLayout.LayoutParams(tamAvatar, tamAvatar);
+        paramsAv.setMargins(16, 0, 0, 0);
+        avatar.setLayoutParams(paramsAv);
+        GradientDrawable fondoAvatar = new GradientDrawable();
+        fondoAvatar.setShape(GradientDrawable.OVAL);
+        fondoAvatar.setColor(Color.parseColor("#26A69A"));
+        avatar.setBackground(fondoAvatar);
 
-        GradientDrawable formaTiempo = new GradientDrawable();
-        formaTiempo.setColor(Color.parseColor("#26A69A"));
-        formaTiempo.setCornerRadius(60);
-        textoTiempo.setBackground(formaTiempo);
+        cabecera.addView(textosCabecera);
+        cabecera.addView(avatar);
+        layout.addView(cabecera);
 
-        tarjetaRanking.addView(informacionRanking);
-        tarjetaRanking.addView(textoTiempo);
+        // ── Tarjeta de Ranking ───────────────────────────────────────
+        LinearLayout tarjetaRanking = new LinearLayout(requireContext());
+        tarjetaRanking.setOrientation(LinearLayout.HORIZONTAL);
+        tarjetaRanking.setGravity(Gravity.CENTER_VERTICAL);
+        tarjetaRanking.setPadding(50, 40, 50, 40);
+        LinearLayout.LayoutParams paramsRk = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        paramsRk.setMargins(0, 0, 0, 20);
+        tarjetaRanking.setLayoutParams(paramsRk);
+        GradientDrawable fondoRanking = new GradientDrawable();
+        fondoRanking.setColor(Color.parseColor("#00796B"));
+        fondoRanking.setCornerRadius(40);
+        tarjetaRanking.setBackground(fondoRanking);
+
+        LinearLayout infoRanking = new LinearLayout(requireContext());
+        infoRanking.setOrientation(LinearLayout.VERTICAL);
+        infoRanking.setLayoutParams(new LinearLayout.LayoutParams(
+                0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
+
+        TextView labelRanking = new TextView(requireContext());
+        labelRanking.setText("🏆  TU POSICIÓN HOY");
+        labelRanking.setTextSize(10);
+        labelRanking.setTypeface(null, Typeface.BOLD);
+        labelRanking.setTextColor(Color.parseColor("#B2DFDB"));
+        labelRanking.setLetterSpacing(0.1f);
+
+        TextView textoPosicion = new TextView(requireContext());
+        textoPosicion.setText("—");
+        textoPosicion.setTextSize(30);
+        textoPosicion.setTypeface(null, Typeface.BOLD);
+        textoPosicion.setTextColor(Color.WHITE);
+
+        TextView textoDetalleRanking = new TextView(requireContext());
+        textoDetalleRanking.setText("Cargando...");
+        textoDetalleRanking.setTextSize(12);
+        textoDetalleRanking.setTextColor(Color.parseColor("#B2DFDB"));
+
+        infoRanking.addView(labelRanking);
+        infoRanking.addView(textoPosicion);
+        infoRanking.addView(textoDetalleRanking);
+
+        TextView iconoTrofeo = new TextView(requireContext());
+        iconoTrofeo.setText("🏆");
+        iconoTrofeo.setTextSize(36);
+
+        tarjetaRanking.addView(infoRanking);
+        tarjetaRanking.addView(iconoTrofeo);
         layout.addView(tarjetaRanking);
-        espacio(layout, 24);
 
-        // Cargar el mejor tiempo real desde el backend
-        String token = GestorSesion.obtenerToken(requireContext());
-        puzzleRepositorio.obtenerMejorTiempo(token, new retrofit2.Callback<Integer>() {
+        // ── Llamada al ranking diario ────────────────────────────────
+        new RankingRepositorio().obtenerRankingDiario(token, new retrofit2.Callback<List<RankingUsuario>>() {
             @Override
-            public void onResponse(@NonNull retrofit2.Call<Integer> call,
-                                   @NonNull retrofit2.Response<Integer> response) {
+            public void onResponse(@NonNull retrofit2.Call<List<RankingUsuario>> call,
+                                   @NonNull retrofit2.Response<List<RankingUsuario>> response) {
                 if (!isAdded()) return;
                 requireActivity().runOnUiThread(() -> {
                     if (response.isSuccessful() && response.body() != null) {
-                        int segundos = response.body();
-                        int mm = segundos / 60;
-                        int ss = segundos % 60;
-                        textoTiempo.setText(String.format("%02d:%02d", mm, ss));
+                        List<RankingUsuario> ranking = response.body();
+                        int posicion = -1;
+                        RankingUsuario miEntrada = null;
+                        for (int i = 0; i < ranking.size(); i++) {
+                            if (ranking.get(i).getIdUsuario() != null
+                                    && ranking.get(i).getIdUsuario() == idUsuario) {
+                                posicion = i + 1;
+                                miEntrada = ranking.get(i);
+                                break;
+                            }
+                        }
+                        if (posicion > 0) {
+                            String medalla = posicion == 1 ? "🥇 " : posicion == 2 ? "🥈 " : posicion == 3 ? "🥉 " : "";
+                            textoPosicion.setText(medalla + "#" + posicion);
+                            iconoTrofeo.setText("🏆");
+                            String media = miEntrada.getMediaDiaria() != null
+                                    ? String.format("%.1f", miEntrada.getMediaDiaria()) : "—";
+                            textoDetalleRanking.setText("Media: " + media + " · de " + ranking.size() + " jugadores");
+                        } else {
+                            textoPosicion.setText("Sin datos");
+                            textoDetalleRanking.setText("Aún no has valorado hoy");
+                            iconoTrofeo.setText("🏆");
+                        }
                     } else {
-                        textoTiempo.setText("N/A");
+                        textoPosicion.setText("—");
+                        textoDetalleRanking.setText("No disponible");
                     }
                 });
             }
             @Override
-            public void onFailure(@NonNull retrofit2.Call<Integer> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull retrofit2.Call<List<RankingUsuario>> call, @NonNull Throwable t) {
                 if (!isAdded()) return;
-                requireActivity().runOnUiThread(() -> textoTiempo.setText("--:--"));
+                requireActivity().runOnUiThread(() -> {
+                    textoPosicion.setText("—");
+                    textoDetalleRanking.setText("Sin conexión");
+                });
             }
         });
 
-        // ── Botón Crear Nuevo Puzzle ──
-        Button botonCrearPuzzle = crearBotonPrimario("➕ Crear Nuevo Puzzle", "#F06292");
+        // ── Fila de acciones rápidas (Mis Puzzles + Editar Perfil) ───
+        LinearLayout filaAcciones = new LinearLayout(requireContext());
+        filaAcciones.setOrientation(LinearLayout.HORIZONTAL);
+        LinearLayout.LayoutParams paramsFila = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        paramsFila.setMargins(0, 0, 0, 20);
+        filaAcciones.setLayoutParams(paramsFila);
 
-        botonCrearPuzzle.setOnClickListener(vista -> {
-            Fragment fragment = new RegistrarPuzzle();
+        LinearLayout cardMisPuzzles = crearCardAccion("🧩", "Mis Puzzles", "#FCE4EC", "#F06292");
+        LinearLayout.LayoutParams paramsC1 = new LinearLayout.LayoutParams(
+                0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f);
+        paramsC1.setMargins(0, 0, 10, 0);
+        cardMisPuzzles.setLayoutParams(paramsC1);
+        cardMisPuzzles.setOnClickListener(v -> irA(new MisPuzzles()));
 
-            requireActivity()
-                    .getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(AppPrincipal.FRAGMENTO_ID, fragment)
-                    .addToBackStack(null)
-                    .commit();
-        });
+        LinearLayout cardEditarPerfil = crearCardAccion("✏️", "Editar Perfil", "#E0F2F1", "#26A69A");
+        cardEditarPerfil.setLayoutParams(new LinearLayout.LayoutParams(
+                0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
+        cardEditarPerfil.setOnClickListener(v -> irA(new EditarPerfil()));
 
+        filaAcciones.addView(cardMisPuzzles);
+        filaAcciones.addView(cardEditarPerfil);
+        layout.addView(filaAcciones);
+
+        // ── Botón Mis Chats ──────────────────────────────────────────
+        Button botonMisChats = crearBotonPrimario("💬  Mis Chats", "#26A69A");
+        botonMisChats.setOnClickListener(v -> irA(new MisChats()));
+        layout.addView(botonMisChats);
+        espacio(layout, 14);
+
+        // ── Botón Crear Nuevo Puzzle ─────────────────────────────────
+        Button botonCrearPuzzle = crearBotonPrimario("➕  Crear Nuevo Puzzle", "#F06292");
+        botonCrearPuzzle.setOnClickListener(v -> irA(new RegistrarPuzzle()));
         layout.addView(botonCrearPuzzle);
-        espacio(layout, 14);
+        espacio(layout, 28);
 
-        Button botonCerrarSesion = crearBotonSecundario("🗑 Cerrar Sesión   ›");
+        // ── Divisor ──────────────────────────────────────────────────
+        View divisor = new View(requireContext());
+        divisor.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, 1));
+        divisor.setBackgroundColor(Color.parseColor("#ECEFF1"));
+        layout.addView(divisor);
+        espacio(layout, 20);
 
-        botonCerrarSesion.setOnClickListener(vista -> {
-
-            UtilidadesSesion.mostrarDialogoCerrarSesion(requireContext(), () -> {
-                UtilidadesSesion.cerrarSesion(requireContext());
-            });
-        });
-
+        // ── Botón Cerrar Sesión ──────────────────────────────────────
+        Button botonCerrarSesion = crearBotonCerrarSesion("🚪  Cerrar Sesión");
+        botonCerrarSesion.setOnClickListener(v ->
+                UtilidadesSesion.mostrarDialogoCerrarSesion(requireContext(), () ->
+                        UtilidadesSesion.cerrarSesion(requireContext())));
         layout.addView(botonCerrarSesion);
-        espacio(layout, 14);
 
         scroll.addView(layout);
         return scroll;
     }
-    private LinearLayout crearTarjeta() {
-        LinearLayout tarjeta = new LinearLayout(requireContext());
-        tarjeta.setLayoutParams(new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
 
-        GradientDrawable forma = new GradientDrawable();
-        forma.setColor(Color.WHITE);
-        forma.setCornerRadius(40);
-        forma.setStroke(2, Color.parseColor("#A5D6A7"));
-        tarjeta.setBackground(forma);
+    // ── Helpers ──────────────────────────────────────────────────────
 
-        return tarjeta;
+    private void irA(Fragment destino) {
+        requireActivity().getSupportFragmentManager()
+                .beginTransaction()
+                .replace(AppPrincipal.FRAGMENTO_ID, destino)
+                .addToBackStack(null)
+                .commit();
     }
 
-    private LinearLayout crearBotonAccion(String emoji, String opcion) {
-
-        LinearLayout boton = new LinearLayout(requireContext());
-        boton.setOrientation(LinearLayout.VERTICAL);
-        boton.setGravity(Gravity.CENTER);
-        boton.setPadding(30, 40, 30, 40);
-
-        LinearLayout.LayoutParams parametrosBoton = new LinearLayout.LayoutParams(
-                0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f);
-
-        parametrosBoton.setMargins(0, 0, 10, 0);
-        boton.setLayoutParams(parametrosBoton);
+    /** Tarjeta pequeña con emoji, texto y borde de color */
+    private LinearLayout crearCardAccion(String emoji, String texto,
+                                         String colorFondo, String colorBorde) {
+        LinearLayout card = new LinearLayout(requireContext());
+        card.setOrientation(LinearLayout.VERTICAL);
+        card.setGravity(Gravity.CENTER);
+        card.setPadding(20, 35, 20, 35);
 
         GradientDrawable forma = new GradientDrawable();
-        forma.setColor(Color.WHITE);
-        forma.setCornerRadius(40);
-        forma.setStroke(2, Color.parseColor("#A5D6A7"));
-        boton.setBackground(forma);
+        forma.setColor(Color.parseColor(colorFondo));
+        forma.setCornerRadius(dpToPx(16));
+        forma.setStroke(dpToPx(1), Color.parseColor(colorBorde));
+        card.setBackground(forma);
 
         TextView textoEmoji = new TextView(requireContext());
         textoEmoji.setText(emoji);
-        textoEmoji.setTextSize(26);
+        textoEmoji.setTextSize(28);
         textoEmoji.setGravity(Gravity.CENTER);
 
-        TextView textoOpcion = new TextView(requireContext());
-        textoOpcion.setText(opcion);
-        textoOpcion.setTextSize(13);
-        textoOpcion.setGravity(Gravity.CENTER);
-        textoOpcion.setTextColor(Color.parseColor("#37474F"));
+        TextView textoLabel = new TextView(requireContext());
+        textoLabel.setText(texto);
+        textoLabel.setTextSize(13);
+        textoLabel.setTypeface(null, Typeface.BOLD);
+        textoLabel.setTextColor(Color.parseColor("#37474F"));
+        textoLabel.setGravity(Gravity.CENTER);
+        LinearLayout.LayoutParams pl = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        pl.setMargins(0, 10, 0, 0);
+        textoLabel.setLayoutParams(pl);
 
-        boton.addView(textoEmoji);
-        boton.addView(textoOpcion);
-
-        return boton;
+        card.addView(textoEmoji);
+        card.addView(textoLabel);
+        return card;
     }
 
     private Button crearBotonPrimario(String texto, String color) {
-
         Button boton = new Button(requireContext());
         boton.setText(texto);
         boton.setTextColor(Color.WHITE);
-        boton.setTextSize(16);
+        boton.setTextSize(15);
+        boton.setTypeface(null, Typeface.BOLD);
         boton.setAllCaps(false);
         boton.setPadding(30, 30, 30, 30);
-
         boton.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-
         GradientDrawable forma = new GradientDrawable();
         forma.setColor(Color.parseColor(color));
-        forma.setCornerRadius(60);
+        forma.setCornerRadius(dpToPx(14));
         boton.setBackground(forma);
-
         return boton;
     }
 
-    private Button crearBotonSecundario(String texto) {
-
+    private Button crearBotonCerrarSesion(String texto) {
         Button boton = new Button(requireContext());
         boton.setText(texto);
-        boton.setTextColor(Color.RED);
+        boton.setTextColor(Color.parseColor("#B0BEC5"));
         boton.setTextSize(14);
         boton.setAllCaps(false);
-        boton.setPadding(30, 20, 30, 20);
-
+        boton.setPadding(0, 20, 0, 20);
+        boton.setGravity(Gravity.CENTER);
+        boton.setBackground(null);
         boton.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-
-        GradientDrawable forma = new GradientDrawable();
-        forma.setColor(Color.parseColor("#FFF9C4"));
-        forma.setCornerRadius(60);
-        forma.setStroke(2, Color.parseColor("#F0CC50"));
-        boton.setBackground(forma);
-
         return boton;
     }
 
     private void espacio(LinearLayout layout, int dp) {
-        View vista = new View(requireContext());
-        vista.setLayoutParams(new LinearLayout.LayoutParams(
+        View v = new View(requireContext());
+        v.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, dp));
-        layout.addView(vista);
+        layout.addView(v);
+    }
+
+    private int dpToPx(int dp) {
+        return Math.round(dp * requireContext().getResources().getDisplayMetrics().density);
     }
 }

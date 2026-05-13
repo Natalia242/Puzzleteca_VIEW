@@ -234,6 +234,10 @@ public class LoginActivity extends AppCompatActivity {
                 GestorSesion.guardarId_usuario(this, loginRespuesta.getId_usuario());
             }
 
+            if (loginRespuesta.getNombre() != null) {
+                GestorSesion.guardarNombre(this, loginRespuesta.getNombre());
+            }
+
             Intent intent = new Intent(this, AppPrincipal.class);
             startActivity(intent);
             finish();
