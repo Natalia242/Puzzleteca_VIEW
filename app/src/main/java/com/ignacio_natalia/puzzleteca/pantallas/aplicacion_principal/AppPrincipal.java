@@ -145,6 +145,12 @@ public class AppPrincipal extends AppCompatActivity {
                 Toast.makeText(this, msg, Toast.LENGTH_LONG).show());
         puzzleViewModel.cargarPuzzles(token);
 
+        puzzleViewModel.getPuzzleCreado().observe(this, creado -> {
+            if (Boolean.TRUE.equals(creado)) {
+                puzzleViewModel.cargarPuzzles(GestorSesion.obtenerToken(this));
+            }
+        });
+
         // Seleccionar Inicio por defecto tras layout
         root.post(() -> seleccionarTab(botonInicio, null));
     }

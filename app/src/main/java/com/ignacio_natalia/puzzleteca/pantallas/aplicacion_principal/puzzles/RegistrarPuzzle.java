@@ -66,7 +66,7 @@ public class RegistrarPuzzle extends Fragment {
             COLOR_TEXTO_HINT = Color.parseColor("#90A4AE"),
             COLOR_SUBTITULO = Color.parseColor("#546E7A"),
 
-            COLOR_FACIL = Color.parseColor("#7BCF9E"),
+    COLOR_FACIL = Color.parseColor("#7BCF9E"),
             COLOR_MEDIA = Color.parseColor("#F2C66D"),
             COLOR_DIFICIL = Color.parseColor("#F6A06A"),
             COLOR_EXTREMO = Color.parseColor("#E57373");
@@ -74,7 +74,7 @@ public class RegistrarPuzzle extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        viewModel = new ViewModelProvider(this).get(PuzzleViewModel.class);
+        viewModel = new ViewModelProvider(requireActivity()).get(PuzzleViewModel.class);
 
         launcher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
@@ -333,8 +333,10 @@ public class RegistrarPuzzle extends Fragment {
         scroll.addView(root);
 
         viewModel.getPuzzleCreado().observe(getViewLifecycleOwner(), creado -> {
-            if (creado != null && creado)
+            if (creado != null && creado) {
                 Toast.makeText(getContext(), "Puzzle creado con éxito!", Toast.LENGTH_SHORT).show();
+                requireActivity().onBackPressed();
+            }
         });
         viewModel.getError().observe(getViewLifecycleOwner(), e ->
                 Toast.makeText(getContext(), e, Toast.LENGTH_SHORT).show());
