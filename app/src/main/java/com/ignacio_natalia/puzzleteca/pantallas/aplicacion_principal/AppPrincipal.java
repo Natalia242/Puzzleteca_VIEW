@@ -16,6 +16,7 @@ import android.graphics.Shader;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.AttributeSet;
 import android.view.Gravity;
@@ -211,7 +212,7 @@ public class AppPrincipal extends AppCompatActivity {
         barraNavegacion.setPadding(0, dpToPx(6), 0, dpToPx(6));
 
         botonInicio = crearTab(ContextCompat.getDrawable(this, R.drawable.home),   "Inicio");
-        botonPuzzles = crearTab(ContextCompat.getDrawable(this, R.drawable.puzzle),  "Puzzles");
+        botonPuzzles = crearTab(ContextCompat.getDrawable(this, R.drawable.puzzle),  "Mis Puzzles");
         botonRanking = crearTab(ContextCompat.getDrawable(this, R.drawable.trophy),  "Ranking");
         botonForo = crearTab(ContextCompat.getDrawable(this, R.drawable.forum),   "Foro");
         botonPerfil = crearTab(ContextCompat.getDrawable(this, R.drawable.person),  "Perfil");
@@ -442,6 +443,9 @@ public class AppPrincipal extends AppCompatActivity {
     private void mostrarPuzzles(List<Puzzle> lista) {
 
         contenedorPuzzles.removeAllViews();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+            lista = lista.reversed();
+        }
 
         for (Puzzle p : lista) {
             contenedorPuzzles.addView(crearTarjeta(p));
