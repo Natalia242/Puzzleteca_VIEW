@@ -7,15 +7,23 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.annotation.SuppressLint;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.LinearGradient;
+import android.graphics.Paint;
+import android.graphics.Path;
+import android.graphics.Shader;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
+import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.*;
+
+import com.bumptech.glide.Glide;
 
 import com.ignacio_natalia.puzzleteca.R;
 import com.ignacio_natalia.puzzleteca.modelos.Puzzle;
@@ -443,61 +451,247 @@ public class AppPrincipal extends AppCompatActivity {
 
     @SuppressLint("SetTextI18n")
     private LinearLayout crearTarjeta(Puzzle puzzle) {
+        int r = dpToPx(16);
 
+        // ── Tarjeta raíz ─────────────────────────────────────────────────────
         LinearLayout tarjeta = new LinearLayout(this);
         tarjeta.setOrientation(LinearLayout.VERTICAL);
-        tarjeta.setPadding(40, 35, 40, 35);
+        tarjeta.setElevation(dpToPx(3));
 
-        LinearLayout.LayoutParams parametrosTarjeta = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        parametrosTarjeta.setMargins(0, 0, 0, 28);
-        tarjeta.setLayoutParams(parametrosTarjeta);
+        LinearLayout.LayoutParams cardLP = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT);
+        cardLP.setMargins(0, 0, 0, dpToPx(16));
+        tarjeta.setLayoutParams(cardLP);
 
-        GradientDrawable fondoTarjeta = new GradientDrawable();
-        fondoTarjeta.setColor(Color.WHITE);
-        fondoTarjeta.setCornerRadius(40);
-        fondoTarjeta.setStroke(3, Color.parseColor("#A5D6A7"));
-        tarjeta.setBackground(fondoTarjeta);
+        GradientDrawable cardBg = new GradientDrawable();
+        cardBg.setColor(Color.WHITE);
+        cardBg.setCornerRadius(r);
+        cardBg.setStroke(dpToPx(1), Color.parseColor("#E8F5E9"));
+        tarjeta.setBackground(cardBg);
+        tarjeta.setClipToOutline(true);
+        tarjeta.setOutlineProvider(new android.view.ViewOutlineProvider() {
+            @Override
+            public void getOutline(View v, android.graphics.Outline o) {
+                o.setRoundRect(0, 0, v.getWidth(), v.getHeight(), r);
+            }
+        });
 
-        TextView textoTitulo = new TextView(this);
-        textoTitulo.setText(puzzle.getAutor());
-        textoTitulo.setTextSize(17);
-        textoTitulo.setTypeface(null, Typeface.BOLD);
-        textoTitulo.setTextColor(Color.parseColor("#37474F"));
-        tarjeta.addView(textoTitulo);
+        // ── Bloque superior: imagen con título superpuesto ────────────────────
+        FrameLayout imgFrame = new FrameLayout(this);
+        imgFrame.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, dpToPx(160)));
 
-        TextView textoDescripcion = new TextView(this);
-        textoDescripcion.setText(puzzle.getDescripcion());
-        textoDescripcion.setTextSize(14);
-        textoDescripcion.setTextColor(Color.parseColor("#78909C"));
-        LinearLayout.LayoutParams parametrosDescripcion = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        parametrosDescripcion.setMargins(0, 8, 0, 16);
-        textoDescripcion.setLayoutParams(parametrosDescripcion);
-        tarjeta.addView(textoDescripcion);
+        ImageView imagen = new ImageView(this);
+        imagen.setLayoutParams(new FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.MATCH_PARENT,
+                FrameLayout.LayoutParams.MATCH_PARENT));
+        imagen.setScaleType(ImageView.ScaleType.CENTER_CROP);
+        imagen.setBackgroundColor(Color.parseColor("#F0F4F8"));
 
-        LinearLayout fila = new LinearLayout(this);
-        fila.setOrientation(LinearLayout.HORIZONTAL);
-        fila.setGravity(Gravity.CENTER_VERTICAL);
+        String url = puzzle.getImagenUrl();
+        if (url != null && !url.isEmpty()) {
+            Glide.with(this)
+                    .load(url)
+                    .placeholder(android.R.drawable.ic_menu_gallery)
+                    .error(android.R.drawable.ic_menu_gallery)
+                    .into(imagen);
+        } else {
+            imagen.setImageResource(android.R.drawable.ic_menu_gallery);
+        }
 
-        TextView textoDificultad = new TextView(this);
-        textoDificultad.setText("⭐ " + (puzzle.getDificultad() != null ? puzzle.getDificultad() : "Normal"));
-        textoDificultad.setTextSize(13);
-        textoDificultad.setTextColor(Color.parseColor("#26A69A"));
-        textoDificultad.setLayoutParams(new LinearLayout.LayoutParams(
-                0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
+        // Degradado inferior sobre la imagen
+        View gradOverlay = new View(this);
+        FrameLayout.LayoutParams gradLP = new FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.MATCH_PARENT, dpToPx(72));
+        gradLP.gravity = Gravity.BOTTOM;
+        gradOverlay.setLayoutParams(gradLP);
+        GradientDrawable grad = new GradientDrawable(
+                GradientDrawable.Orientation.BOTTOM_TOP,
+                new int[]{0xDD000000, 0x00000000});
+        gradOverlay.setBackground(grad);
 
-        fila.addView(textoDificultad);
-        tarjeta.addView(fila);
+        // Título del puzzle sobre el degradado
+        TextView tvTitulo = new TextView(this);
+        tvTitulo.setText(puzzle.getTitulo());
+        tvTitulo.setTextSize(16);
+        tvTitulo.setTypeface(null, Typeface.BOLD);
+        tvTitulo.setTextColor(Color.WHITE);
+        tvTitulo.setShadowLayer(4f, 0f, 2f, 0x99000000);
+        tvTitulo.setMaxLines(1);
+        tvTitulo.setEllipsize(android.text.TextUtils.TruncateAt.END);
+        FrameLayout.LayoutParams titLP = new FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.MATCH_PARENT,
+                FrameLayout.LayoutParams.WRAP_CONTENT);
+        titLP.gravity = Gravity.BOTTOM;
+        titLP.setMargins(dpToPx(14), 0, dpToPx(14), dpToPx(10));
+        tvTitulo.setLayoutParams(titLP);
 
-        // Abrir dialog de detalle y valoración al pulsar la tarjeta
+        imgFrame.addView(imagen);
+        imgFrame.addView(gradOverlay);
+        imgFrame.addView(tvTitulo);
+
+        // ── Bloque inferior: autor + estrellas + flecha ───────────────────────
+        LinearLayout infoRow = new LinearLayout(this);
+        infoRow.setOrientation(LinearLayout.HORIZONTAL);
+        infoRow.setGravity(Gravity.CENTER_VERTICAL);
+        infoRow.setPadding(dpToPx(14), dpToPx(10), dpToPx(12), dpToPx(12));
+
+        // Avatar circular con inicial del autor
+        TextView avatar = new TextView(this);
+        String autorStr = puzzle.getAutor() != null ? puzzle.getAutor() : "?";
+        avatar.setText(String.valueOf(autorStr.charAt(0)).toUpperCase());
+        avatar.setTextSize(14);
+        avatar.setTypeface(null, Typeface.BOLD);
+        avatar.setTextColor(Color.WHITE);
+        avatar.setGravity(Gravity.CENTER);
+        int avatarSize = dpToPx(34);
+        LinearLayout.LayoutParams avatarLP = new LinearLayout.LayoutParams(avatarSize, avatarSize);
+        avatarLP.setMargins(0, 0, dpToPx(10), 0);
+        avatar.setLayoutParams(avatarLP);
+        GradientDrawable avatarBg = new GradientDrawable();
+        avatarBg.setShape(GradientDrawable.OVAL);
+        avatarBg.setColor(Color.parseColor("#2E7D6E"));
+        avatar.setBackground(avatarBg);
+
+        // Columna: nombre autor + estrellas
+        LinearLayout colInfo = new LinearLayout(this);
+        colInfo.setOrientation(LinearLayout.VERTICAL);
+        colInfo.setLayoutParams(new LinearLayout.LayoutParams(0,
+                LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
+
+        TextView tvAutor = new TextView(this);
+        tvAutor.setText(autorStr);
+        tvAutor.setTextSize(13);
+        tvAutor.setTypeface(null, Typeface.BOLD);
+        tvAutor.setTextColor(Color.parseColor("#37474F"));
+        tvAutor.setMaxLines(1);
+        tvAutor.setEllipsize(android.text.TextUtils.TruncateAt.END);
+
+        // Estrellas mini visuales
+        MiniStarsView miniStars = new MiniStarsView(this, puzzle.getValoracion());
+        LinearLayout.LayoutParams starsLP = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT);
+        starsLP.setMargins(0, dpToPx(3), 0, 0);
+        miniStars.setLayoutParams(starsLP);
+
+        colInfo.addView(tvAutor);
+        colInfo.addView(miniStars);
+
+        // Flecha derecha
+        TextView flecha = new TextView(this);
+        flecha.setText("›");
+        flecha.setTextSize(28);
+        flecha.setTextColor(Color.parseColor("#A5D6A7"));
+        flecha.setTypeface(null, Typeface.BOLD);
+        flecha.setGravity(Gravity.CENTER_VERTICAL);
+        LinearLayout.LayoutParams flechaLP = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.MATCH_PARENT);
+        flechaLP.setMargins(dpToPx(6), 0, dpToPx(4), 0);
+        flechaLP.gravity = Gravity.CENTER_VERTICAL;
+        flecha.setLayoutParams(flechaLP);
+
+        infoRow.addView(avatar);
+        infoRow.addView(colInfo);
+        infoRow.addView(flecha);
+
+        // ── Montaje ───────────────────────────────────────────────────────────
+        tarjeta.addView(imgFrame);
+        tarjeta.addView(infoRow);
+
+        // Feedback táctil + abrir dialog
         tarjeta.setOnClickListener(v ->
                 PuzzleDialogFragment.newInstance(puzzle)
-                        .show(getSupportFragmentManager(), "puzzle_dialog")
-        );
+                        .show(getSupportFragmentManager(), "puzzle_dialog"));
 
         return tarjeta;
+    }
 
+    // ── Vista de estrellas mini (solo visual, sin interacción) ────────────────
+
+    private static class MiniStarsView extends View {
+
+        private static final int   NUM   = 5;
+        private static final float SIZE  = 13f;   // dp
+        private static final float GAP   = 3f;    // dp
+        private static final float CR    = 1.8f;  // corner radius dp
+
+        private final Paint pFill   = new Paint(Paint.ANTI_ALIAS_FLAG);
+        private final Paint pEmpty  = new Paint(Paint.ANTI_ALIAS_FLAG);
+        private final float sizePx, gapPx, crPx;
+        private final int   rating;
+
+        MiniStarsView(android.content.Context ctx, Integer rating) {
+            super(ctx);
+            float d = ctx.getResources().getDisplayMetrics().density;
+            sizePx = SIZE * d;
+            gapPx  = GAP  * d;
+            crPx   = CR   * d;
+            this.rating = (rating != null) ? Math.max(0, Math.min(NUM, rating)) : 0;
+
+            pFill.setStyle(Paint.Style.FILL);
+            pEmpty.setStyle(Paint.Style.FILL);
+            pEmpty.setColor(Color.parseColor("#DDDDDD"));
+        }
+
+        @Override
+        protected void onMeasure(int wSpec, int hSpec) {
+            int w = (int)(NUM * sizePx + (NUM - 1) * gapPx);
+            setMeasuredDimension(resolveSize(w, wSpec), resolveSize((int) sizePx, hSpec));
+        }
+
+        @SuppressLint("DrawAllocation")
+        @Override
+        protected void onDraw(Canvas canvas) {
+            float cx = sizePx / 2f, cy = sizePx / 2f;
+            for (int i = 0; i < NUM; i++) {
+                float ox = i * (sizePx + gapPx);
+                if (i < rating) {
+                    pFill.setShader(new LinearGradient(
+                            ox, 0, ox, sizePx,
+                            Color.parseColor("#FFD740"),
+                            Color.parseColor("#FF8F00"),
+                            Shader.TileMode.CLAMP));
+                    canvas.drawPath(roundedStar(cx + ox, cy, sizePx * 0.45f,
+                            sizePx * 0.18f, crPx), pFill);
+                } else {
+                    canvas.drawPath(roundedStar(cx + ox, cy, sizePx * 0.45f,
+                            sizePx * 0.18f, crPx), pEmpty);
+                }
+            }
+        }
+
+        private Path roundedStar(float cx, float cy, float outer, float inner, float cr) {
+            Path path = new Path();
+            int pts = 5;
+            double step = Math.PI * 2 / pts;
+            double start = -Math.PI / 2;
+            float[] vx = new float[pts * 2], vy = new float[pts * 2];
+            for (int i = 0; i < pts; i++) {
+                double ao = start + i * step, ai = ao + step / 2.0;
+                vx[i*2]   = cx + (float)(outer * Math.cos(ao));
+                vy[i*2]   = cy + (float)(outer * Math.sin(ao));
+                vx[i*2+1] = cx + (float)(inner * Math.cos(ai));
+                vy[i*2+1] = cy + (float)(inner * Math.sin(ai));
+            }
+            int n = vx.length;
+            for (int i = 0; i < n; i++) {
+                int prev = (i - 1 + n) % n, next = (i + 1) % n;
+                float inDx = vx[i]-vx[prev], inDy = vy[i]-vy[prev];
+                float outDx = vx[next]-vx[i], outDy = vy[next]-vy[i];
+                float inL = (float)Math.hypot(inDx,inDy), outL = (float)Math.hypot(outDx,outDy);
+                float r = ((i%2==0) ? cr*2f : cr*0.8f);
+                r = Math.min(r, Math.min(inL, outL) * 0.35f);
+                float t1x = vx[i]-inDx/inL*r,  t1y = vy[i]-inDy/inL*r;
+                float t2x = vx[i]+outDx/outL*r, t2y = vy[i]+outDy/outL*r;
+                if (i == 0) path.moveTo(t1x, t1y); else path.lineTo(t1x, t1y);
+                path.quadTo(vx[i], vy[i], t2x, t2y);
+            }
+            path.close();
+            return path;
+        }
     }
 
     // ── Utilidades ────────────────────────────────────────────────────────────
