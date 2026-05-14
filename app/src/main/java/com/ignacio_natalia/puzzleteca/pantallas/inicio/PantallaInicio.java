@@ -14,6 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import com.ignacio_natalia.puzzleteca.R;
 import com.ignacio_natalia.puzzleteca.pantallas.login.LoginActivity;
@@ -27,12 +28,15 @@ public class PantallaInicio extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        getWindow().setStatusBarColor(Color.parseColor("#DFF5C9")); // color personalizado
+        getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.app_green_light));
 
         // Fondo degradado
         GradientDrawable fondo = new GradientDrawable(
                 GradientDrawable.Orientation.TOP_BOTTOM,
-                new int[]{Color.parseColor("#DFF5C9"), Color.parseColor("#B8E6A5")}
+                new int[]{
+                        ContextCompat.getColor(this, R.color.app_green_light),
+                        ContextCompat.getColor(this, R.color.app_green_medium)
+                }
         );
 
         // Layout principal
@@ -50,9 +54,7 @@ public class PantallaInicio extends AppCompatActivity {
                         FrameLayout.LayoutParams.WRAP_CONTENT,
                         FrameLayout.LayoutParams.WRAP_CONTENT
                 );
-
         parametrosTitulo.gravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
-
         titulo.setLayoutParams(parametrosTitulo);
 
         // ---------- CONTENEDOR BOTONES ----------
@@ -66,7 +68,6 @@ public class PantallaInicio extends AppCompatActivity {
                         FrameLayout.LayoutParams.WRAP_CONTENT
                 );
         parametrosContenedorBotones.gravity = Gravity.CENTER;
-
         contenedorBotones.setLayoutParams(parametrosContenedorBotones);
 
         LinearLayout.LayoutParams parametrosBotones =
@@ -77,7 +78,7 @@ public class PantallaInicio extends AppCompatActivity {
         parametrosBotones.setMargins(80, 25, 80, 25);
 
         // Botón Login
-        Button botonLogin = crearBoton("Iniciar sesión", "#F06292");
+        Button botonLogin = crearBoton("Iniciar sesión", R.color.app_rosa);
         botonLogin.setLayoutParams(parametrosBotones);
         botonLogin.setOnClickListener(vista -> {
             Intent intent = new Intent(PantallaInicio.this, LoginActivity.class);
@@ -85,7 +86,7 @@ public class PantallaInicio extends AppCompatActivity {
         });
 
         // Botón Registrarse
-        Button botonRegistro = crearBoton("Registrarse", "#F06292");
+        Button botonRegistro = crearBoton("Registrarse", R.color.app_rosa);
         botonRegistro.setLayoutParams(parametrosBotones);
         botonRegistro.setOnClickListener(v -> {
             Intent intent = new Intent(PantallaInicio.this, RegistroActivity.class);
@@ -95,7 +96,7 @@ public class PantallaInicio extends AppCompatActivity {
         // Botón continuar como invitado
         TextView textoInvitado = new TextView(this);
         textoInvitado.setText("Continuar como invitado");
-        textoInvitado.setTextColor(Color.parseColor("#455A64"));
+        textoInvitado.setTextColor(ContextCompat.getColor(this, R.color.app_texto_link));
         textoInvitado.setTextSize(18);
         textoInvitado.setGravity(Gravity.CENTER);
         textoInvitado.setPadding(20, 30, 20, 0);
@@ -119,7 +120,7 @@ public class PantallaInicio extends AppCompatActivity {
         separador.setBackgroundColor(Color.DKGRAY);
 
         // Botón recuperar contraseña
-        Button botonOlvidada = crearBoton("¿Has olvidado la contraseña?", "#26A69A");
+        Button botonOlvidada = crearBoton("¿Has olvidado la contraseña?", R.color.app_teal);
         botonOlvidada.setLayoutParams(parametrosBotones);
         botonOlvidada.setOnClickListener(view -> {
             Intent intent = new Intent(PantallaInicio.this, RecuperarContrasennaActivity.class);
@@ -132,29 +133,25 @@ public class PantallaInicio extends AppCompatActivity {
         contenedorBotones.addView(separador);
         contenedorBotones.addView(botonOlvidada);
 
-        // Añadir elementos
         layout.addView(titulo);
         layout.addView(contenedorBotones);
 
         setContentView(layout);
     }
 
-    private Button crearBoton(String texto, String color) {
-
+    private Button crearBoton(String texto, int colorRes) {
         Button boton = new Button(this);
         boton.setText(texto);
-        boton.setTextColor(Color.WHITE);
+        boton.setTextColor(ContextCompat.getColor(this, R.color.white));
         boton.setTextSize(20);
         boton.setAllCaps(false);
         boton.setPadding(20, 30, 20, 30);
 
         GradientDrawable forma = new GradientDrawable();
         forma.setCornerRadius(60);
-        forma.setColor(Color.parseColor(color));
+        forma.setColor(ContextCompat.getColor(this, colorRes));
 
         boton.setBackground(forma);
-
         return boton;
     }
-
 }

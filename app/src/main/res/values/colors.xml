@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- ── Colores del sistema Material (originales) ── -->
     <color name="purple_200">#FFBB86FC</color>
     <color name="purple_500">#FF6200EE</color>
     <color name="purple_700">#FF3700B3</color>
@@ -8,6 +9,7 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
+    <!-- ── Paleta principal de Puzzleteca ── -->
     <color name="pink">#FFDA90B2</color>
     <color name="dark_pink">#FFF06292</color>
     <color name="jungle_green">#FF26A69A</color>
@@ -15,4 +17,118 @@
     <color name="teal">#FF6BA3A3</color>
     <color name="green">#FFCBEC9C</color>
     <color name="surfie_green">#FF008577</color>
+
+    <!-- ── Colores semánticos de la app ── -->
+
+    <!-- Rosa (acento principal) -->
+    <color name="app_rosa">#F06292</color>
+    <color name="app_rosa_soft">#FCE4EC</color>
+    <color name="app_rosa_dark">#EC407A</color>
+    <color name="app_rosa_light">#F8BBD9</color>
+    <color name="app_rosa_fondo">#FFF0F5</color>
+    <color name="app_rosa_burbuja">#FBC7DF</color>
+    <color name="app_rosa_borde">#F48FB1</color>
+
+    <!-- Teal / Verde (color secundario) -->
+    <color name="app_teal">#26A69A</color>
+    <color name="app_teal_dark">#2E7D6E</color>
+    <color name="app_teal_darker">#00796B</color>
+    <color name="app_teal_soft">#E0F2F1</color>
+    <color name="app_teal_fondo">#F0FAFA</color>
+    <color name="app_teal_borde">#B2DFDB</color>
+    <color name="app_teal_borde_light">#80CBC4</color>
+    <color name="app_teal_badge">#4DB6AC</color>
+    <color name="app_teal_chat">#00897B</color>
+
+    <!-- Verde claro (fondo de pantallas) -->
+    <color name="app_green_light">#DFF5C9</color>
+    <color name="app_green_medium">#B8E6A5</color>
+    <color name="app_green_soft">#EAF8E0</color>
+    <color name="app_green_border">#A5D6A7</color>
+    <color name="app_green_success">#E8F5E9</color>
+    <color name="app_green_success_text">#2E7D32</color>
+    <color name="app_green_success_text_dark">#43A047</color>
+
+    <!-- Texto -->
+    <color name="app_texto">#37474F</color>
+    <color name="app_texto_dark">#263238</color>
+    <color name="app_texto_nombre">#2E4057</color>
+    <color name="app_subtexto">#78909C</color>
+    <color name="app_subtexto_dark">#546E7A</color>
+    <color name="app_subtexto_label">#90A4AE</color>
+    <color name="app_texto_link">#455A64</color>
+    <color name="app_texto_admin_rol">#CE93D8</color>
+
+    <!-- Fondos neutros -->
+    <color name="app_fondo_pagina">#FAFAFA</color>
+    <color name="app_fondo_input">#F8FAFB</color>
+    <color name="app_fondo_input_alt">#F5F7FA</color>
+    <color name="app_fondo_card">#F5F5F5</color>
+    <color name="app_fondo_gris">#F5F7F8</color>
+    <color name="app_fondo_gris_light">#F0F4F8</color>
+    <color name="app_fondo_blanco_suave">#F8F8F8</color>
+    <color name="app_fondo_cancelar">#F0F0F0</color>
+
+    <!-- Bordes -->
+    <color name="app_borde">#ECEFF1</color>
+    <color name="app_borde_light">#E8EDF2</color>
+    <color name="app_borde_card">#E8ECF0</color>
+    <color name="app_borde_gris">#E0E0E0</color>
+    <color name="app_borde_gris_light">#DDDDDD</color>
+    <color name="app_borde_gris_dark">#BDBDBD</color>
+    <color name="app_borde_donut_pista">#E8ECF0</color>
+
+    <!-- Peligro / Error -->
+    <color name="app_peligro">#E53935</color>
+    <color name="app_peligro_bg">#FFEBEE</color>
+    <color name="app_peligro_borde">#EF9A9A</color>
+    <color name="app_peligro_dark">#C62828</color>
+    <color name="app_peligro_darker">#B71C1C</color>
+    <color name="app_error_text">#E57373</color>
+
+    <!-- Naranja / Advertencia -->
+    <color name="app_naranja">#FF8F00</color>
+    <color name="app_naranja_soft">#FFF8E1</color>
+    <color name="app_naranja_medium">#FF8A65</color>
+    <color name="app_naranja_borde">#FFCC80</color>
+    <color name="app_naranja_fondo">#FFF3E0</color>
+    <color name="app_naranja_text">#E65100</color>
+    <color name="app_naranja_dark">#FF7043</color>
+    <color name="app_naranja_amber">#FF8F00</color>
+    <color name="app_naranja_top3">#FFAB40</color>
+    <color name="app_naranja_borde_top3">#FFAB40</color>
+
+    <!-- Amarillo / Estrellas -->
+    <color name="app_estrella">#FDD835</color>
+    <color name="app_estrella_light">#FFD740</color>
+    <color name="app_estrella_dark">#FF8F00</color>
+
+    <!-- Admin / Morado -->
+    <color name="app_admin_bg">#4527A0</color>
+    <color name="app_admin_accent">#3F51B5</color>
+    <color name="app_admin_indigo">#5C6BC0</color>
+    <color name="app_admin_indigo_soft">#E8EAF6</color>
+    <color name="app_admin_rol_text">#CE93D8</color>
+    <color name="app_admin_violet">#AB47BC</color>
+
+    <!-- Colores especiales de puzzle (dificultad) -->
+    <color name="app_dificultad_facil">#7BCF9E</color>
+    <color name="app_dificultad_media">#F2C66D</color>
+    <color name="app_dificultad_dificil">#F6A06A</color>
+    <color name="app_dificultad_extremo">#E57373</color>
+
+    <!-- Colores avatar (paleta de avatares de usuarios en chats) -->
+    <color name="app_avatar_cyan">#26C6DA</color>
+    <color name="app_avatar_blue">#42A5F5</color>
+    <color name="app_avatar_green">#66BB6A</color>
+
+    <!-- Estado de puzzle en gestión admin -->
+    <color name="app_estado_pendiente">#F9A825</color>
+
+    <!-- Chip de piezas (azul índigo) -->
+    <color name="app_piezas_text">#5C6BC0</color>
+    <color name="app_piezas_bg">#E8EAF6</color>
+
+    <!-- Barra de progreso ranking -->
+    <color name="app_barra_bg">#F8E0E8</color>
 </resources>

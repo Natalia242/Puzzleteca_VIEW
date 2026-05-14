@@ -309,14 +309,20 @@ public class PanelUsuario extends Fragment {
     private Button crearBotonCerrarSesion(String texto) {
         Button boton = new Button(requireContext());
         boton.setText(texto);
-        boton.setTextColor(Color.parseColor("#B0BEC5"));
-        boton.setTextSize(14);
+        boton.setTextColor(Color.parseColor("#C62828"));
+        boton.setTextSize(15);
+        boton.setTypeface(null, Typeface.BOLD);
         boton.setAllCaps(false);
-        boton.setPadding(0, 20, 0, 20);
+        boton.setPadding(dpToPx(16), dpToPx(14), dpToPx(16), dpToPx(14));
         boton.setGravity(Gravity.CENTER);
-        boton.setBackground(null);
-        boton.setLayoutParams(new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        boton.setLayoutParams(params);
+        GradientDrawable forma = new GradientDrawable();
+        forma.setColor(Color.parseColor("#FFEBEE"));
+        forma.setCornerRadius(dpToPx(14));
+        forma.setStroke(dpToPx(1), Color.parseColor("#EF9A9A"));
+        boton.setBackground(forma);
         return boton;
     }
 

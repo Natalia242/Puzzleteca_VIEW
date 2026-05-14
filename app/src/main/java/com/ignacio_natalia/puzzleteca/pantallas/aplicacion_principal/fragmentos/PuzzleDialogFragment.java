@@ -285,7 +285,7 @@ public class PuzzleDialogFragment extends DialogFragment {
         frameParams.bottomMargin = dp(16);
         imagenFrame.setLayoutParams(frameParams);
 
-        // Recorte redondeado para todo el frame
+        // Recorte redondeado para el frame entero
         android.graphics.drawable.GradientDrawable frameBg =
                 new android.graphics.drawable.GradientDrawable();
         frameBg.setCornerRadius(dp(12));

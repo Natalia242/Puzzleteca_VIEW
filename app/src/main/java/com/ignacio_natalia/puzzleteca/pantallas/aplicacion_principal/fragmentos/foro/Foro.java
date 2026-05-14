@@ -2,7 +2,6 @@ package com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -32,6 +31,7 @@ import com.ignacio_natalia.puzzleteca.pantallas.inicio.PantallaInicio;
 import com.ignacio_natalia.puzzleteca.repositorios.PostRepositorio;
 import com.ignacio_natalia.puzzleteca.repositorios.PuzzleRepositorio;
 import com.ignacio_natalia.puzzleteca.utilidades.GestorSesion;
+import com.ignacio_natalia.puzzleteca.utilidades.UtilidadesSesion;
 import com.ignacio_natalia.puzzleteca.modelos.Comentario;
 
 import java.io.File;
@@ -64,8 +64,8 @@ public class Foro extends Fragment {
     private ActivityResultLauncher<Uri>    launcherCamara;
 
     private File imagenSeleccionada = null;
-    private String mimeSeleccionado = null;
-    private Uri uriCamaraTemp = null;
+    private final String mimeSeleccionado = null;
+    private final Uri uriCamaraTemp = null;
     private ImageView previewDialog = null;
 
     // ── Puzzles del usuario (para el selector) ────────────────────────────────
@@ -74,41 +74,7 @@ public class Foro extends Fragment {
     private final PostRepositorio postRepositorio = new PostRepositorio();
     private List<Puzzle> misPuzzles = new ArrayList<>();
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        launcherGaleria = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                result -> {
-                    if (result.getResultCode() == Activity.RESULT_OK
-                            && result.getData() != null) {
-                        Uri uri = result.getData().getData();
-                        if (uri == null) return;
-                        File f = uriAFile(uri);
-                        if (f != null) {
-                            imagenSeleccionada = f;
-                            actualizarPreviewDialog(uri);
-                        } else {
-                            Toast.makeText(requireContext(),
-                                    "No se pudo cargar la imagen", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-
-        launcherCamara = registerForActivityResult(
-                new ActivityResultContracts.TakePicture(),
-                exito -> {
-                    if (exito && uriCamaraTemp != null) {
-                        File f = uriAFile(uriCamaraTemp);
-                        if (f != null) {
-                            imagenSeleccionada = f;
-                            actualizarPreviewDialog(uriCamaraTemp);
-                        }
-                    }
-                });
-    }
-
+    @SuppressLint("SetTextI18n")
     @Nullable
     @Override
     public View onCreateView(@NonNull android.view.LayoutInflater inflater,
@@ -313,15 +279,38 @@ public class Foro extends Fragment {
     // Dialog crear post — con selector de puzzle
     // =========================================================================
 
+    @SuppressLint("SetTextI18n")
     private void mostrarDialogCrearPost() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-        builder.setTitle("✏️ Nuevo post");
+        android.app.Dialog dialog = new android.app.Dialog(requireContext());
+        dialog.requestWindowFeature(android.view.Window.FEATURE_NO_TITLE);
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setSoftInputMode(
+                    android.view.WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+        }
 
-        LinearLayout layout = new LinearLayout(requireContext());
-        layout.setOrientation(LinearLayout.VERTICAL);
-        layout.setPadding(dp(20), dp(12), dp(20), dp(8));
+        // ── Raíz de la tarjeta ────────────────────────────────────────────────
+        LinearLayout root = new LinearLayout(requireContext());
+        root.setOrientation(LinearLayout.VERTICAL);
+        root.setPadding(dp(20), dp(20), dp(20), dp(16));
+        GradientDrawable rootBg = new GradientDrawable();
+        rootBg.setColor(Color.WHITE);
+        rootBg.setCornerRadius(dp(20));
+        root.setBackground(rootBg);
 
-        // Campo de texto
+        // ── Encabezado centrado (consistente con UtilidadesSesion) ────────────
+        TextView tvTitulo = new TextView(requireContext());
+        tvTitulo.setText("Nuevo post");
+        tvTitulo.setTextSize(19);
+        tvTitulo.setTypeface(null, android.graphics.Typeface.BOLD);
+        tvTitulo.setTextColor(Color.parseColor("#37474F"));
+        tvTitulo.setGravity(Gravity.CENTER);
+        LinearLayout.LayoutParams titLP = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        titLP.bottomMargin = dp(16);
+        tvTitulo.setLayoutParams(titLP);
+        root.addView(tvTitulo);
+
+        // ── Campo de texto ────────────────────────────────────────────────────
         EditText inputTexto = new EditText(requireContext());
         inputTexto.setHint("¿Qué quieres compartir?");
         inputTexto.setMinLines(3);
@@ -329,25 +318,30 @@ public class Foro extends Fragment {
         inputTexto.setTextColor(COLOR_TEXTO);
         inputTexto.setHintTextColor(COLOR_TEXTO_LEVE);
         GradientDrawable fondoInput = new GradientDrawable();
-        fondoInput.setColor(Color.parseColor("#FFF6F9"));
+        fondoInput.setColor(Color.parseColor("#F8FAFB"));
         fondoInput.setCornerRadius(dp(12));
         fondoInput.setStroke(dp(1), COLOR_CARD_BORDE);
         inputTexto.setBackground(fondoInput);
         inputTexto.setPadding(dp(12), dp(10), dp(12), dp(10));
-        layout.addView(inputTexto);
-
-        espacio(layout, dp(12));
+        LinearLayout.LayoutParams inputLP = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        inputLP.bottomMargin = dp(14);
+        inputTexto.setLayoutParams(inputLP);
+        root.addView(inputTexto);
 
         // ── Selector de puzzle ────────────────────────────────────────────────
         if (!misPuzzles.isEmpty()) {
             TextView tvPuzzleLabel = new TextView(requireContext());
-            tvPuzzleLabel.setText("🧩 Vincular puzzle (opcional)");
+            tvPuzzleLabel.setText("🧩  Vincular puzzle (opcional)");
             tvPuzzleLabel.setTextSize(13);
+            tvPuzzleLabel.setTypeface(null, android.graphics.Typeface.BOLD);
             tvPuzzleLabel.setTextColor(COLOR_TEXTO_LEVE);
-            tvPuzzleLabel.setPadding(0, 0, 0, dp(4));
-            layout.addView(tvPuzzleLabel);
+            LinearLayout.LayoutParams lblLP = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            lblLP.bottomMargin = dp(6);
+            tvPuzzleLabel.setLayoutParams(lblLP);
+            root.addView(tvPuzzleLabel);
 
-            // Opciones: "Ninguno" + puzzles del usuario
             List<String> opciones = new ArrayList<>();
             opciones.add("— Sin puzzle —");
             for (Puzzle p : misPuzzles) {
@@ -368,29 +362,69 @@ public class Foro extends Fragment {
             spBg.setStroke(dp(1), COLOR_CARD_BORDE);
             puzzleSpinner.setBackground(spBg);
             puzzleSpinner.setPadding(dp(10), dp(8), dp(10), dp(8));
-            LinearLayout.LayoutParams spParams = new LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams spLP = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-            spParams.setMargins(0, 0, 0, dp(12));
-            puzzleSpinner.setLayoutParams(spParams);
-            layout.addView(puzzleSpinner);
+            spLP.bottomMargin = dp(14);
+            puzzleSpinner.setLayoutParams(spLP);
+            root.addView(puzzleSpinner);
 
-            // Cuando el usuario confirma el dialog usamos esta referencia
-            layout.setTag(puzzleSpinner);
+            root.setTag(puzzleSpinner);
         }
 
-        // ── Botones de imagen ────────────────────────────────────────────────
+        // ── Divisor ───────────────────────────────────────────────────────────
+        View divisor = new View(requireContext());
+        LinearLayout.LayoutParams divLP = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, dp(1));
+        divLP.setMargins(0, dp(4), 0, dp(14));
+        divisor.setLayoutParams(divLP);
+        divisor.setBackgroundColor(Color.parseColor("#ECEFF1"));
+        root.addView(divisor);
 
-        builder.setView(layout);
-        AlertDialog dialog = builder.create();
+        // ── Botón Publicar ────────────────────────────────────────────────────
+        TextView btnPublicar = new TextView(requireContext());
+        btnPublicar.setText("📤  Publicar");
+        btnPublicar.setTextColor(Color.WHITE);
+        btnPublicar.setTextSize(15);
+        btnPublicar.setTypeface(null, android.graphics.Typeface.BOLD);
+        btnPublicar.setGravity(Gravity.CENTER);
+        btnPublicar.setPadding(0, dp(14), 0, dp(14));
+        LinearLayout.LayoutParams pubLP = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        pubLP.bottomMargin = dp(10);
+        btnPublicar.setLayoutParams(pubLP);
+        GradientDrawable pubBg = new GradientDrawable();
+        pubBg.setColor(COLOR_PRIMARIO);
+        pubBg.setCornerRadius(dp(12));
+        btnPublicar.setBackground(pubBg);
+        btnPublicar.setClickable(true);
+        btnPublicar.setFocusable(true);
 
+        // ── Botón Cancelar ────────────────────────────────────────────────────
+        TextView btnCancelar = new TextView(requireContext());
+        btnCancelar.setText("Cancelar");
+        btnCancelar.setTextColor(COLOR_TEXTO_LEVE);
+        btnCancelar.setTextSize(14);
+        btnCancelar.setGravity(Gravity.CENTER);
+        btnCancelar.setPadding(0, dp(12), 0, dp(12));
+        btnCancelar.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        GradientDrawable cancelBg = new GradientDrawable();
+        cancelBg.setColor(Color.parseColor("#F0F0F0"));
+        cancelBg.setCornerRadius(dp(12));
+        btnCancelar.setBackground(cancelBg);
+        btnCancelar.setClickable(true);
+        btnCancelar.setFocusable(true);
 
-        dialog.setButton(AlertDialog.BUTTON_POSITIVE, "Publicar", (d, which) -> {
-            String texto    = inputTexto.getText().toString().trim();
-            int idUsuario   = GestorSesion.obtenerId_usuario(requireContext());
-            String token    = obtenerToken();
+        root.addView(btnPublicar);
+        root.addView(btnCancelar);
 
-            // Detectar si se seleccionó un puzzle
-            Spinner sp = (Spinner) layout.getTag();
+        // ── Lógica de publicar ────────────────────────────────────────────────
+        btnPublicar.setOnClickListener(v -> {
+            String texto  = inputTexto.getText().toString().trim();
+            int idUsuario = GestorSesion.obtenerId_usuario(requireContext());
+            String token  = obtenerToken();
+
+            Spinner sp = (Spinner) root.getTag();
             Puzzle puzzleSeleccionado = null;
             if (sp != null && sp.getSelectedItemPosition() > 0) {
                 puzzleSeleccionado = misPuzzles.get(sp.getSelectedItemPosition() - 1);
@@ -405,20 +439,17 @@ public class Foro extends Fragment {
                 return;
             }
 
-            // Añadir datos del puzzle al contenido si se seleccionó uno
-
             final String textoFinal = texto;
-            final Integer idPuzzleFinal = puzzleSeleccionado != null ? puzzleSeleccionado.getId() : null;
+            final Puzzle puzzleFinal = puzzleSeleccionado;
 
-            // Si el usuario NO ha seleccionado su propia imagen pero el puzzle tiene una,
-            // la descargamos en background y luego enviamos el post.
             if (imagenSeleccionada == null
-                    && puzzleSeleccionado != null
-                    && puzzleSeleccionado.getImagenUrl() != null
-                    && !puzzleSeleccionado.getImagenUrl().isBlank()) {
+                    && puzzleFinal != null
+                    && puzzleFinal.getImagenUrl() != null
+                    && !puzzleFinal.getImagenUrl().isBlank()) {
 
-                final String urlImagen = puzzleSeleccionado.getImagenUrl();
+                final String urlImagen = puzzleFinal.getImagenUrl();
                 progressBar.setVisibility(View.VISIBLE);
+                dialog.dismiss();
 
                 new Thread(() -> {
                     ImagenDescargada img = descargarImagenComoFile(urlImagen);
@@ -429,23 +460,32 @@ public class Foro extends Fragment {
                                 img != null ? img.mime : null);
                     });
                 }).start();
-
             } else {
                 viewModel.crearPost(token, idUsuario, textoFinal,
                         imagenSeleccionada, mimeSeleccionado);
+                dialog.dismiss();
             }
         });
 
-        dialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Cancelar", (d, which) -> {
+        btnCancelar.setOnClickListener(v -> {
             imagenSeleccionada = null;
             previewDialog = null;
+            dialog.dismiss();
         });
 
         dialog.setOnDismissListener(d -> previewDialog = null);
+        dialog.setContentView(root);
+        dialog.setCanceledOnTouchOutside(true);
         dialog.show();
 
-        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(COLOR_PRIMARIO);
-        dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(COLOR_TEXTO_LEVE);
+        if (dialog.getWindow() != null) {
+            int screenW = requireContext().getResources().getDisplayMetrics().widthPixels;
+            dialog.getWindow().setBackgroundDrawable(
+                    new android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT));
+            dialog.getWindow().setLayout(
+                    (int)(screenW * 0.92f),
+                    android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
+        }
     }
     private void actualizarPreviewDialog(Uri uri) {
         if (previewDialog == null) return;
@@ -953,13 +993,15 @@ public class Foro extends Fragment {
     }
 
     private void confirmarEliminar(Integer idPost, int idUsuario) {
-        new AlertDialog.Builder(requireContext())
-                .setTitle("Eliminar post")
-                .setMessage("¿Seguro que quieres eliminar este post?")
-                .setPositiveButton("Eliminar", (d, w) ->
-                        viewModel.eliminarPost(obtenerToken(), idPost, idUsuario))
-                .setNegativeButton("Cancelar", null)
-                .show();
+        UtilidadesSesion.mostrarDialogoPersonalizado(
+                requireContext(),
+                "🗑️",
+                "Eliminar post",
+                "¿Seguro que quieres eliminar este post?\nEsta acción no se puede deshacer.",
+                "Eliminar",
+                "#E53935",
+                () -> viewModel.eliminarPost(obtenerToken(), idPost, idUsuario)
+        );
     }
 
     // =========================================================================

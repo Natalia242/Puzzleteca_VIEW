@@ -13,7 +13,6 @@ import android.widget.*;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.AppPrincipal;
@@ -245,13 +244,8 @@ public class PanelAdmin extends Fragment {
         // ── Botón Cerrar Sesión ──────────────────────────────────────
         Button btnCerrarSesion = crearBotonCerrarSesion("🚪  Cerrar Sesión");
         btnCerrarSesion.setOnClickListener(v ->
-                new AlertDialog.Builder(requireContext())
-                        .setTitle("Cerrar sesión")
-                        .setMessage("¿Seguro que quieres cerrar sesión?")
-                        .setPositiveButton("Cerrar sesión", (dialog, which) ->
-                                UtilidadesSesion.cerrarSesion(requireContext()))
-                        .setNegativeButton("Cancelar", null)
-                        .show());
+                UtilidadesSesion.mostrarDialogoCerrarSesion(requireContext(), () ->
+                        UtilidadesSesion.cerrarSesion(requireContext())));
         layout.addView(btnCerrarSesion);
 
         scroll.addView(layout);
@@ -328,14 +322,20 @@ public class PanelAdmin extends Fragment {
     private Button crearBotonCerrarSesion(String texto) {
         Button boton = new Button(requireContext());
         boton.setText(texto);
-        boton.setTextColor(Color.parseColor("#B0BEC5"));
-        boton.setTextSize(14);
+        boton.setTextColor(Color.parseColor("#C62828"));
+        boton.setTextSize(15);
+        boton.setTypeface(null, Typeface.BOLD);
         boton.setAllCaps(false);
-        boton.setPadding(0, 20, 0, 20);
+        boton.setPadding(0, dpToPx(14), 0, dpToPx(14));
         boton.setGravity(Gravity.CENTER);
-        boton.setBackground(null);
-        boton.setLayoutParams(new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        boton.setLayoutParams(params);
+        GradientDrawable forma = new GradientDrawable();
+        forma.setColor(Color.parseColor("#FFEBEE"));
+        forma.setCornerRadius(dpToPx(14));
+        forma.setStroke(dpToPx(1), Color.parseColor("#EF9A9A"));
+        boton.setBackground(forma);
         return boton;
     }
 

@@ -21,7 +21,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.util.Log;
 
+import android.app.Dialog;
+import android.view.View;
+import android.view.Window;
+import android.graphics.drawable.ColorDrawable;
+
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.ignacio_natalia.puzzleteca.R;
@@ -307,47 +313,239 @@ public class RegistroActivity extends AppCompatActivity {
     @SuppressLint("SetTextI18n")
     private void mostrarPoliticas(CheckBox checkPoliticas) {
 
+        Dialog dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setCanceledOnTouchOutside(true);
+
+        int screenW = getResources().getDisplayMetrics().widthPixels;
+        int screenH = getResources().getDisplayMetrics().heightPixels;
+
+        // ── Tarjeta raíz ────────────────────────────────────────────────
+        LinearLayout root = new LinearLayout(this);
+        root.setOrientation(LinearLayout.VERTICAL);
+
+        GradientDrawable rootBg = new GradientDrawable();
+        rootBg.setColor(ContextCompat.getColor(this, R.color.white));
+        rootBg.setCornerRadius(dp(24));
+        root.setBackground(rootBg);
+
+        // ── Cabecera con degradado ───────────────────────────────────────
+        LinearLayout header = new LinearLayout(this);
+        header.setOrientation(LinearLayout.VERTICAL);
+        header.setGravity(Gravity.CENTER_HORIZONTAL);
+        header.setPadding(dp(24), dp(24), dp(24), dp(20));
+
+        GradientDrawable headerBg = new GradientDrawable(
+                GradientDrawable.Orientation.TL_BR,
+                new int[]{
+                        ContextCompat.getColor(this, R.color.app_teal_soft),
+                        ContextCompat.getColor(this, R.color.app_green_light)
+                });
+        headerBg.setCornerRadii(new float[]{dp(24), dp(24), dp(24), dp(24), 0, 0, 0, 0});
+        header.setBackground(headerBg);
+
+        // Emoji escudo
+        TextView tvEmoji = new TextView(this);
+        tvEmoji.setText("🛡️");
+        tvEmoji.setTextSize(36);
+        tvEmoji.setGravity(Gravity.CENTER);
+        LinearLayout.LayoutParams emojiLP = new LinearLayout.LayoutParams(dp(72), dp(72));
+        emojiLP.gravity = Gravity.CENTER_HORIZONTAL;
+        emojiLP.bottomMargin = dp(12);
+        tvEmoji.setLayoutParams(emojiLP);
+        GradientDrawable emojiBg = new GradientDrawable();
+        emojiBg.setShape(GradientDrawable.OVAL);
+        emojiBg.setColor(ContextCompat.getColor(this, R.color.white));
+        tvEmoji.setBackground(emojiBg);
+
+        // Título
+        TextView tvTitulo = new TextView(this);
+        tvTitulo.setText("Política de Privacidad");
+        tvTitulo.setTextSize(20);
+        tvTitulo.setTypeface(null, android.graphics.Typeface.BOLD);
+        tvTitulo.setTextColor(ContextCompat.getColor(this, R.color.app_teal_dark));
+        tvTitulo.setGravity(Gravity.CENTER);
+
+        // Subtítulo
+        TextView tvSub = new TextView(this);
+        tvSub.setText("Puzzleteca · Versión 1.0");
+        tvSub.setTextSize(12);
+        tvSub.setTextColor(ContextCompat.getColor(this, R.color.app_subtexto));
+        tvSub.setGravity(Gravity.CENTER);
+        LinearLayout.LayoutParams subLP = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        subLP.topMargin = dp(4);
+        tvSub.setLayoutParams(subLP);
+
+        header.addView(tvEmoji);
+        header.addView(tvTitulo);
+        header.addView(tvSub);
+
+        // ── Cuerpo con scroll ────────────────────────────────────────────
         ScrollView scrollView = new ScrollView(this);
+        LinearLayout.LayoutParams scrollLP = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, 0, 1f);
+        scrollView.setLayoutParams(scrollLP);
 
-        TextView texto = new TextView(this);
-        texto.setText(Html.fromHtml(
-                "Esta aplicación permite publicar dentro de una red social.<br><br>" +
-                        "<b>Recopilamos datos básicos</b> como nombre, email, contraseña (cifrada) y contenido que publiques en la app.<br><br>" +
-                        "Estos datos se utilizan únicamente para:<br>" +
-                        "- <b>Gestionar tu cuenta</b><br>" +
-                        "- <b>Permitir la publicación de puzzles</b><br>" +
-                        "- <b>Mejorar la experiencia de la aplicación</b><br>" +
-                        "- <b>Mantener la seguridad del servicio</b><br><br>" +
-                        "Tu contenido puede ser visible para otros usuarios dentro de la plataforma.<br><br>" +
-                        "<b>No compartimos tus datos con terceros</b>, salvo obligación legal.<br><br>" +
-                        "<b>Puedes eliminar tu cuenta</b> y tus datos <b>en cualquier momento.</b><br><br>" +
-                        "<b>Al continuar, aceptas estas condiciones.</b>"
-        ));
-        texto.setPadding(40, 40, 40, 40);
-        texto.setTextColor(Color.DKGRAY);
+        LinearLayout cuerpo = new LinearLayout(this);
+        cuerpo.setOrientation(LinearLayout.VERTICAL);
+        cuerpo.setPadding(dp(20), dp(16), dp(20), dp(16));
 
-        scrollView.addView(texto);
+        // Secciones de la política
+        String[][] secciones = {
+                {"📋", "¿Qué datos recogemos?",
+                        "Nombre, email y contraseña (cifrada). También el contenido que publiques en la app, como puzzles y comentarios."},
+                {"🎯", "¿Para qué los usamos?",
+                        "• Gestionar tu cuenta\n• Publicar y compartir puzzles\n• Mejorar la experiencia de la app\n• Mantener la seguridad del servicio"},
+                {"👥", "Visibilidad del contenido",
+                        "Tu contenido puede ser visible para otros usuarios dentro de la plataforma."},
+                {"🔒", "Privacidad garantizada",
+                        "No compartimos tus datos con terceros, salvo obligación legal."},
+                {"🗑️", "Tu control",
+                        "Puedes eliminar tu cuenta y todos tus datos en cualquier momento desde el panel de perfil."},
+        };
 
-        new androidx.appcompat.app.AlertDialog.Builder(this)
-                .setTitle("Política de Privacidad")
-                .setView(scrollView)
-                .setPositiveButton("Acepto", (dialog, which) -> {
+        for (String[] sec : secciones) {
+            cuerpo.addView(crearSeccionPolitica(sec[0], sec[1], sec[2]));
+        }
 
-                    checkPoliticas.setChecked(true);
-                    politicasAceptadas = true;
+        scrollView.addView(cuerpo);
 
-                    botonRegistro.setEnabled(true);
-                    botonRegistro.setAlpha(1f);
-                })
-                .setNegativeButton("Cancelar", (dialog, which) -> {
+        // ── Separador ────────────────────────────────────────────────────
+        View sep = new View(this);
+        LinearLayout.LayoutParams sepLP = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, 1);
+        sepLP.setMargins(dp(20), 0, dp(20), 0);
+        sep.setLayoutParams(sepLP);
+        sep.setBackgroundColor(ContextCompat.getColor(this, R.color.app_borde));
 
-                    checkPoliticas.setChecked(false);
-                    politicasAceptadas = false;
+        // ── Botones ──────────────────────────────────────────────────────
+        LinearLayout filaBotones = new LinearLayout(this);
+        filaBotones.setOrientation(LinearLayout.HORIZONTAL);
+        filaBotones.setPadding(dp(16), dp(14), dp(16), dp(16));
+        filaBotones.setGravity(Gravity.CENTER_VERTICAL);
 
-                    botonRegistro.setEnabled(false);
-                    botonRegistro.setAlpha(0.5f);
-                })
-                .show();
+        // Botón Cancelar
+        TextView btnCancelar = new TextView(this);
+        btnCancelar.setText("No, gracias");
+        btnCancelar.setTextSize(14);
+        btnCancelar.setTypeface(null, android.graphics.Typeface.BOLD);
+        btnCancelar.setTextColor(ContextCompat.getColor(this, R.color.app_subtexto));
+        btnCancelar.setGravity(Gravity.CENTER);
+        btnCancelar.setPadding(dp(16), dp(12), dp(16), dp(12));
+        LinearLayout.LayoutParams cancelLP = new LinearLayout.LayoutParams(0,
+                LinearLayout.LayoutParams.WRAP_CONTENT, 1f);
+        cancelLP.setMargins(0, 0, dp(8), 0);
+        btnCancelar.setLayoutParams(cancelLP);
+        GradientDrawable cancelBg = new GradientDrawable();
+        cancelBg.setColor(ContextCompat.getColor(this, R.color.app_fondo_cancelar));
+        cancelBg.setCornerRadius(dp(14));
+        btnCancelar.setBackground(cancelBg);
+        btnCancelar.setOnClickListener(v -> {
+            dialog.dismiss();
+            checkPoliticas.setChecked(false);
+            politicasAceptadas = false;
+            botonRegistro.setEnabled(false);
+            botonRegistro.setAlpha(0.5f);
+        });
+
+        // Botón Aceptar
+        TextView btnAceptar = new TextView(this);
+        btnAceptar.setText("✓  Acepto");
+        btnAceptar.setTextSize(14);
+        btnAceptar.setTypeface(null, android.graphics.Typeface.BOLD);
+        btnAceptar.setTextColor(ContextCompat.getColor(this, R.color.white));
+        btnAceptar.setGravity(Gravity.CENTER);
+        btnAceptar.setPadding(dp(16), dp(12), dp(16), dp(12));
+        btnAceptar.setLayoutParams(new LinearLayout.LayoutParams(0,
+                LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
+        GradientDrawable aceptarBg = new GradientDrawable();
+        aceptarBg.setColor(ContextCompat.getColor(this, R.color.app_teal));
+        aceptarBg.setCornerRadius(dp(14));
+        btnAceptar.setBackground(aceptarBg);
+        btnAceptar.setOnClickListener(v -> {
+            dialog.dismiss();
+            checkPoliticas.setChecked(true);
+            politicasAceptadas = true;
+            botonRegistro.setEnabled(true);
+            botonRegistro.setAlpha(1f);
+        });
+
+        filaBotones.addView(btnCancelar);
+        filaBotones.addView(btnAceptar);
+
+        // ── Montaje ──────────────────────────────────────────────────────
+        root.addView(header);
+        root.addView(scrollView);
+        root.addView(sep);
+        root.addView(filaBotones);
+
+        dialog.setContentView(root);
+        dialog.show();
+
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            dialog.getWindow().setLayout(
+                    (int) (screenW * 0.92f),
+                    (int) (screenH * 0.75f));
+        }
+    }
+
+    /** Bloque visual de una sección de la política */
+    private LinearLayout crearSeccionPolitica(String emoji, String titulo, String texto) {
+        LinearLayout sec = new LinearLayout(this);
+        sec.setOrientation(LinearLayout.VERTICAL);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        lp.bottomMargin = dp(12);
+        sec.setLayoutParams(lp);
+        sec.setPadding(dp(14), dp(12), dp(14), dp(12));
+
+        GradientDrawable bg = new GradientDrawable();
+        bg.setColor(ContextCompat.getColor(this, R.color.app_teal_soft));
+        bg.setCornerRadius(dp(14));
+        sec.setBackground(bg);
+
+        // Fila: emoji + título
+        LinearLayout fila = new LinearLayout(this);
+        fila.setOrientation(LinearLayout.HORIZONTAL);
+        fila.setGravity(Gravity.CENTER_VERTICAL);
+        LinearLayout.LayoutParams filaLP = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        filaLP.bottomMargin = dp(6);
+        fila.setLayoutParams(filaLP);
+
+        TextView tvEmoji = new TextView(this);
+        tvEmoji.setText(emoji);
+        tvEmoji.setTextSize(18);
+        LinearLayout.LayoutParams eLP = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        eLP.setMargins(0, 0, dp(10), 0);
+        tvEmoji.setLayoutParams(eLP);
+
+        TextView tvTitulo = new TextView(this);
+        tvTitulo.setText(titulo);
+        tvTitulo.setTextSize(14);
+        tvTitulo.setTypeface(null, android.graphics.Typeface.BOLD);
+        tvTitulo.setTextColor(ContextCompat.getColor(this, R.color.app_teal_dark));
+
+        fila.addView(tvEmoji);
+        fila.addView(tvTitulo);
+
+        // Texto del cuerpo
+        TextView tvTexto = new TextView(this);
+        tvTexto.setText(texto);
+        tvTexto.setTextSize(13);
+        tvTexto.setTextColor(ContextCompat.getColor(this, R.color.app_texto));
+        tvTexto.setLineSpacing(dp(2), 1f);
+
+        sec.addView(fila);
+        sec.addView(tvTexto);
+        return sec;
+    }
+
+    private int dp(int v) {
+        return Math.round(v * getResources().getDisplayMetrics().density);
     }
 
 }
