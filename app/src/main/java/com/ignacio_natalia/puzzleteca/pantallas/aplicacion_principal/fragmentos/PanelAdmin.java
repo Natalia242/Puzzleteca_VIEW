@@ -201,13 +201,13 @@ public class PanelAdmin extends Fragment {
         layout.addView(crearEtiquetaSeccion("PERFIL"));
 
         LinearLayout opEditarPerfil = crearOpcion("✏️", "Editar Perfil", "#E8EAF6", "#3F51B5");
-        opEditarPerfil.setOnClickListener(v -> irA(new EditarPerfil()));
+        opEditarPerfil.setOnClickListener(v -> irA(new EditarPerfil(), 0));
         layout.addView(opEditarPerfil);
 
         espacio(layout, 6);
 
         LinearLayout opMisChats = crearOpcion("💬", "Mis Chats", "#E0F2F1", "#26A69A");
-        opMisChats.setOnClickListener(v -> irA(new MisChats()));
+        opMisChats.setOnClickListener(v -> irA(new MisChats(), 0));
         layout.addView(opMisChats);
 
         espacio(layout, 18);
@@ -216,19 +216,19 @@ public class PanelAdmin extends Fragment {
         layout.addView(crearEtiquetaSeccion("GESTIÓN"));
 
         LinearLayout opCrearPuzzle = crearOpcion("➕", "Crear Nuevo Puzzle", "#FCE4EC", "#F06292");
-        opCrearPuzzle.setOnClickListener(v -> irA(new RegistrarPuzzle()));
+        opCrearPuzzle.setOnClickListener(v -> irA(new RegistrarPuzzle(), 0));
         layout.addView(opCrearPuzzle);
 
         espacio(layout, 6);
 
         LinearLayout opGestionPuzzles = crearOpcion("🧩", "Gestionar Puzzles", "#FFF8E1", "#FFA726");
-        opGestionPuzzles.setOnClickListener(v -> irA(new GestionPuzzles()));
+        opGestionPuzzles.setOnClickListener(v -> irA(new GestionPuzzles(), 0));
         layout.addView(opGestionPuzzles);
 
         espacio(layout, 6);
 
         LinearLayout opGestionUsuarios = crearOpcion("👥", "Gestionar Usuarios", "#E8F5E9", "#43A047");
-        opGestionUsuarios.setOnClickListener(v -> irA(new GestionUsuarios()));
+        opGestionUsuarios.setOnClickListener(v -> irA(new GestionUsuarios(), 0));
         layout.addView(opGestionUsuarios);
 
         espacio(layout, 28);
@@ -254,8 +254,12 @@ public class PanelAdmin extends Fragment {
 
     // ── Helpers ──────────────────────────────────────────────────────
 
-    private void irA(Fragment destino) {
-        requireActivity().getSupportFragmentManager()
+    private void irA(Fragment destino, int tituloDrawable) {
+        AppPrincipal activity = (AppPrincipal) requireActivity();
+        if (tituloDrawable != 0) {
+            activity.actualizarTituloPantalla(tituloDrawable);
+        }
+        activity.getSupportFragmentManager()
                 .beginTransaction()
                 .replace(AppPrincipal.FRAGMENTO_ID, destino)
                 .addToBackStack(null)

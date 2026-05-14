@@ -202,12 +202,12 @@ public class PanelUsuario extends Fragment {
                 0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f);
         paramsC1.setMargins(0, 0, 10, 0);
         cardMisPuzzles.setLayoutParams(paramsC1);
-        cardMisPuzzles.setOnClickListener(v -> irA(new MisPuzzles()));
+        cardMisPuzzles.setOnClickListener(v -> irA(new MisPuzzles(), com.ignacio_natalia.puzzleteca.R.drawable.titulo_mis_puzzles_recortado));
 
         LinearLayout cardEditarPerfil = crearCardAccion("✏️", "Editar Perfil", "#E0F2F1", "#26A69A");
         cardEditarPerfil.setLayoutParams(new LinearLayout.LayoutParams(
                 0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
-        cardEditarPerfil.setOnClickListener(v -> irA(new EditarPerfil()));
+        cardEditarPerfil.setOnClickListener(v -> irA(new EditarPerfil(), 0));
 
         filaAcciones.addView(cardMisPuzzles);
         filaAcciones.addView(cardEditarPerfil);
@@ -215,13 +215,13 @@ public class PanelUsuario extends Fragment {
 
         // ── Botón Mis Chats ──────────────────────────────────────────
         Button botonMisChats = crearBotonPrimario("💬  Mis Chats", "#26A69A");
-        botonMisChats.setOnClickListener(v -> irA(new MisChats()));
+        botonMisChats.setOnClickListener(v -> irA(new MisChats(), 0));
         layout.addView(botonMisChats);
         espacio(layout, 14);
 
         // ── Botón Crear Nuevo Puzzle ─────────────────────────────────
         Button botonCrearPuzzle = crearBotonPrimario("➕  Crear Nuevo Puzzle", "#F06292");
-        botonCrearPuzzle.setOnClickListener(v -> irA(new RegistrarPuzzle()));
+        botonCrearPuzzle.setOnClickListener(v -> irA(new RegistrarPuzzle(), 0));
         layout.addView(botonCrearPuzzle);
         espacio(layout, 28);
 
@@ -246,8 +246,12 @@ public class PanelUsuario extends Fragment {
 
     // ── Helpers ──────────────────────────────────────────────────────
 
-    private void irA(Fragment destino) {
-        requireActivity().getSupportFragmentManager()
+    private void irA(Fragment destino, int tituloDrawable) {
+        AppPrincipal activity = (AppPrincipal) requireActivity();
+        if (tituloDrawable != 0) {
+            activity.actualizarTituloPantalla(tituloDrawable);
+        }
+        activity.getSupportFragmentManager()
                 .beginTransaction()
                 .replace(AppPrincipal.FRAGMENTO_ID, destino)
                 .addToBackStack(null)

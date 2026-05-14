@@ -171,7 +171,7 @@ public class AppPrincipal extends AppCompatActivity {
         contenedorFragmento.setVisibility(FrameLayout.GONE);
     }
 
-    private void actualizarTituloPantalla(int drawableRes) {
+    public void actualizarTituloPantalla(int drawableRes) {
         tituloPantalla.setImageResource(drawableRes);
     }
 
