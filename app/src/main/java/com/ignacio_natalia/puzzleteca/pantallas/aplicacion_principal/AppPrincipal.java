@@ -49,7 +49,7 @@ public class AppPrincipal extends AppCompatActivity {
     private FrameLayout contenedorFragmento;
     private ImageView tituloPantalla;
 
-    // Tabs (ahora LinearLayout en lugar de TextView)
+    // Tabs
     private LinearLayout botonInicio, botonPuzzles, botonRanking, botonForo, botonPerfil;
     // Indicador deslizante
     private View indicadorActivo;

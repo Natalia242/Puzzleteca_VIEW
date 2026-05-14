@@ -18,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.ignacio_natalia.puzzleteca.R;
@@ -26,15 +27,12 @@ import com.ignacio_natalia.puzzleteca.pantallas.login.LoginActivity;
 public class RecuperarContrasennaActivity extends AppCompatActivity {
 
     private RecuperarContrasennaViewModel viewModel;
-
     private String emailGuardado;
 
-    // Paso 1
     private EditText emailEditText;
     private Button botonSolicitarCodigo;
     private LinearLayout pasoUnoLayout;
 
-    // Paso 2
     private EditText codigoEditText;
     private EditText nuevaContrasenaEditText;
     private EditText confirmarContrasenaEditText;
@@ -50,14 +48,16 @@ public class RecuperarContrasennaActivity extends AppCompatActivity {
 
         GradientDrawable fondo = new GradientDrawable(
                 GradientDrawable.Orientation.TOP_BOTTOM,
-                new int[]{Color.parseColor("#DFF5C9"), Color.parseColor("#B8E6A5")}
+                new int[]{
+                        ContextCompat.getColor(this, R.color.app_green_light),
+                        ContextCompat.getColor(this, R.color.app_green_medium)
+                }
         );
 
         FrameLayout layout = new FrameLayout(this);
         layout.setBackground(fondo);
         layout.setPadding(40, 60, 40, 40);
 
-        // TITULO
         ImageView titulo = new ImageView(this);
         titulo.setImageResource(R.drawable.titulo);
         titulo.setAdjustViewBounds(true);
@@ -66,7 +66,6 @@ public class RecuperarContrasennaActivity extends AppCompatActivity {
         parametrosTitulo.gravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
         titulo.setLayoutParams(parametrosTitulo);
 
-        // CONTENEDOR PRINCIPAL
         LinearLayout contenedor = new LinearLayout(this);
         contenedor.setOrientation(LinearLayout.VERTICAL);
         contenedor.setGravity(Gravity.CENTER);
@@ -79,14 +78,14 @@ public class RecuperarContrasennaActivity extends AppCompatActivity {
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         parametrosCampos.setMargins(80, 25, 80, 25);
 
-        // ========== PASO 1 ==========
+        // ═══ PASO 1 ═══
         pasoUnoLayout = new LinearLayout(this);
         pasoUnoLayout.setOrientation(LinearLayout.VERTICAL);
         pasoUnoLayout.setGravity(Gravity.CENTER);
 
         TextView textoTituloUno = new TextView(this);
         textoTituloUno.setText("Recuperar contraseña");
-        textoTituloUno.setTextColor(Color.parseColor("#37474F"));
+        textoTituloUno.setTextColor(ContextCompat.getColor(this, R.color.app_texto));
         textoTituloUno.setTextSize(22);
         textoTituloUno.setGravity(Gravity.CENTER);
         LinearLayout.LayoutParams parametrosTituloUno = new LinearLayout.LayoutParams(
@@ -96,7 +95,7 @@ public class RecuperarContrasennaActivity extends AppCompatActivity {
 
         TextView pasoUno = new TextView(this);
         pasoUno.setText("Introduce tu email y te enviaremos un código");
-        pasoUno.setTextColor(Color.parseColor("#78909C"));
+        pasoUno.setTextColor(ContextCompat.getColor(this, R.color.app_subtexto));
         pasoUno.setTextSize(14);
         pasoUno.setGravity(Gravity.CENTER);
         LinearLayout.LayoutParams parametrosPasoUno = new LinearLayout.LayoutParams(
@@ -122,7 +121,7 @@ public class RecuperarContrasennaActivity extends AppCompatActivity {
         pasoUnoLayout.addView(emailEditText);
         pasoUnoLayout.addView(botonSolicitarCodigo);
 
-        // ========== PASO 2 ==========
+        // ═══ PASO 2 ═══
         pasoDosLayout = new LinearLayout(this);
         pasoDosLayout.setOrientation(LinearLayout.VERTICAL);
         pasoDosLayout.setGravity(Gravity.CENTER);
@@ -130,7 +129,7 @@ public class RecuperarContrasennaActivity extends AppCompatActivity {
 
         TextView textoTituloDos = new TextView(this);
         textoTituloDos.setText("Introduce el código");
-        textoTituloDos.setTextColor(Color.parseColor("#37474F"));
+        textoTituloDos.setTextColor(ContextCompat.getColor(this, R.color.app_texto));
         textoTituloDos.setTextSize(22);
         textoTituloDos.setGravity(Gravity.CENTER);
         LinearLayout.LayoutParams parametrosTituloDos = new LinearLayout.LayoutParams(
@@ -140,7 +139,7 @@ public class RecuperarContrasennaActivity extends AppCompatActivity {
 
         TextView pasoDos = new TextView(this);
         pasoDos.setText("Revisa tu correo e introduce el código de 6 dígitos");
-        pasoDos.setTextColor(Color.parseColor("#78909C"));
+        pasoDos.setTextColor(ContextCompat.getColor(this, R.color.app_subtexto));
         pasoDos.setTextSize(14);
         pasoDos.setGravity(Gravity.CENTER);
         LinearLayout.LayoutParams parametrosPasoDos = new LinearLayout.LayoutParams(
@@ -174,7 +173,8 @@ public class RecuperarContrasennaActivity extends AppCompatActivity {
                     nuevaContrasenaEditText.setTransformationMethod(contrasenaUnoVisible[0]
                             ? android.text.method.HideReturnsTransformationMethod.getInstance()
                             : android.text.method.PasswordTransformationMethod.getInstance());
-                    nuevaContrasenaEditText.setCompoundDrawablesWithIntrinsicBounds(android.R.drawable.ic_lock_lock, 0, contrasenaUnoVisible[0] ? R.drawable.eye : R.drawable.visibility_off, 0);
+                    nuevaContrasenaEditText.setCompoundDrawablesWithIntrinsicBounds(android.R.drawable.ic_lock_lock, 0,
+                            contrasenaUnoVisible[0] ? R.drawable.eye : R.drawable.visibility_off, 0);
                     nuevaContrasenaEditText.setSelection(nuevaContrasenaEditText.getText().length());
                     return true;
                 }
@@ -193,14 +193,14 @@ public class RecuperarContrasennaActivity extends AppCompatActivity {
         confirmarContrasenaEditText.setCompoundDrawablePadding(20);
         confirmarContrasenaEditText.setLayoutParams(parametrosCampos);
         confirmarContrasenaEditText.setOnTouchListener((vista, event) -> {
-
             if (event.getAction() == MotionEvent.ACTION_UP) {
                 if (event.getRawX() >= (confirmarContrasenaEditText.getRight() - confirmarContrasenaEditText.getCompoundDrawables()[2].getBounds().width())) {
                     contrasenaDosVisible[0] = !contrasenaDosVisible[0];
                     confirmarContrasenaEditText.setTransformationMethod(contrasenaDosVisible[0]
                             ? android.text.method.HideReturnsTransformationMethod.getInstance()
                             : android.text.method.PasswordTransformationMethod.getInstance());
-                    confirmarContrasenaEditText.setCompoundDrawablesWithIntrinsicBounds(android.R.drawable.ic_lock_lock, 0, contrasenaDosVisible[0] ? R.drawable.eye : R.drawable.visibility_off, 0);
+                    confirmarContrasenaEditText.setCompoundDrawablesWithIntrinsicBounds(android.R.drawable.ic_lock_lock, 0,
+                            contrasenaDosVisible[0] ? R.drawable.eye : R.drawable.visibility_off, 0);
                     confirmarContrasenaEditText.setSelection(confirmarContrasenaEditText.getText().length());
                     return true;
                 }
@@ -218,10 +218,9 @@ public class RecuperarContrasennaActivity extends AppCompatActivity {
         pasoDosLayout.addView(confirmarContrasenaEditText);
         pasoDosLayout.addView(botonConfirmar);
 
-        // VOLVER AL LOGIN
         TextView textoVolver = new TextView(this);
         textoVolver.setText("¿Recuerdas tu contraseña? Iniciar sesión");
-        textoVolver.setTextColor(Color.parseColor("#455A64"));
+        textoVolver.setTextColor(ContextCompat.getColor(this, R.color.app_texto_link));
         textoVolver.setTextSize(16);
         textoVolver.setGravity(Gravity.CENTER);
         textoVolver.setPadding(20, 30, 20, 10);
@@ -239,7 +238,6 @@ public class RecuperarContrasennaActivity extends AppCompatActivity {
         layout.addView(contenedor);
         setContentView(layout);
 
-        // ========== LÓGICA BOTONES ==========
         botonSolicitarCodigo.setOnClickListener(vista -> {
             String email = emailEditText.getText().toString().trim();
             if (email.isEmpty()) {
@@ -254,7 +252,6 @@ public class RecuperarContrasennaActivity extends AppCompatActivity {
             String codigo = codigoEditText.getText().toString().trim();
             String nuevaContrasena = nuevaContrasenaEditText.getText().toString().trim();
             String confirmarContrasena = confirmarContrasenaEditText.getText().toString().trim();
-
             if (codigo.isEmpty() || nuevaContrasena.isEmpty() || confirmarContrasena.isEmpty()) {
                 Toast.makeText(this, "Completa todos los campos", Toast.LENGTH_SHORT).show();
                 return;
@@ -270,7 +267,6 @@ public class RecuperarContrasennaActivity extends AppCompatActivity {
             viewModel.confirmarCambioPassword(emailGuardado, codigo, nuevaContrasena);
         });
 
-        // ========== OBSERVERS ==========
         viewModel.codigoEnviado.observe(this, enviado -> {
             if (enviado) {
                 pasoUnoLayout.setVisibility(android.view.View.GONE);
@@ -290,31 +286,28 @@ public class RecuperarContrasennaActivity extends AppCompatActivity {
         });
 
         viewModel.error.observe(this, msg ->
-                Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
-        );
+                Toast.makeText(this, msg, Toast.LENGTH_SHORT).show());
     }
 
     private Button crearBoton(String texto) {
         Button boton = new Button(this);
         boton.setText(texto);
-        boton.setTextColor(Color.WHITE);
+        boton.setTextColor(ContextCompat.getColor(this, R.color.white));
         boton.setTextSize(18);
         boton.setAllCaps(false);
         boton.setPadding(20, 30, 20, 30);
-
         GradientDrawable forma = new GradientDrawable();
         forma.setCornerRadius(60);
-        forma.setColor(Color.parseColor("#F06292"));
+        forma.setColor(ContextCompat.getColor(this, R.color.app_rosa));
         boton.setBackground(forma);
         return boton;
     }
 
     private GradientDrawable crearFondoCampo() {
         GradientDrawable forma = new GradientDrawable();
-        forma.setColor(Color.WHITE);
+        forma.setColor(ContextCompat.getColor(this, R.color.white));
         forma.setCornerRadius(50);
-        forma.setStroke(3, Color.parseColor("#A5D6A7"));
+        forma.setStroke(3, ContextCompat.getColor(this, R.color.app_green_border));
         return forma;
     }
-
 }

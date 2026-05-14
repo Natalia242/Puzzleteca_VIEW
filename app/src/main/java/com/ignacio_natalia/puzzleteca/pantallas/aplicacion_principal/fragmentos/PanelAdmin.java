@@ -1,7 +1,6 @@
 package com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos;
 
 import android.annotation.SuppressLint;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
@@ -13,15 +12,16 @@ import android.widget.*;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import com.ignacio_natalia.puzzleteca.R;
+import com.ignacio_natalia.puzzleteca.modelos.RankingUsuario;
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.AppPrincipal;
-import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos.EditarPerfil;
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos.chats.MisChats;
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos.gestionesAdministrador.puzzles.GestionPuzzles;
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos.gestionesAdministrador.usuarios.GestionUsuarios;
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.puzzles.RegistrarPuzzle;
-import com.ignacio_natalia.puzzleteca.modelos.RankingUsuario;
 import com.ignacio_natalia.puzzleteca.repositorios.RankingRepositorio;
 import com.ignacio_natalia.puzzleteca.utilidades.GestorSesion;
 import com.ignacio_natalia.puzzleteca.utilidades.UtilidadesSesion;
@@ -48,7 +48,7 @@ public class PanelAdmin extends Fragment {
         layout.setOrientation(LinearLayout.VERTICAL);
         layout.setPadding(40, 50, 40, 50);
 
-        // ── Tarjeta de cabecera Admin ────────────────────────────────
+        // ── Tarjeta cabecera Admin ───────────────────────────────────────
         LinearLayout tarjetaAdmin = new LinearLayout(requireContext());
         tarjetaAdmin.setOrientation(LinearLayout.HORIZONTAL);
         tarjetaAdmin.setGravity(Gravity.CENTER_VERTICAL);
@@ -58,16 +58,15 @@ public class PanelAdmin extends Fragment {
         paramsTa.setMargins(0, 0, 0, 20);
         tarjetaAdmin.setLayoutParams(paramsTa);
         GradientDrawable fondoAdmin = new GradientDrawable();
-        fondoAdmin.setColor(Color.parseColor("#4527A0"));
+        fondoAdmin.setColor(ContextCompat.getColor(requireContext(), R.color.app_admin_bg));
         fondoAdmin.setCornerRadius(40);
         tarjetaAdmin.setBackground(fondoAdmin);
 
-        // Avatar circular
         TextView avatar = new TextView(requireContext());
         avatar.setText(nombre.isEmpty() ? "A" : nombre.substring(0, 1).toUpperCase());
         avatar.setTextSize(22);
         avatar.setTypeface(null, Typeface.BOLD);
-        avatar.setTextColor(Color.parseColor("#4527A0"));
+        avatar.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_admin_bg));
         avatar.setGravity(Gravity.CENTER);
         int tamAv = dpToPx(52);
         LinearLayout.LayoutParams paramsAv = new LinearLayout.LayoutParams(tamAv, tamAv);
@@ -75,7 +74,7 @@ public class PanelAdmin extends Fragment {
         avatar.setLayoutParams(paramsAv);
         GradientDrawable fondoAv = new GradientDrawable();
         fondoAv.setShape(GradientDrawable.OVAL);
-        fondoAv.setColor(Color.WHITE);
+        fondoAv.setColor(ContextCompat.getColor(requireContext(), R.color.white));
         avatar.setBackground(fondoAv);
 
         LinearLayout infoAdmin = new LinearLayout(requireContext());
@@ -87,21 +86,20 @@ public class PanelAdmin extends Fragment {
         textoNombreAdmin.setText("¡Hola, " + nombre + "! 🛡️");
         textoNombreAdmin.setTextSize(18);
         textoNombreAdmin.setTypeface(null, Typeface.BOLD);
-        textoNombreAdmin.setTextColor(Color.WHITE);
+        textoNombreAdmin.setTextColor(ContextCompat.getColor(requireContext(), R.color.white));
 
         TextView textoRolAdmin = new TextView(requireContext());
         textoRolAdmin.setText("Panel de Administración");
         textoRolAdmin.setTextSize(12);
-        textoRolAdmin.setTextColor(Color.parseColor("#CE93D8"));
+        textoRolAdmin.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_admin_rol_text));
 
         infoAdmin.addView(textoNombreAdmin);
         infoAdmin.addView(textoRolAdmin);
-
         tarjetaAdmin.addView(avatar);
         tarjetaAdmin.addView(infoAdmin);
         layout.addView(tarjetaAdmin);
 
-        // ── Tarjeta de Ranking del día ───────────────────────────────
+        // ── Tarjeta Ranking ──────────────────────────────────────────────
         LinearLayout tarjetaRanking = new LinearLayout(requireContext());
         tarjetaRanking.setOrientation(LinearLayout.HORIZONTAL);
         tarjetaRanking.setGravity(Gravity.CENTER_VERTICAL);
@@ -111,7 +109,7 @@ public class PanelAdmin extends Fragment {
         paramsRk.setMargins(0, 0, 0, 20);
         tarjetaRanking.setLayoutParams(paramsRk);
         GradientDrawable fondoRanking = new GradientDrawable();
-        fondoRanking.setColor(Color.parseColor("#00796B"));
+        fondoRanking.setColor(ContextCompat.getColor(requireContext(), R.color.app_teal_darker));
         fondoRanking.setCornerRadius(40);
         tarjetaRanking.setBackground(fondoRanking);
 
@@ -124,19 +122,19 @@ public class PanelAdmin extends Fragment {
         labelRanking.setText("🏆  TU POSICIÓN HOY");
         labelRanking.setTextSize(10);
         labelRanking.setTypeface(null, Typeface.BOLD);
-        labelRanking.setTextColor(Color.parseColor("#B2DFDB"));
+        labelRanking.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_teal_borde));
         labelRanking.setLetterSpacing(0.1f);
 
         TextView textoPosicion = new TextView(requireContext());
         textoPosicion.setText("—");
         textoPosicion.setTextSize(30);
         textoPosicion.setTypeface(null, Typeface.BOLD);
-        textoPosicion.setTextColor(Color.WHITE);
+        textoPosicion.setTextColor(ContextCompat.getColor(requireContext(), R.color.white));
 
         TextView textoDetalleRanking = new TextView(requireContext());
         textoDetalleRanking.setText("Cargando...");
         textoDetalleRanking.setTextSize(12);
-        textoDetalleRanking.setTextColor(Color.parseColor("#B2DFDB"));
+        textoDetalleRanking.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_teal_borde));
 
         infoRanking.addView(labelRanking);
         infoRanking.addView(textoPosicion);
@@ -150,7 +148,7 @@ public class PanelAdmin extends Fragment {
         tarjetaRanking.addView(iconoTrofeo);
         layout.addView(tarjetaRanking);
 
-        // ── Llamada al ranking diario ────────────────────────────────
+        // ── Llamada al ranking ───────────────────────────────────────────
         new RankingRepositorio().obtenerRankingDiario(token, new retrofit2.Callback<List<RankingUsuario>>() {
             @Override
             public void onResponse(@NonNull retrofit2.Call<List<RankingUsuario>> call,
@@ -197,51 +195,41 @@ public class PanelAdmin extends Fragment {
             }
         });
 
-        // ── Sección "Perfil" ─────────────────────────────────────────
+        // ── Sección Perfil ───────────────────────────────────────────────
         layout.addView(crearEtiquetaSeccion("PERFIL"));
-
-        LinearLayout opEditarPerfil = crearOpcion("✏️", "Editar Perfil", "#E8EAF6", "#3F51B5");
-        opEditarPerfil.setOnClickListener(v -> irA(new EditarPerfil(), 0));
+        LinearLayout opEditarPerfil = crearOpcion("✏️", "Editar Perfil", R.color.app_admin_indigo_soft, R.color.app_admin_accent);
+        opEditarPerfil.setOnClickListener(v -> irA(new EditarPerfil()));
         layout.addView(opEditarPerfil);
-
         espacio(layout, 6);
-
-        LinearLayout opMisChats = crearOpcion("💬", "Mis Chats", "#E0F2F1", "#26A69A");
-        opMisChats.setOnClickListener(v -> irA(new MisChats(), 0));
+        LinearLayout opMisChats = crearOpcion("💬", "Mis Chats", R.color.app_teal_soft, R.color.app_teal);
+        opMisChats.setOnClickListener(v -> irA(new MisChats()));
         layout.addView(opMisChats);
-
         espacio(layout, 18);
 
-        // ── Sección "Gestión" ────────────────────────────────────────
+        // ── Sección Gestión ──────────────────────────────────────────────
         layout.addView(crearEtiquetaSeccion("GESTIÓN"));
-
-        LinearLayout opCrearPuzzle = crearOpcion("➕", "Crear Nuevo Puzzle", "#FCE4EC", "#F06292");
-        opCrearPuzzle.setOnClickListener(v -> irA(new RegistrarPuzzle(), 0));
+        LinearLayout opCrearPuzzle = crearOpcion("➕", "Crear Nuevo Puzzle", R.color.app_rosa_soft, R.color.app_rosa);
+        opCrearPuzzle.setOnClickListener(v -> irA(new RegistrarPuzzle()));
         layout.addView(opCrearPuzzle);
-
         espacio(layout, 6);
-
-        LinearLayout opGestionPuzzles = crearOpcion("🧩", "Gestionar Puzzles", "#FFF8E1", "#FFA726");
-        opGestionPuzzles.setOnClickListener(v -> irA(new GestionPuzzles(), 0));
+        LinearLayout opGestionPuzzles = crearOpcion("🧩", "Gestionar Puzzles", R.color.app_naranja_soft, R.color.app_naranja);
+        opGestionPuzzles.setOnClickListener(v -> irA(new GestionPuzzles()));
         layout.addView(opGestionPuzzles);
-
         espacio(layout, 6);
-
-        LinearLayout opGestionUsuarios = crearOpcion("👥", "Gestionar Usuarios", "#E8F5E9", "#43A047");
-        opGestionUsuarios.setOnClickListener(v -> irA(new GestionUsuarios(), 0));
+        LinearLayout opGestionUsuarios = crearOpcion("👥", "Gestionar Usuarios", R.color.app_green_success, R.color.app_green_success_text_dark);
+        opGestionUsuarios.setOnClickListener(v -> irA(new GestionUsuarios()));
         layout.addView(opGestionUsuarios);
-
         espacio(layout, 28);
 
-        // ── Divisor ──────────────────────────────────────────────────
+        // ── Divisor ──────────────────────────────────────────────────────
         View divisor = new View(requireContext());
         divisor.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, 1));
-        divisor.setBackgroundColor(Color.parseColor("#ECEFF1"));
+        divisor.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.app_borde));
         layout.addView(divisor);
         espacio(layout, 20);
 
-        // ── Botón Cerrar Sesión ──────────────────────────────────────
+        // ── Botón Cerrar Sesión ──────────────────────────────────────────
         Button btnCerrarSesion = crearBotonCerrarSesion("🚪  Cerrar Sesión");
         btnCerrarSesion.setOnClickListener(v ->
                 UtilidadesSesion.mostrarDialogoCerrarSesion(requireContext(), () ->
@@ -252,27 +240,20 @@ public class PanelAdmin extends Fragment {
         return scroll;
     }
 
-    // ── Helpers ──────────────────────────────────────────────────────
-
-    private void irA(Fragment destino, int tituloDrawable) {
-        AppPrincipal activity = (AppPrincipal) requireActivity();
-        if (tituloDrawable != 0) {
-            activity.actualizarTituloPantalla(tituloDrawable);
-        }
-        activity.getSupportFragmentManager()
+    private void irA(Fragment destino) {
+        requireActivity().getSupportFragmentManager()
                 .beginTransaction()
                 .replace(AppPrincipal.FRAGMENTO_ID, destino)
                 .addToBackStack(null)
                 .commit();
     }
 
-    /** Etiqueta de sección en mayúsculas con línea inferior */
     private TextView crearEtiquetaSeccion(String texto) {
         TextView label = new TextView(requireContext());
         label.setText(texto);
         label.setTextSize(11);
         label.setTypeface(null, Typeface.BOLD);
-        label.setTextColor(Color.parseColor("#90A4AE"));
+        label.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_subtexto_label));
         label.setLetterSpacing(0.15f);
         LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -281,8 +262,7 @@ public class PanelAdmin extends Fragment {
         return label;
     }
 
-    private LinearLayout crearOpcion(String emoji, String texto,
-                                     String colorFondo, String colorBorde) {
+    private LinearLayout crearOpcion(String emoji, String texto, int colorFondoRes, int colorBordeRes) {
         LinearLayout fila = new LinearLayout(requireContext());
         fila.setOrientation(LinearLayout.HORIZONTAL);
         fila.setGravity(Gravity.CENTER_VERTICAL);
@@ -293,9 +273,9 @@ public class PanelAdmin extends Fragment {
         fila.setLayoutParams(params);
 
         GradientDrawable forma = new GradientDrawable();
-        forma.setColor(Color.parseColor(colorFondo));
+        forma.setColor(ContextCompat.getColor(requireContext(), colorFondoRes));
         forma.setCornerRadius(dpToPx(16));
-        forma.setStroke(dpToPx(1), Color.parseColor(colorBorde));
+        forma.setStroke(dpToPx(1), ContextCompat.getColor(requireContext(), colorBordeRes));
         fila.setBackground(forma);
 
         TextView emojiTv = new TextView(requireContext());
@@ -307,7 +287,7 @@ public class PanelAdmin extends Fragment {
         textoTv.setText(texto);
         textoTv.setTextSize(15);
         textoTv.setTypeface(null, Typeface.BOLD);
-        textoTv.setTextColor(Color.parseColor("#37474F"));
+        textoTv.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_texto));
         textoTv.setLayoutParams(new LinearLayout.LayoutParams(
                 0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
 
@@ -315,7 +295,7 @@ public class PanelAdmin extends Fragment {
         flecha.setText("›");
         flecha.setTextSize(22);
         flecha.setTypeface(null, Typeface.BOLD);
-        flecha.setTextColor(Color.parseColor(colorBorde));
+        flecha.setTextColor(ContextCompat.getColor(requireContext(), colorBordeRes));
 
         fila.addView(emojiTv);
         fila.addView(textoTv);
@@ -326,19 +306,18 @@ public class PanelAdmin extends Fragment {
     private Button crearBotonCerrarSesion(String texto) {
         Button boton = new Button(requireContext());
         boton.setText(texto);
-        boton.setTextColor(Color.parseColor("#C62828"));
+        boton.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_peligro_dark));
         boton.setTextSize(15);
         boton.setTypeface(null, Typeface.BOLD);
         boton.setAllCaps(false);
         boton.setPadding(0, dpToPx(14), 0, dpToPx(14));
         boton.setGravity(Gravity.CENTER);
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        boton.setLayoutParams(params);
+        boton.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
         GradientDrawable forma = new GradientDrawable();
-        forma.setColor(Color.parseColor("#FFEBEE"));
+        forma.setColor(ContextCompat.getColor(requireContext(), R.color.app_peligro_bg));
         forma.setCornerRadius(dpToPx(14));
-        forma.setStroke(dpToPx(1), Color.parseColor("#EF9A9A"));
+        forma.setStroke(dpToPx(1), ContextCompat.getColor(requireContext(), R.color.app_peligro_borde));
         boton.setBackground(forma);
         return boton;
     }
