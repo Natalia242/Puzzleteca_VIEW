@@ -18,7 +18,6 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
@@ -29,7 +28,7 @@ import com.bumptech.glide.Glide;
 import com.ignacio_natalia.puzzleteca.R;
 import com.ignacio_natalia.puzzleteca.modelos.Puzzle;
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos.MisPuzzles;
-import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos.PuzzleDialogFragment;
+import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.puzzles.PuzzleDialogFragment;
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos.foro.Foro;
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos.PanelAdmin;
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos.PanelUsuario;
@@ -60,7 +59,7 @@ public class AppPrincipal extends AppCompatActivity {
     protected void onCreate(Bundle instanciaEstadoGuardado) {
         super.onCreate(instanciaEstadoGuardado);
 
-        getWindow().setStatusBarColor(Color.parseColor("#DFF5C9"));
+        getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.app_green_light));
 
         if ("Bloqueado".equals(GestorSesion.obtenerRol(this))) {
             mostrarPantallaBloqueo();
@@ -69,7 +68,7 @@ public class AppPrincipal extends AppCompatActivity {
 
         GradientDrawable fondo = new GradientDrawable(
                 GradientDrawable.Orientation.TOP_BOTTOM,
-                new int[]{Color.parseColor("#F1B2CA"), Color.parseColor("#FFF6F9")}
+                new int[]{ContextCompat.getColor(this, R.color.app_rosa_burbuja), ContextCompat.getColor(this, R.color.app_rosa_fondo)}
         );
 
         LinearLayout root = new LinearLayout(this);
@@ -205,7 +204,7 @@ public class AppPrincipal extends AppCompatActivity {
 
         // Indicador deslizante superior
         indicadorActivo = new View(this);
-        indicadorActivo.setBackgroundColor(Color.parseColor("#F06292"));
+        indicadorActivo.setBackgroundColor(ContextCompat.getColor(this, R.color.app_rosa));
         LinearLayout.LayoutParams parametrosIndicador = new LinearLayout.LayoutParams(dpToPx(32), dpToPx(3));
         parametrosIndicador.gravity = Gravity.START;
         indicadorActivo.setLayoutParams(parametrosIndicador);
@@ -304,14 +303,14 @@ public class AppPrincipal extends AppCompatActivity {
 
         ImageView imagen = new ImageView(this);
         imagen.setImageDrawable(icono);
-        imagen.setColorFilter(Color.parseColor("#90A4AE"));
+        imagen.setColorFilter(ContextCompat.getColor(this, R.color.app_subtexto_label));
         LinearLayout.LayoutParams parametrosImagen = new LinearLayout.LayoutParams(dpToPx(22), dpToPx(22));
         imagen.setLayoutParams(parametrosImagen);
 
         TextView texto = new TextView(this);
         texto.setText(etiqueta);
         texto.setTextSize(10f);
-        texto.setTextColor(Color.parseColor("#90A4AE"));
+        texto.setTextColor(ContextCompat.getColor(this, R.color.app_subtexto_label));
         texto.setGravity(Gravity.CENTER);
 
         LinearLayout.LayoutParams parametrosTexto = new LinearLayout.LayoutParams(
@@ -337,8 +336,8 @@ public class AppPrincipal extends AppCompatActivity {
 
     private void marcarTab(LinearLayout tab) {
 
-        int colorActivo   = Color.parseColor("#F06292");
-        int colorInactivo = Color.parseColor("#90A4AE");
+        int colorActivo   = ContextCompat.getColor(this, R.color.app_rosa);
+        int colorInactivo = ContextCompat.getColor(this, R.color.app_subtexto_label);
 
         for (LinearLayout boton : new LinearLayout[] {botonInicio, botonPuzzles, botonForo, botonRanking, botonPerfil}) {
 
@@ -353,7 +352,7 @@ public class AppPrincipal extends AppCompatActivity {
                     if (activo) {
                         imagen.clearColorFilter();
                     } else {
-                        imagen.setColorFilter(Color.parseColor("#90A4AE"));
+                        imagen.setColorFilter(ContextCompat.getColor(this, R.color.app_subtexto_label));
                     }
 
                 } else {
@@ -409,7 +408,7 @@ public class AppPrincipal extends AppCompatActivity {
 
         GradientDrawable fondo = new GradientDrawable(
                 GradientDrawable.Orientation.TOP_BOTTOM,
-                new int[] {Color.parseColor("#DFF5C9"), Color.parseColor("#B8E6A5")}
+                new int[] {ContextCompat.getColor(this, R.color.app_green_light), ContextCompat.getColor(this, R.color.app_green_medium)}
         );
 
         FrameLayout layout = new FrameLayout(this);
@@ -430,7 +429,7 @@ public class AppPrincipal extends AppCompatActivity {
         textoMensaje.setText("Usuario bloqueado");
         textoMensaje.setTextSize(22);
         textoMensaje.setTypeface(null, Typeface.BOLD);
-        textoMensaje.setTextColor(Color.parseColor("#C62828"));
+        textoMensaje.setTextColor(ContextCompat.getColor(this, R.color.app_peligro_dark));
         textoMensaje.setGravity(Gravity.CENTER);
         LinearLayout.LayoutParams parametrosMensaje = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -477,7 +476,7 @@ public class AppPrincipal extends AppCompatActivity {
         GradientDrawable cardBg = new GradientDrawable();
         cardBg.setColor(Color.WHITE);
         cardBg.setCornerRadius(r);
-        cardBg.setStroke(dpToPx(1), Color.parseColor("#E8F5E9"));
+        cardBg.setStroke(dpToPx(1), ContextCompat.getColor(this, R.color.app_green_success));
         tarjeta.setBackground(cardBg);
         tarjeta.setClipToOutline(true);
         tarjeta.setOutlineProvider(new android.view.ViewOutlineProvider() {
@@ -497,7 +496,7 @@ public class AppPrincipal extends AppCompatActivity {
                 FrameLayout.LayoutParams.MATCH_PARENT,
                 FrameLayout.LayoutParams.MATCH_PARENT));
         imagen.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        imagen.setBackgroundColor(Color.parseColor("#F0F4F8"));
+        imagen.setBackgroundColor(ContextCompat.getColor(this, R.color.app_fondo_gris_light));
 
         String url = puzzle.getImagenUrl();
         if (url != null && !url.isEmpty()) {
@@ -561,7 +560,7 @@ public class AppPrincipal extends AppCompatActivity {
         avatar.setLayoutParams(avatarLP);
         GradientDrawable avatarBg = new GradientDrawable();
         avatarBg.setShape(GradientDrawable.OVAL);
-        avatarBg.setColor(Color.parseColor("#2E7D6E"));
+        avatarBg.setColor(ContextCompat.getColor(this, R.color.app_teal_dark));
         avatar.setBackground(avatarBg);
 
         // Columna: nombre autor + estrellas
@@ -574,7 +573,7 @@ public class AppPrincipal extends AppCompatActivity {
         tvAutor.setText(autorStr);
         tvAutor.setTextSize(13);
         tvAutor.setTypeface(null, Typeface.BOLD);
-        tvAutor.setTextColor(Color.parseColor("#37474F"));
+        tvAutor.setTextColor(ContextCompat.getColor(this, R.color.app_texto));
         tvAutor.setMaxLines(1);
         tvAutor.setEllipsize(android.text.TextUtils.TruncateAt.END);
 
@@ -593,7 +592,7 @@ public class AppPrincipal extends AppCompatActivity {
         TextView flecha = new TextView(this);
         flecha.setText("›");
         flecha.setTextSize(28);
-        flecha.setTextColor(Color.parseColor("#A5D6A7"));
+        flecha.setTextColor(ContextCompat.getColor(this, R.color.app_green_border));
         flecha.setTypeface(null, Typeface.BOLD);
         flecha.setGravity(Gravity.CENTER_VERTICAL);
         LinearLayout.LayoutParams flechaLP = new LinearLayout.LayoutParams(
@@ -643,7 +642,7 @@ public class AppPrincipal extends AppCompatActivity {
 
             pFill.setStyle(Paint.Style.FILL);
             pEmpty.setStyle(Paint.Style.FILL);
-            pEmpty.setColor(Color.parseColor("#DDDDDD"));
+            pEmpty.setColor(ContextCompat.getColor(ctx, R.color.app_borde_gris_light));
         }
 
         @Override
@@ -661,8 +660,8 @@ public class AppPrincipal extends AppCompatActivity {
                 if (i < rating) {
                     pFill.setShader(new LinearGradient(
                             ox, 0, ox, sizePx,
-                            Color.parseColor("#FFD740"),
-                            Color.parseColor("#FF8F00"),
+                            ContextCompat.getColor(getContext(), R.color.app_estrella_light),
+                            ContextCompat.getColor(getContext(), R.color.app_naranja),
                             Shader.TileMode.CLAMP));
                     canvas.drawPath(roundedStar(cx + ox, cy, sizePx * 0.45f,
                             sizePx * 0.18f, crPx), pFill);

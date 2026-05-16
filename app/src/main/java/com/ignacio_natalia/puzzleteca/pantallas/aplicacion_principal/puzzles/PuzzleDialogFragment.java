@@ -1,4 +1,4 @@
-package com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos;
+package com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.puzzles;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -7,7 +7,6 @@ import android.graphics.Color;
 import android.graphics.LinearGradient;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.RectF;
 import android.graphics.Shader;
 import android.graphics.Typeface;
 import android.os.Bundle;

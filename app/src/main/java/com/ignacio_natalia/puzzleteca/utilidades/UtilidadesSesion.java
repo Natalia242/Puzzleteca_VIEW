@@ -15,7 +15,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 
+import com.ignacio_natalia.puzzleteca.R;
 import com.ignacio_natalia.puzzleteca.pantallas.login.LoginActivity;
 import com.ignacio_natalia.puzzleteca.repositorios.UsuarioRepositorio;
 
@@ -25,13 +27,6 @@ import retrofit2.Response;
 
 public class UtilidadesSesion {
 
-    // ── Paleta compartida con la app ──────────────────────────────────────────
-    private static final String C_TEAL       = "#2E7D6E";
-    private static final String C_TEAL_LIGHT = "#E0F2F1";
-    private static final String C_PELIGRO    = "#E53935";
-    private static final String C_PELIGRO_BG = "#FFEBEE";
-    private static final String C_TEXTO      = "#37474F";
-    private static final String C_SUBTEXTO   = "#78909C";
 
     // ══════════════════════════════════════════════════════════════════════════
     //  Diálogo personalizado genérico reutilizable en toda la app
@@ -73,7 +68,7 @@ public class UtilidadesSesion {
         root.setBackground(rootBg);
 
         // ── Círculo de emoji ──────────────────────────────────────────────────
-        boolean esPeligro = C_PELIGRO.equalsIgnoreCase(colorConfirmar);
+        boolean esPeligro = "#E53935".equalsIgnoreCase(colorConfirmar);
 
         TextView tvEmoji = new TextView(context);
         tvEmoji.setText(emoji);
@@ -87,7 +82,7 @@ public class UtilidadesSesion {
         tvEmoji.setLayoutParams(emojiLP);
         GradientDrawable circleBg = new GradientDrawable();
         circleBg.setShape(GradientDrawable.OVAL);
-        circleBg.setColor(Color.parseColor(esPeligro ? C_PELIGRO_BG : C_TEAL_LIGHT));
+        circleBg.setColor(ContextCompat.getColor(context, esPeligro ? R.color.app_peligro_bg : R.color.app_teal_soft));
         tvEmoji.setBackground(circleBg);
 
         // ── Título ────────────────────────────────────────────────────────────
@@ -95,7 +90,7 @@ public class UtilidadesSesion {
         tvTitulo.setText(titulo);
         tvTitulo.setTextSize(18);
         tvTitulo.setTypeface(null, Typeface.BOLD);
-        tvTitulo.setTextColor(Color.parseColor(C_TEXTO));
+        tvTitulo.setTextColor(ContextCompat.getColor(context, R.color.app_texto));
         tvTitulo.setGravity(Gravity.CENTER);
         LinearLayout.LayoutParams tituloLP = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -106,7 +101,7 @@ public class UtilidadesSesion {
         TextView tvMensaje = new TextView(context);
         tvMensaje.setText(mensaje);
         tvMensaje.setTextSize(14);
-        tvMensaje.setTextColor(Color.parseColor(C_SUBTEXTO));
+        tvMensaje.setTextColor(ContextCompat.getColor(context, R.color.app_subtexto));
         tvMensaje.setGravity(Gravity.CENTER);
         tvMensaje.setLineSpacing(dp(context, 2), 1f);
         LinearLayout.LayoutParams msgLP = new LinearLayout.LayoutParams(
@@ -129,7 +124,7 @@ public class UtilidadesSesion {
         btnConfirmar.setClickable(true);
         btnConfirmar.setFocusable(true);
         GradientDrawable confirmBg = new GradientDrawable();
-        confirmBg.setColor(Color.parseColor(colorConfirmar));
+        confirmBg.setColor(ContextCompat.getColor(context, esPeligro ? R.color.app_peligro : R.color.app_teal_dark));
         confirmBg.setCornerRadius(dp(context, 12));
         btnConfirmar.setBackground(confirmBg);
         btnConfirmar.setOnClickListener(v -> {
@@ -140,7 +135,7 @@ public class UtilidadesSesion {
         // ── Botón cancelar ────────────────────────────────────────────────────
         TextView btnCancelar = new TextView(context);
         btnCancelar.setText("Cancelar");
-        btnCancelar.setTextColor(Color.parseColor(C_SUBTEXTO));
+        btnCancelar.setTextColor(ContextCompat.getColor(context, R.color.app_subtexto));
         btnCancelar.setTextSize(14);
         btnCancelar.setGravity(Gravity.CENTER);
         btnCancelar.setPadding(dp(context, 16), dp(context, 12), dp(context, 16), dp(context, 12));
@@ -149,7 +144,7 @@ public class UtilidadesSesion {
         btnCancelar.setClickable(true);
         btnCancelar.setFocusable(true);
         GradientDrawable cancelBg = new GradientDrawable();
-        cancelBg.setColor(Color.parseColor("#F0F0F0"));
+        cancelBg.setColor(ContextCompat.getColor(context, R.color.app_fondo_cancelar));
         cancelBg.setCornerRadius(dp(context, 12));
         btnCancelar.setBackground(cancelBg);
         btnCancelar.setOnClickListener(v -> dialog.dismiss());
@@ -194,7 +189,7 @@ public class UtilidadesSesion {
                 "Cerrar sesión",
                 "¿Seguro que quieres salir de tu cuenta?",
                 "Cerrar sesión",
-                C_TEAL,
+                "#2E7D6E",
                 onConfirm
         );
     }
@@ -206,7 +201,7 @@ public class UtilidadesSesion {
                 "Eliminar cuenta",
                 "Esta acción es irreversible.\nTodos tus datos se perderán definitivamente.",
                 "Eliminar cuenta",
-                C_PELIGRO,
+                "#E53935",
                 onConfirm
         );
     }

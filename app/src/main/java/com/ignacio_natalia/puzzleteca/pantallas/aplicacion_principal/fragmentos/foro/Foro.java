@@ -1,7 +1,6 @@
 package com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos.foro;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -14,7 +13,7 @@ import android.view.ViewGroup;
 import android.widget.*;
 
 import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.core.content.ContextCompat;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -26,7 +25,7 @@ import com.ignacio_natalia.puzzleteca.R;
 import com.ignacio_natalia.puzzleteca.modelos.Post;
 import com.ignacio_natalia.puzzleteca.modelos.Puzzle;
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.AppPrincipal;
-import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos.PuzzleDialogFragment;
+import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.puzzles.PuzzleDialogFragment;
 import com.ignacio_natalia.puzzleteca.pantallas.inicio.PantallaInicio;
 import com.ignacio_natalia.puzzleteca.repositorios.PostRepositorio;
 import com.ignacio_natalia.puzzleteca.repositorios.PuzzleRepositorio;
@@ -39,7 +38,6 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Fragment del Foro.
@@ -50,11 +48,6 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public class Foro extends Fragment {
 
-    private static final int COLOR_PRIMARIO   = Color.parseColor("#F06292");
-    private static final int COLOR_SECUNDARIO = Color.parseColor("#26A69A");
-    private static final int COLOR_TEXTO      = Color.parseColor("#37474F");
-    private static final int COLOR_TEXTO_LEVE = Color.parseColor("#78909C");
-    private static final int COLOR_CARD_BORDE = Color.parseColor("#F8BBD9");
 
     private ForoViewModel viewModel;
     private LinearLayout contenedor;
@@ -101,7 +94,7 @@ public class Foro extends Fragment {
         titulo.setText("💬 Foro");
         titulo.setTextSize(22);
         titulo.setTypeface(null, Typeface.BOLD);
-        titulo.setTextColor(COLOR_TEXTO);
+        titulo.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_texto));
         LinearLayout.LayoutParams tituloParams = new LinearLayout.LayoutParams(
                 0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f);
         titulo.setLayoutParams(tituloParams);
@@ -118,7 +111,7 @@ public class Foro extends Fragment {
             btnCrear.setTypeface(null, Typeface.BOLD);
 
             GradientDrawable fondoBtn = new GradientDrawable();
-            fondoBtn.setColor(COLOR_PRIMARIO);
+            fondoBtn.setColor(ContextCompat.getColor(requireContext(), R.color.app_rosa));
             fondoBtn.setCornerRadius(dp(50));
 
             btnCrear.setBackground(fondoBtn);
@@ -137,9 +130,9 @@ public class Foro extends Fragment {
             banner.setPadding(dp(16), dp(10), dp(16), dp(10));
 
             GradientDrawable fondoBanner = new GradientDrawable();
-            fondoBanner.setColor(Color.parseColor("#FFF3E0"));
+            fondoBanner.setColor(ContextCompat.getColor(requireContext(), R.color.app_naranja_fondo));
             fondoBanner.setCornerRadius(dp(12));
-            fondoBanner.setStroke(dp(1), Color.parseColor("#FFCC80"));
+            fondoBanner.setStroke(dp(1), ContextCompat.getColor(requireContext(), R.color.app_naranja_borde));
 
             banner.setBackground(fondoBanner);
 
@@ -155,14 +148,14 @@ public class Foro extends Fragment {
             TextView textoBanner = new TextView(requireContext());
             textoBanner.setText("🔒 ");
             textoBanner.setTextSize(14);
-            textoBanner.setTextColor(Color.parseColor("#E65100"));
+            textoBanner.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_naranja_text));
 
             banner.addView(textoBanner);
 
             TextView textoInfo = new TextView(requireContext());
             textoInfo.setText("Para publicar, ");
             textoInfo.setTextSize(14);
-            textoInfo.setTextColor(Color.parseColor("#E65100"));
+            textoInfo.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_naranja_text));
 
             banner.addView(textoInfo);
 
@@ -170,7 +163,7 @@ public class Foro extends Fragment {
             linkLogin.setText("inicia sesión");
             linkLogin.setTextSize(14);
             linkLogin.setTypeface(null, Typeface.BOLD);
-            linkLogin.setTextColor(COLOR_PRIMARIO);
+            linkLogin.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_rosa));
 
             linkLogin.setPaintFlags(
                     linkLogin.getPaintFlags()
@@ -302,7 +295,7 @@ public class Foro extends Fragment {
         tvTitulo.setText("Nuevo post");
         tvTitulo.setTextSize(19);
         tvTitulo.setTypeface(null, android.graphics.Typeface.BOLD);
-        tvTitulo.setTextColor(Color.parseColor("#37474F"));
+        tvTitulo.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_texto));
         tvTitulo.setGravity(Gravity.CENTER);
         LinearLayout.LayoutParams titLP = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -315,12 +308,12 @@ public class Foro extends Fragment {
         inputTexto.setHint("¿Qué quieres compartir?");
         inputTexto.setMinLines(3);
         inputTexto.setMaxLines(6);
-        inputTexto.setTextColor(COLOR_TEXTO);
-        inputTexto.setHintTextColor(COLOR_TEXTO_LEVE);
+        inputTexto.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_texto));
+        inputTexto.setHintTextColor(ContextCompat.getColor(requireContext(), R.color.app_texto));
         GradientDrawable fondoInput = new GradientDrawable();
-        fondoInput.setColor(Color.parseColor("#F8FAFB"));
+        fondoInput.setColor(ContextCompat.getColor(requireContext(), R.color.app_fondo_input));
         fondoInput.setCornerRadius(dp(12));
-        fondoInput.setStroke(dp(1), COLOR_CARD_BORDE);
+        fondoInput.setStroke(dp(1), ContextCompat.getColor(requireContext(), R.color.app_rosa_light));
         inputTexto.setBackground(fondoInput);
         inputTexto.setPadding(dp(12), dp(10), dp(12), dp(10));
         LinearLayout.LayoutParams inputLP = new LinearLayout.LayoutParams(
@@ -335,7 +328,7 @@ public class Foro extends Fragment {
             tvPuzzleLabel.setText("🧩  Vincular puzzle (opcional)");
             tvPuzzleLabel.setTextSize(13);
             tvPuzzleLabel.setTypeface(null, android.graphics.Typeface.BOLD);
-            tvPuzzleLabel.setTextColor(COLOR_TEXTO_LEVE);
+            tvPuzzleLabel.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_texto));
             LinearLayout.LayoutParams lblLP = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
             lblLP.bottomMargin = dp(6);
@@ -359,7 +352,7 @@ public class Foro extends Fragment {
             GradientDrawable spBg = new GradientDrawable();
             spBg.setColor(Color.WHITE);
             spBg.setCornerRadius(dp(10));
-            spBg.setStroke(dp(1), COLOR_CARD_BORDE);
+            spBg.setStroke(dp(1), ContextCompat.getColor(requireContext(), R.color.app_rosa_light));
             puzzleSpinner.setBackground(spBg);
             puzzleSpinner.setPadding(dp(10), dp(8), dp(10), dp(8));
             LinearLayout.LayoutParams spLP = new LinearLayout.LayoutParams(
@@ -377,7 +370,7 @@ public class Foro extends Fragment {
                 LinearLayout.LayoutParams.MATCH_PARENT, dp(1));
         divLP.setMargins(0, dp(4), 0, dp(14));
         divisor.setLayoutParams(divLP);
-        divisor.setBackgroundColor(Color.parseColor("#ECEFF1"));
+        divisor.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.app_borde));
         root.addView(divisor);
 
         // ── Botón Publicar ────────────────────────────────────────────────────
@@ -393,7 +386,7 @@ public class Foro extends Fragment {
         pubLP.bottomMargin = dp(10);
         btnPublicar.setLayoutParams(pubLP);
         GradientDrawable pubBg = new GradientDrawable();
-        pubBg.setColor(COLOR_PRIMARIO);
+        pubBg.setColor(ContextCompat.getColor(requireContext(), R.color.app_rosa));
         pubBg.setCornerRadius(dp(12));
         btnPublicar.setBackground(pubBg);
         btnPublicar.setClickable(true);
@@ -402,14 +395,14 @@ public class Foro extends Fragment {
         // ── Botón Cancelar ────────────────────────────────────────────────────
         TextView btnCancelar = new TextView(requireContext());
         btnCancelar.setText("Cancelar");
-        btnCancelar.setTextColor(COLOR_TEXTO_LEVE);
+        btnCancelar.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_texto));
         btnCancelar.setTextSize(14);
         btnCancelar.setGravity(Gravity.CENTER);
         btnCancelar.setPadding(0, dp(12), 0, dp(12));
         btnCancelar.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
         GradientDrawable cancelBg = new GradientDrawable();
-        cancelBg.setColor(Color.parseColor("#F0F0F0"));
+        cancelBg.setColor(ContextCompat.getColor(requireContext(), R.color.app_fondo_cancelar));
         cancelBg.setCornerRadius(dp(12));
         btnCancelar.setBackground(cancelBg);
         btnCancelar.setClickable(true);
@@ -514,7 +507,7 @@ public class Foro extends Fragment {
             msg.setText("Todavía no hay posts.\n¡Sé el primero!");
             msg.setGravity(Gravity.CENTER);
             msg.setTextSize(16);
-            msg.setTextColor(COLOR_TEXTO_LEVE);
+            msg.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_texto));
             LinearLayout.LayoutParams msgParams = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
             msgParams.setMargins(0, dp(12), 0, 0);
@@ -537,7 +530,7 @@ public class Foro extends Fragment {
         GradientDrawable fondo = new GradientDrawable();
         fondo.setColor(Color.WHITE);
         fondo.setCornerRadius(dp(20));
-        fondo.setStroke(dp(1), COLOR_CARD_BORDE);
+        fondo.setStroke(dp(1), ContextCompat.getColor(requireContext(), R.color.app_rosa_light));
         tarjeta.setBackground(fondo);
         tarjeta.setElevation(4f);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
@@ -563,7 +556,7 @@ public class Foro extends Fragment {
         avatar.setLayoutParams(avatarParams);
         GradientDrawable avatarFondo = new GradientDrawable();
         avatarFondo.setShape(GradientDrawable.OVAL);
-        avatarFondo.setColor(COLOR_SECUNDARIO);
+        avatarFondo.setColor(ContextCompat.getColor(requireContext(), R.color.app_teal));
         avatar.setBackground(avatarFondo);
         cabecera.addView(avatar);
 
@@ -576,7 +569,7 @@ public class Foro extends Fragment {
         autorTv.setText(nombre);
         autorTv.setTypeface(null, Typeface.BOLD);
         autorTv.setTextSize(14);
-        autorTv.setTextColor(COLOR_TEXTO);
+        autorTv.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_texto));
         infoCol.addView(autorTv);
 
         if (post.getFechaCreacion() != null && !post.getFechaCreacion().isEmpty()) {
@@ -585,7 +578,7 @@ public class Foro extends Fragment {
             if (fecha.length() > 16) fecha = fecha.substring(0, 16);
             fechaTv.setText(fecha);
             fechaTv.setTextSize(11);
-            fechaTv.setTextColor(COLOR_TEXTO_LEVE);
+            fechaTv.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_texto));
             infoCol.addView(fechaTv);
         }
         cabecera.addView(infoCol);
@@ -595,7 +588,7 @@ public class Foro extends Fragment {
             ImageButton btnEliminar = new ImageButton(requireContext());
             btnEliminar.setImageResource(android.R.drawable.ic_menu_delete);
             btnEliminar.setBackgroundColor(Color.TRANSPARENT);
-            btnEliminar.setColorFilter(COLOR_PRIMARIO);
+            btnEliminar.setColorFilter(ContextCompat.getColor(requireContext(), R.color.app_rosa));
             btnEliminar.setOnClickListener(v -> confirmarEliminar(post.getId(), idUsuarioSesion));
             cabecera.addView(btnEliminar);
         }
@@ -604,7 +597,7 @@ public class Foro extends Fragment {
         View separador = new View(requireContext());
         separador.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, dp(1)));
-        separador.setBackgroundColor(Color.parseColor("#FCE4EC"));
+        separador.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.app_rosa_soft));
         tarjeta.addView(separador);
 
         if (post.getImagenUrl() != null && !post.getImagenUrl().isEmpty()) {
@@ -625,7 +618,7 @@ public class Foro extends Fragment {
             contenidoTv.setText(post.getContenido());
             contenidoTv.setPadding(dp(14), dp(10), dp(14), dp(6));
             contenidoTv.setTextSize(15);
-            contenidoTv.setTextColor(COLOR_TEXTO);
+            contenidoTv.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_texto));
             tarjeta.addView(contenidoTv);
         }
 
@@ -645,7 +638,7 @@ public class Foro extends Fragment {
         btnComentarios.setGravity(Gravity.CENTER_VERTICAL);
 
         GradientDrawable fondoComentarios = new GradientDrawable();
-        fondoComentarios.setColor(Color.parseColor("#F5F5F5"));
+        fondoComentarios.setColor(ContextCompat.getColor(requireContext(), R.color.app_fondo_card));
         fondoComentarios.setCornerRadius(dp(20));
 
         btnComentarios.setBackground(fondoComentarios);
@@ -670,7 +663,7 @@ public class Foro extends Fragment {
         txtComentario.setText("Comentarios");
         txtComentario.setTextSize(13);
         txtComentario.setTypeface(null, Typeface.BOLD);
-        txtComentario.setTextColor(COLOR_TEXTO_LEVE);
+        txtComentario.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_texto));
         txtComentario.setPadding(dp(6), 0, 0, 0);
 
         btnComentarios.addView(iconComentario);
@@ -714,9 +707,9 @@ public class Foro extends Fragment {
         inputComentario.setTextSize(13);
 
         GradientDrawable fondoInputComentario = new GradientDrawable();
-        fondoInputComentario.setColor(Color.parseColor("#FAFAFA"));
+        fondoInputComentario.setColor(ContextCompat.getColor(requireContext(), R.color.app_fondo_pagina));
         fondoInputComentario.setCornerRadius(dp(16));
-        fondoInputComentario.setStroke(dp(1), Color.parseColor("#E0E0E0"));
+        fondoInputComentario.setStroke(dp(1), ContextCompat.getColor(requireContext(), R.color.app_borde_gris));
 
         inputComentario.setBackground(fondoInputComentario);
         inputComentario.setPadding(dp(12), dp(8), dp(12), dp(8));
@@ -727,7 +720,7 @@ public class Foro extends Fragment {
         btnEnviarComentario.setTextColor(Color.WHITE);
 
         GradientDrawable fondoEnviar = new GradientDrawable();
-        fondoEnviar.setColor(COLOR_PRIMARIO);
+        fondoEnviar.setColor(ContextCompat.getColor(requireContext(), R.color.app_rosa));
         fondoEnviar.setCornerRadius(dp(20));
 
         btnEnviarComentario.setBackground(fondoEnviar);
@@ -782,7 +775,7 @@ public class Foro extends Fragment {
 
                 TextView vacio = new TextView(requireContext());
                 vacio.setText("Todavía no hay comentarios");
-                vacio.setTextColor(COLOR_TEXTO_LEVE);
+                vacio.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_texto));
                 vacio.setTextSize(12);
 
                 listaComentarios.addView(vacio);
@@ -796,7 +789,7 @@ public class Foro extends Fragment {
                 item.setOrientation(LinearLayout.VERTICAL);
 
                 GradientDrawable fondoComentario = new GradientDrawable();
-                fondoComentario.setColor(Color.parseColor("#FAFAFA"));
+                fondoComentario.setColor(ContextCompat.getColor(requireContext(), R.color.app_fondo_pagina));
                 fondoComentario.setCornerRadius(dp(12));
 
                 item.setBackground(fondoComentario);
@@ -824,7 +817,7 @@ public class Foro extends Fragment {
 
                 autorComentario.setTypeface(null, Typeface.BOLD);
                 autorComentario.setTextSize(12);
-                autorComentario.setTextColor(COLOR_SECUNDARIO);
+                autorComentario.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_teal));
 
                 item.addView(autorComentario);
 
@@ -833,7 +826,7 @@ public class Foro extends Fragment {
                 contenidoComentario.setText(comentario.getContenido());
 
                 contenidoComentario.setTextSize(13);
-                contenidoComentario.setTextColor(COLOR_TEXTO);
+                contenidoComentario.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_texto));
 
                 LinearLayout.LayoutParams contenidoParams =
                         new LinearLayout.LayoutParams(
@@ -954,9 +947,9 @@ public class Foro extends Fragment {
         layout.setOrientation(LinearLayout.HORIZONTAL);
         layout.setGravity(Gravity.CENTER_VERTICAL);
         GradientDrawable fondoLike = new GradientDrawable();
-        fondoLike.setColor(Color.parseColor("#FFF0F5"));
+        fondoLike.setColor(ContextCompat.getColor(requireContext(), R.color.app_rosa_fondo));
         fondoLike.setCornerRadius(dp(20));
-        fondoLike.setStroke(dp(1), Color.parseColor("#F8BBD9"));
+        fondoLike.setStroke(dp(1), ContextCompat.getColor(requireContext(), R.color.app_rosa_light));
         layout.setBackground(fondoLike);
         layout.setPadding(dp(12), dp(6), dp(14), dp(6));
 
@@ -965,7 +958,7 @@ public class Foro extends Fragment {
 
         TextView txt = new TextView(requireContext());
         txt.setPadding(dp(6), 0, 0, 0);
-        txt.setTextColor(COLOR_TEXTO_LEVE);
+        txt.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_texto));
         txt.setTypeface(null, Typeface.BOLD);
         txt.setTextSize(13);
 
@@ -987,9 +980,9 @@ public class Foro extends Fragment {
 
     private void actualizarLikeUI(ImageView icon, TextView txt, boolean liked, int count) {
         icon.setImageResource(liked ? R.drawable.like : R.drawable.no_like);
-        icon.setColorFilter(liked ? COLOR_PRIMARIO : COLOR_TEXTO_LEVE);
+        icon.setColorFilter(liked ? ContextCompat.getColor(requireContext(), R.color.app_rosa) : ContextCompat.getColor(requireContext(), R.color.app_texto));
         txt.setText(String.valueOf(count));
-        txt.setTextColor(liked ? COLOR_PRIMARIO : COLOR_TEXTO_LEVE);
+        txt.setTextColor(liked ? ContextCompat.getColor(requireContext(), R.color.app_rosa) : ContextCompat.getColor(requireContext(), R.color.app_texto));
     }
 
     private void confirmarEliminar(Integer idPost, int idUsuario) {
@@ -1087,11 +1080,11 @@ public class Foro extends Fragment {
         btn.setText(texto);
         btn.setAllCaps(false);
         btn.setTextSize(13);
-        btn.setTextColor(COLOR_TEXTO);
+        btn.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_texto));
         GradientDrawable fondo = new GradientDrawable();
         fondo.setColor(Color.WHITE);
         fondo.setCornerRadius(dp(12));
-        fondo.setStroke(dp(1), COLOR_CARD_BORDE);
+        fondo.setStroke(dp(1), ContextCompat.getColor(requireContext(), R.color.app_rosa_light));
         btn.setBackground(fondo);
         btn.setPadding(dp(8), dp(8), dp(8), dp(8));
         return btn;

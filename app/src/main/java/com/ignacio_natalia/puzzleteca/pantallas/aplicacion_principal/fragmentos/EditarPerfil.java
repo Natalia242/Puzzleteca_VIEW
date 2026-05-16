@@ -14,8 +14,10 @@ import android.widget.*;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import com.ignacio_natalia.puzzleteca.R;
 import com.ignacio_natalia.puzzleteca.modelos.ActualizarUsuarioRequest;
 import com.ignacio_natalia.puzzleteca.repositorios.UsuarioRepositorio;
 import com.ignacio_natalia.puzzleteca.utilidades.GestorSesion;
@@ -28,15 +30,6 @@ import retrofit2.Response;
 public class EditarPerfil extends Fragment {
 
     // ── Paleta ────────────────────────────────────────────────────────────────
-    private static final String C_TEAL       = "#2E7D6E";
-    private static final String C_TEAL_SOFT  = "#E0F2F1";
-    private static final String C_TEXTO      = "#37474F";
-    private static final String C_SUBTEXTO   = "#78909C";
-    private static final String C_BORDE      = "#ECEFF1";
-    private static final String C_PELIGRO    = "#E53935";
-    private static final String C_PELIGRO_BG = "#FFEBEE";
-    private static final String C_PELIGRO_BD = "#EF9A9A";
-    private static final String C_INPUT_BG   = "#F8FAFB";
 
     private UsuarioRepositorio repositorio;
 
@@ -117,7 +110,7 @@ public class EditarPerfil extends Fragment {
 
         GradientDrawable headerBg = new GradientDrawable(
                 GradientDrawable.Orientation.TL_BR,
-                new int[]{Color.parseColor("#2E7D6E"), Color.parseColor("#26A69A")});
+                new int[]{ContextCompat.getColor(requireContext(), R.color.app_teal_dark), ContextCompat.getColor(requireContext(), R.color.app_teal)});
         header.setBackground(headerBg);
 
         // Círculo avatar con inicial
@@ -127,7 +120,7 @@ public class EditarPerfil extends Fragment {
         avatar.setText(inicial);
         avatar.setTextSize(36);
         avatar.setTypeface(null, Typeface.BOLD);
-        avatar.setTextColor(Color.parseColor(C_TEAL));
+        avatar.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_teal_dark));
         avatar.setGravity(Gravity.CENTER);
         int avatarSize = dp(86);
         LinearLayout.LayoutParams avLP = new LinearLayout.LayoutParams(avatarSize, avatarSize);
@@ -136,7 +129,7 @@ public class EditarPerfil extends Fragment {
         GradientDrawable avBg = new GradientDrawable();
         avBg.setShape(GradientDrawable.OVAL);
         avBg.setColor(Color.WHITE);
-        avBg.setStroke(dp(3), Color.parseColor("#B2DFDB"));
+        avBg.setStroke(dp(3), ContextCompat.getColor(requireContext(), R.color.app_teal_borde));
         avatar.setBackground(avBg);
 
         // Nombre
@@ -155,7 +148,7 @@ public class EditarPerfil extends Fragment {
         TextView tvEmail = new TextView(requireContext());
         tvEmail.setText(email != null ? email : "");
         tvEmail.setTextSize(13);
-        tvEmail.setTextColor(Color.parseColor("#B2DFDB"));
+        tvEmail.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_teal_borde));
         tvEmail.setGravity(Gravity.CENTER);
         LinearLayout.LayoutParams emailLP = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -167,7 +160,7 @@ public class EditarPerfil extends Fragment {
         chipRol.setText(rolEmoji(rol) + "  " + (rol != null ? rol : "Usuario"));
         chipRol.setTextSize(12);
         chipRol.setTypeface(null, Typeface.BOLD);
-        chipRol.setTextColor(Color.parseColor(C_TEAL));
+        chipRol.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_teal_dark));
         chipRol.setPadding(dp(14), dp(5), dp(14), dp(5));
         GradientDrawable chipBg = new GradientDrawable();
         chipBg.setColor(Color.WHITE);
@@ -220,14 +213,14 @@ public class EditarPerfil extends Fragment {
         TextView tvLabel = new TextView(requireContext());
         tvLabel.setText(etiqueta);
         tvLabel.setTextSize(11);
-        tvLabel.setTextColor(Color.parseColor(C_SUBTEXTO));
+        tvLabel.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_subtexto));
         tvLabel.setTypeface(null, Typeface.BOLD);
         tvLabel.setLetterSpacing(0.05f);
 
         TextView tvValor = new TextView(requireContext());
         tvValor.setText(valor);
         tvValor.setTextSize(14);
-        tvValor.setTextColor(Color.parseColor(C_TEXTO));
+        tvValor.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_texto));
         tvValor.setTypeface(null, Typeface.BOLD);
 
         col.addView(tvLabel);
@@ -248,7 +241,7 @@ public class EditarPerfil extends Fragment {
         TextView desc = new TextView(requireContext());
         desc.setText("Actualiza cómo te llamas en la app.");
         desc.setTextSize(13);
-        desc.setTextColor(Color.parseColor(C_SUBTEXTO));
+        desc.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_subtexto));
         LinearLayout.LayoutParams descLP = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         descLP.bottomMargin = dp(14);
@@ -264,7 +257,7 @@ public class EditarPerfil extends Fragment {
         card.addView(campoApellido);
         espaciado(card, 16);
 
-        btnGuardarNombre = crearBotonAccion("💾  Guardar cambios", C_TEAL, C_TEAL_SOFT, C_TEAL);
+        btnGuardarNombre = crearBotonAccion("💾  Guardar cambios", R.color.app_teal_dark, R.color.app_teal_soft, R.color.app_teal_dark);
         btnGuardarNombre.setOnClickListener(v -> guardarNombreApellido(email));
         card.addView(btnGuardarNombre);
         return card;
@@ -314,7 +307,7 @@ public class EditarPerfil extends Fragment {
         TextView desc = new TextView(requireContext());
         desc.setText("Te enviaremos un código a tu email para verificar el cambio.");
         desc.setTextSize(13);
-        desc.setTextColor(Color.parseColor(C_SUBTEXTO));
+        desc.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_subtexto));
         LinearLayout.LayoutParams descLP = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         descLP.bottomMargin = dp(14);
@@ -323,7 +316,7 @@ public class EditarPerfil extends Fragment {
 
         // Paso 1: solicitar código
         btnSolicitarCodigo = crearBotonAccion(
-                "📨  Solicitar código de verificación", "#5C6BC0", "#E8EAF6", "#5C6BC0");
+                "📨  Solicitar código de verificación", R.color.app_admin_indigo, R.color.app_admin_indigo_soft, R.color.app_admin_indigo);
         btnSolicitarCodigo.setOnClickListener(v -> solicitarCodigoCambioContrasena(email));
         card.addView(btnSolicitarCodigo);
         espaciado(card, 14);
@@ -338,14 +331,14 @@ public class EditarPerfil extends Fragment {
                 LinearLayout.LayoutParams.MATCH_PARENT, dp(1));
         sepLP.setMargins(0, 0, 0, dp(14));
         separador.setLayoutParams(sepLP);
-        separador.setBackgroundColor(Color.parseColor(C_BORDE));
+        separador.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.app_borde));
         seccionCodigo.addView(separador);
 
         TextView tvPaso2 = new TextView(requireContext());
         tvPaso2.setText("✉️ Introduce el código recibido y tu nueva contraseña:");
         tvPaso2.setTextSize(13);
         tvPaso2.setTypeface(null, Typeface.BOLD);
-        tvPaso2.setTextColor(Color.parseColor(C_TEXTO));
+        tvPaso2.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_texto));
         LinearLayout.LayoutParams paso2LP = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         paso2LP.bottomMargin = dp(12);
@@ -367,7 +360,7 @@ public class EditarPerfil extends Fragment {
         seccionCodigo.addView(campoContrasenaConfirm);
         espaciado(seccionCodigo, 14);
 
-        btnCambiarContrasena = crearBotonAccion("🔑  Cambiar contraseña", C_TEAL, C_TEAL_SOFT, C_TEAL);
+        btnCambiarContrasena = crearBotonAccion("🔑  Cambiar contraseña", R.color.app_teal_dark, R.color.app_teal_soft, R.color.app_teal_dark);
         btnCambiarContrasena.setOnClickListener(v -> cambiarContrasena(email));
         seccionCodigo.addView(btnCambiarContrasena);
 
@@ -441,7 +434,7 @@ public class EditarPerfil extends Fragment {
                         UtilidadesSesion.mostrarDialogoPersonalizado(
                                 requireContext(), "✅", "Contraseña cambiada",
                                 "Tu contraseña se ha actualizado correctamente.\nVuelve a iniciar sesión.",
-                                "Cerrar sesión", C_TEAL,
+                                "Cerrar sesión", "#2E7D6E",
                                 () -> UtilidadesSesion.cerrarSesion(requireContext()));
                     } else {
                         String msg = r.code() == 400
@@ -476,15 +469,15 @@ public class EditarPerfil extends Fragment {
         cardLP.bottomMargin = dp(8);
         card.setLayoutParams(cardLP);
         GradientDrawable cardBg = new GradientDrawable();
-        cardBg.setColor(Color.parseColor(C_PELIGRO_BG));
+        cardBg.setColor(ContextCompat.getColor(requireContext(), R.color.app_peligro_bg));
         cardBg.setCornerRadius(dp(14));
-        cardBg.setStroke(dp(1), Color.parseColor(C_PELIGRO_BD));
+        cardBg.setStroke(dp(1), ContextCompat.getColor(requireContext(), R.color.app_peligro_borde));
         card.setBackground(cardBg);
 
         TextView tvAviso = new TextView(requireContext());
         tvAviso.setText("⚠️  Las acciones de esta sección son permanentes y no se pueden deshacer.");
         tvAviso.setTextSize(13);
-        tvAviso.setTextColor(Color.parseColor("#B71C1C"));
+        tvAviso.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_peligro_darker));
         LinearLayout.LayoutParams avisoLP = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         avisoLP.bottomMargin = dp(14);
@@ -501,7 +494,7 @@ public class EditarPerfil extends Fragment {
         btnEliminar.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
         GradientDrawable elimBg = new GradientDrawable();
-        elimBg.setColor(Color.parseColor(C_PELIGRO));
+        elimBg.setColor(ContextCompat.getColor(requireContext(), R.color.app_peligro));
         elimBg.setCornerRadius(dp(12));
         btnEliminar.setBackground(elimBg);
 
@@ -556,7 +549,7 @@ public class EditarPerfil extends Fragment {
         UtilidadesSesion.mostrarDialogoPersonalizado(
                 requireContext(), "✅", "¡Listo!",
                 mensaje,
-                "Aceptar", C_TEAL,
+                "Aceptar", "#2E7D6E",
                 () -> requireActivity().getSupportFragmentManager().popBackStack());
     }
 
@@ -574,7 +567,7 @@ public class EditarPerfil extends Fragment {
         GradientDrawable bg = new GradientDrawable();
         bg.setColor(Color.WHITE);
         bg.setCornerRadius(dp(14));
-        bg.setStroke(dp(1), Color.parseColor(C_BORDE));
+        bg.setStroke(dp(1), ContextCompat.getColor(requireContext(), R.color.app_borde));
         t.setBackground(bg);
         t.setElevation(dp(1));
         return t;
@@ -585,7 +578,7 @@ public class EditarPerfil extends Fragment {
         tv.setText(texto);
         tv.setTextSize(12);
         tv.setTypeface(null, Typeface.BOLD);
-        tv.setTextColor(Color.parseColor(C_SUBTEXTO));
+        tv.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_subtexto));
         tv.setLetterSpacing(0.08f);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -599,7 +592,7 @@ public class EditarPerfil extends Fragment {
         tv.setText(texto);
         tv.setTextSize(12);
         tv.setTypeface(null, Typeface.BOLD);
-        tv.setTextColor(Color.parseColor(C_TEXTO));
+        tv.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_texto));
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         lp.bottomMargin = dp(4);
@@ -611,8 +604,8 @@ public class EditarPerfil extends Fragment {
         EditText campo = new EditText(requireContext());
         campo.setHint(hint);
         campo.setTextSize(14);
-        campo.setTextColor(Color.parseColor(C_TEXTO));
-        campo.setHintTextColor(Color.parseColor(C_SUBTEXTO));
+        campo.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_texto));
+        campo.setHintTextColor(ContextCompat.getColor(requireContext(), R.color.app_subtexto));
         campo.setPadding(dp(14), dp(13), dp(14), dp(13));
         campo.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
@@ -621,19 +614,20 @@ public class EditarPerfil extends Fragment {
                     InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
         }
         GradientDrawable bg = new GradientDrawable();
-        bg.setColor(Color.parseColor(C_INPUT_BG));
+        bg.setColor(ContextCompat.getColor(requireContext(), R.color.app_fondo_input));
         bg.setCornerRadius(dp(10));
-        bg.setStroke(dp(1), Color.parseColor("#CFD8DC"));
+        bg.setStroke(dp(1), ContextCompat.getColor(requireContext(), R.color.app_subtexto_label));
         campo.setBackground(bg);
         return campo;
     }
 
     @SuppressLint("SetTextI18n")
-    private Button crearBotonAccion(String texto, String colorTexto,
-                                    String colorFondo, String colorBorde) {
+    private Button crearBotonAccion(String texto, @androidx.annotation.ColorRes int colorTexto,
+                                    @androidx.annotation.ColorRes int colorFondo,
+                                    @androidx.annotation.ColorRes int colorBorde) {
         Button btn = new Button(requireContext());
         btn.setText(texto);
-        btn.setTextColor(Color.parseColor(colorTexto));
+        btn.setTextColor(ContextCompat.getColor(requireContext(), colorTexto));
         btn.setTextSize(14);
         btn.setTypeface(null, Typeface.BOLD);
         btn.setAllCaps(false);
@@ -641,9 +635,9 @@ public class EditarPerfil extends Fragment {
         btn.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
         GradientDrawable bg = new GradientDrawable();
-        bg.setColor(Color.parseColor(colorFondo));
+        bg.setColor(ContextCompat.getColor(requireContext(), colorFondo));
         bg.setCornerRadius(dp(10));
-        bg.setStroke(dp(1), Color.parseColor(colorBorde));
+        bg.setStroke(dp(1), ContextCompat.getColor(requireContext(), colorBorde));
         btn.setBackground(bg);
         return btn;
     }
@@ -654,7 +648,7 @@ public class EditarPerfil extends Fragment {
                 LinearLayout.LayoutParams.MATCH_PARENT, dp(1));
         lp.setMargins(dp(16), 0, dp(16), 0);
         d.setLayoutParams(lp);
-        d.setBackgroundColor(Color.parseColor(C_BORDE));
+        d.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.app_borde));
         return d;
     }
 
