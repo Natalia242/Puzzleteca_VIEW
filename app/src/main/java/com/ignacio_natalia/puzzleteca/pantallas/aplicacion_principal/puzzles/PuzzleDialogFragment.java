@@ -7,7 +7,6 @@ import android.graphics.Color;
 import android.graphics.LinearGradient;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.RectF;
 import android.graphics.Shader;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -29,7 +28,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
 import com.bumptech.glide.Glide;
-import com.ignacio_natalia.puzzleteca.modelos.Puzzle;
+import com.ignacio_natalia.puzzleteca.modelos.clases.Puzzle;
 import com.ignacio_natalia.puzzleteca.repositorios.RankingRepositorio;
 import com.ignacio_natalia.puzzleteca.utilidades.GestorSesion;
 
@@ -374,8 +373,11 @@ public class PuzzleDialogFragment extends DialogFragment {
         cardValoracion.setLayoutParams(cardValParams);
 
         int idUsuario = GestorSesion.obtenerId_usuario(requireContext());
-        boolean esMioPuzzle  = puzzle.getIdUsuario() != null
-                && puzzle.getIdUsuario().equals(idUsuario);
+
+        boolean esMioPuzzle = puzzle.getUsuario() != null
+                && puzzle.getUsuario().getId() != null
+
+                && puzzle.getUsuario().getId().equals(idUsuario);
         boolean esInvitado   = "Invitado".equals(GestorSesion.obtenerRol(requireContext()));
         boolean yaValorado   = puzzle.getValoracion() != null && puzzle.getValoracion() > 0
                 && !esMioPuzzle; // si es mío la valoración es la media, no la mía

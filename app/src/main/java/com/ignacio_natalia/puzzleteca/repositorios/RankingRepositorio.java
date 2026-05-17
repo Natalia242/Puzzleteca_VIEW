@@ -1,7 +1,7 @@
 package com.ignacio_natalia.puzzleteca.repositorios;
 
-import com.ignacio_natalia.puzzleteca.modelos.RankingUsuario;
-import com.ignacio_natalia.puzzleteca.modelos.ValorarRequest;
+import com.ignacio_natalia.puzzleteca.modelos.ranking.RankingUsuario;
+import com.ignacio_natalia.puzzleteca.modelos.ranking.ValorarRequest;
 import com.ignacio_natalia.puzzleteca.red.ranking.RankingApi;
 import com.ignacio_natalia.puzzleteca.red.ranking.ServiciosApiRanking;
 

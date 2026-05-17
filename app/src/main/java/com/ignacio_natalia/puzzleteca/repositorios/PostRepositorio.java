@@ -1,7 +1,7 @@
 package com.ignacio_natalia.puzzleteca.repositorios;
 
-import com.ignacio_natalia.puzzleteca.modelos.Post;
-import com.ignacio_natalia.puzzleteca.red.posts.PaginacionPost;
+import com.ignacio_natalia.puzzleteca.modelos.post.Post;
+import com.ignacio_natalia.puzzleteca.modelos.paginacion.PaginacionPost;
 import com.ignacio_natalia.puzzleteca.red.posts.PostApi;
 import com.ignacio_natalia.puzzleteca.red.posts.ServiciosApiPost;
 
@@ -24,7 +24,6 @@ public class PostRepositorio {
 
     // -------------------------------------------------------------------------
     // Crear post — con imagen
-    // -------------------------------------------------------------------------
     public void crearPost(String token, Integer idUsuario, String contenido,
                           File imagenFile, String mimeType, Callback<Post> callback) {
 

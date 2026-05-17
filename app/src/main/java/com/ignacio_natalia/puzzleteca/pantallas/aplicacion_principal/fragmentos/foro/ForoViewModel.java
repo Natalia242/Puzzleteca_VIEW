@@ -7,12 +7,12 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.ignacio_natalia.puzzleteca.modelos.Comentario;
-import com.ignacio_natalia.puzzleteca.modelos.Post;
-import com.ignacio_natalia.puzzleteca.red.posts.PaginacionPost;
+import com.ignacio_natalia.puzzleteca.modelos.comentarios.Comentario;
+import com.ignacio_natalia.puzzleteca.modelos.post.Post;
+import com.ignacio_natalia.puzzleteca.modelos.paginacion.PaginacionPost;
 import com.ignacio_natalia.puzzleteca.repositorios.ComentarioRepositorio;
 import com.ignacio_natalia.puzzleteca.repositorios.PostRepositorio;
-import com.ignacio_natalia.puzzleteca.utilidades.PaginacionComentarios;
+import com.ignacio_natalia.puzzleteca.modelos.paginacion.PaginacionComentarios;
 
 import java.io.File;
 import java.util.ArrayList;

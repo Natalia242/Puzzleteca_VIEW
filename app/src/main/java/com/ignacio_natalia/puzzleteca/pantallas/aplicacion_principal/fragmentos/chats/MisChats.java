@@ -12,7 +12,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.ignacio_natalia.puzzleteca.modelos.Usuario;
+import com.ignacio_natalia.puzzleteca.modelos.clases.Usuario;
 import com.ignacio_natalia.puzzleteca.modelos.chat.CrearConversacionRequest;
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.AppPrincipal;
 import com.ignacio_natalia.puzzleteca.utilidades.GestorSesion;

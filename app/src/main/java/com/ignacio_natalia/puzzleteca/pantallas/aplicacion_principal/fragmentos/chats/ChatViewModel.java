@@ -7,7 +7,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.google.gson.Gson;
-import com.ignacio_natalia.puzzleteca.modelos.Usuario;
+import com.ignacio_natalia.puzzleteca.modelos.clases.Usuario;
 import com.ignacio_natalia.puzzleteca.modelos.chat.*;
 import com.ignacio_natalia.puzzleteca.red.chats.*;
 import com.ignacio_natalia.puzzleteca.repositorios.UsuarioRepositorio;

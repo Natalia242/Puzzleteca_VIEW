@@ -1,11 +1,11 @@
 package com.ignacio_natalia.puzzleteca.repositorios;
 
-import com.ignacio_natalia.puzzleteca.modelos.ActualizarUsuarioRequest;
-import com.ignacio_natalia.puzzleteca.modelos.ConfirmarCambioContrasenaRequest;
-import com.ignacio_natalia.puzzleteca.modelos.LoginRequest;
-import com.ignacio_natalia.puzzleteca.modelos.LoginRespuesta;
-import com.ignacio_natalia.puzzleteca.modelos.SolicitarCodigoRequest;
-import com.ignacio_natalia.puzzleteca.modelos.Usuario;
+import com.ignacio_natalia.puzzleteca.modelos.actualizar.ActualizarUsuarioRequest;
+import com.ignacio_natalia.puzzleteca.modelos.cambioContrasenna.ConfirmarCambioContrasenaRequest;
+import com.ignacio_natalia.puzzleteca.modelos.login.LoginRequest;
+import com.ignacio_natalia.puzzleteca.modelos.login.LoginRespuesta;
+import com.ignacio_natalia.puzzleteca.modelos.cambioContrasenna.SolicitarCodigoRequest;
+import com.ignacio_natalia.puzzleteca.modelos.clases.Usuario;
 import com.ignacio_natalia.puzzleteca.red.clientes.ClienteApi;
 import com.ignacio_natalia.puzzleteca.red.clientes.ServiciosAPI;
 

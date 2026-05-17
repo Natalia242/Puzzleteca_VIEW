@@ -6,6 +6,8 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.*;
 import android.widget.*;
 
@@ -16,13 +18,9 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.slider.LabelFormatter;
 import com.google.android.material.slider.Slider;
-import com.ignacio_natalia.puzzleteca.modelos.Puzzle;
+import com.ignacio_natalia.puzzleteca.modelos.clases.Puzzle;
 import com.ignacio_natalia.puzzleteca.utilidades.GestorSesion;
 
-/**
- * Formulario para actualizar los datos de un puzzle existente.
- * Recibe el puzzle a editar a través de setArguments() con la clave "puzzle".
- */
 public class ActualizarPuzzle extends Fragment {
 
     private static final String ARG_PUZZLE = "puzzle";
@@ -36,6 +34,8 @@ public class ActualizarPuzzle extends Fragment {
     @SuppressLint("UseSwitchCompatOrMaterialCode")
     private Switch   switchColor, switchEstado;
 
+    private boolean dificultadAutomatica = false;
+
     private static final int
             COLOR_CARD      = Color.WHITE,
             COLOR_ACENTO    = Color.parseColor("#F06292"),
@@ -48,7 +48,6 @@ public class ActualizarPuzzle extends Fragment {
             COLOR_DIFICIL   = Color.parseColor("#F6A06A"),
             COLOR_EXTREMO   = Color.parseColor("#E57373");
 
-    /** Crea el fragment con el puzzle a editar. */
     public static ActualizarPuzzle newInstance(Puzzle puzzle) {
         ActualizarPuzzle f = new ActualizarPuzzle();
         Bundle args = new Bundle();
@@ -128,12 +127,24 @@ public class ActualizarPuzzle extends Fragment {
                 puzzle.getPiezas() != null ? String.valueOf(puzzle.getPiezas()) : "");
         campoDescripcion = crearCampoMultilinea("Descripción", puzzle.getDescripcion());
 
-        // Slider dificultad
+        // ── Fila dificultad: label + checkbox auto ──
+        LinearLayout filaDificultad = new LinearLayout(getContext());
+        filaDificultad.setOrientation(LinearLayout.HORIZONTAL);
+        filaDificultad.setGravity(Gravity.CENTER_VERTICAL);
+        filaDificultad.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+
         TextView tvDifLabel = new TextView(getContext());
         tvDifLabel.setText("Dificultad");
         tvDifLabel.setTextSize(13);
         tvDifLabel.setTextColor(COLOR_SUBTITULO);
         tvDifLabel.setPadding(dp(4), dp(10), dp(4), 0);
+        tvDifLabel.setLayoutParams(new LinearLayout.LayoutParams(
+                0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
+
+        CheckBox autoCheck = new CheckBox(getContext());
+        autoCheck.setText("Auto");
+        autoCheck.setChecked(false); // al editar, por defecto se respeta la dificultad guardada
 
         sliderDificultad = new Slider(getContext());
         sliderDificultad.setValueFrom(0);
@@ -142,13 +153,41 @@ public class ActualizarPuzzle extends Fragment {
         sliderDificultad.setValue(dificultadAInt(puzzle.getDificultad()));
         sliderDificultad.setTrackInactiveTintList(ColorStateList.valueOf(Color.TRANSPARENT));
         sliderDificultad.setLabelBehavior(LabelFormatter.LABEL_GONE);
+        sliderDificultad.setEnabled(true); // empieza habilitado (modo manual)
 
         tvDifValor = new TextView(getContext());
         tvDifValor.setTextColor(COLOR_SUBTITULO);
-
-        sliderDificultad.addOnChangeListener((slider, value, fromUser) ->
-                actualizarColorDificultad((int) value));
         actualizarColorDificultad((int) sliderDificultad.getValue());
+
+        // Checkbox: activar/desactivar modo automático
+        autoCheck.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            dificultadAutomatica = isChecked;
+            sliderDificultad.setEnabled(!isChecked);
+            if (isChecked) recalcularDificultad();
+        });
+
+        // Slider: si el usuario lo mueve manualmente, desactivar auto
+        sliderDificultad.addOnChangeListener((slider, value, fromUser) -> {
+            if (fromUser) {
+                dificultadAutomatica = false;
+                autoCheck.setChecked(false);
+                sliderDificultad.setEnabled(true);
+            }
+            actualizarColorDificultad((int) value);
+        });
+
+        // Piezas: recalcular si auto está activo
+        campoPiezas.addTextChangedListener(new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (!s.toString().isEmpty()) recalcularDificultad();
+            }
+        });
+
+        filaDificultad.addView(tvDifLabel);
+        filaDificultad.addView(autoCheck);
 
         cardDetalles.addView(campoTiempo);
         cardDetalles.addView(separador());
@@ -156,7 +195,7 @@ public class ActualizarPuzzle extends Fragment {
         cardDetalles.addView(separador());
         cardDetalles.addView(campoDescripcion);
         cardDetalles.addView(separador());
-        cardDetalles.addView(tvDifLabel);
+        cardDetalles.addView(filaDificultad);
         cardDetalles.addView(sliderDificultad);
         cardDetalles.addView(tvDifValor);
         root.addView(cardDetalles);
@@ -171,6 +210,8 @@ public class ActualizarPuzzle extends Fragment {
         LinearLayout textoColor = textoDoble("Color del puzzle", "El puzzle tiene más de un color");
         switchColor = new Switch(getContext());
         switchColor.setChecked(puzzle.isColor() != null && puzzle.isColor());
+        // Al cambiar color, recalcular si auto está activo
+        switchColor.setOnCheckedChangeListener((btn, isChecked) -> recalcularDificultad());
         filaColor.addView(textoColor);
         filaColor.addView(switchColor);
         cardOpciones.addView(filaColor);
@@ -244,70 +285,84 @@ public class ActualizarPuzzle extends Fragment {
     }
 
     // ─────────────────────────────────────────────────────
-    // Lógica
+    // Lógica de dificultad
+    // ─────────────────────────────────────────────────────
+
+    private int calcularDificultad(int piezas, boolean color) {
+        int dificultad;
+        if (piezas <= 100)       dificultad = 0;
+        else if (piezas <= 1000) dificultad = 1;
+        else if (piezas < 10000) dificultad = 2;
+        else                     dificultad = 3;
+        if (!color && dificultad < 3) dificultad++;
+        return dificultad;
+    }
+
+    private void recalcularDificultad() {
+        if (!dificultadAutomatica) return;
+        String txt = campoPiezas.getText().toString();
+        if (txt.isEmpty()) return;
+        try {
+            sliderDificultad.setValue(
+                    calcularDificultad(Integer.parseInt(txt), switchColor.isChecked()));
+        } catch (Exception ignored) {}
+    }
+
+    // ─────────────────────────────────────────────────────
+    // Guardar cambios
     // ─────────────────────────────────────────────────────
 
     private void guardarCambios() {
-
         String token     = GestorSesion.obtenerToken(getContext());
         int    idUsuario = GestorSesion.obtenerId_usuario(getContext());
         int    idPuzzle  = puzzle.getId();
 
-        // ── Campos de texto ──
         String nuevoTitulo = campoTitulo.getText().toString().trim();
         String viejoTitulo = puzzle.getTitulo() != null ? puzzle.getTitulo().trim() : "";
-        if (!nuevoTitulo.isEmpty() && !nuevoTitulo.equals(viejoTitulo)) {
+        if (!nuevoTitulo.isEmpty() && !nuevoTitulo.equals(viejoTitulo))
             viewModel.actualizarPuzzle(token, idUsuario, idPuzzle, "titulo", nuevoTitulo);
-        }
 
         String nuevoAutor = campoAutor.getText().toString().trim();
         String viejoAutor = puzzle.getAutor() != null ? puzzle.getAutor().trim() : "";
-        if (!nuevoAutor.isEmpty() && !nuevoAutor.equals(viejoAutor)) {
+        if (!nuevoAutor.isEmpty() && !nuevoAutor.equals(viejoAutor))
             viewModel.actualizarPuzzle(token, idUsuario, idPuzzle, "autor", nuevoAutor);
-        }
 
         String nuevoDesc = campoDescripcion.getText().toString().trim();
         String viejoDesc = puzzle.getDescripcion() != null ? puzzle.getDescripcion().trim() : "";
-        if (!nuevoDesc.equals(viejoDesc)) {
+        if (!nuevoDesc.equals(viejoDesc))
             viewModel.actualizarPuzzle(token, idUsuario, idPuzzle, "descripcion", nuevoDesc);
-        }
 
         String nuevoPiezas = campoPiezas.getText().toString().trim();
         String viejoPiezas = puzzle.getPiezas() != null ? String.valueOf(puzzle.getPiezas()) : "";
-        if (!nuevoPiezas.isEmpty() && !nuevoPiezas.equals(viejoPiezas)) {
+        if (!nuevoPiezas.isEmpty() && !nuevoPiezas.equals(viejoPiezas))
             viewModel.actualizarPuzzle(token, idUsuario, idPuzzle, "piezas", nuevoPiezas);
-        }
 
         String nuevoTiempo = campoTiempo.getText().toString().trim();
         String viejoTiempo = puzzle.getTiempo() != null ? String.valueOf(puzzle.getTiempo()) : "";
-        if (!nuevoTiempo.isEmpty() && !nuevoTiempo.equals(viejoTiempo)) {
+        if (!nuevoTiempo.isEmpty() && !nuevoTiempo.equals(viejoTiempo))
             viewModel.actualizarPuzzle(token, idUsuario, idPuzzle, "tiempo", nuevoTiempo);
-        }
 
-        // ── Dificultad ──
         String nuevaDif = intADificultad((int) sliderDificultad.getValue());
         String viejaDif = puzzle.getDificultad() != null ? puzzle.getDificultad().name() : "Facil";
-        if (!nuevaDif.equals(viejaDif)) {
+        if (!nuevaDif.equals(viejaDif))
             viewModel.actualizarPuzzle(token, idUsuario, idPuzzle, "dificultad", nuevaDif);
-        }
 
-        // ── Color  (endpoint genérico) ──
         String nuevoColor = String.valueOf(switchColor.isChecked());
         String viejoColor = puzzle.isColor() != null ? String.valueOf(puzzle.isColor()) : "true";
-        if (!nuevoColor.equals(viejoColor)) {
+        if (!nuevoColor.equals(viejoColor))
             viewModel.actualizarPuzzle(token, idUsuario, idPuzzle, "color", nuevoColor);
-        }
 
-        // ── Estado (endpoint específico: /puzzles/actualizarEstado) ──
         String nuevoEstado = switchEstado.isChecked() ? "Publico" : "Privado";
         String viejoEstado = puzzle.getEstado() != null ? puzzle.getEstado().name() : "Publico";
-        if (!nuevoEstado.equals(viejoEstado)) {
+        if (!nuevoEstado.equals(viejoEstado))
             viewModel.cambiarEstadoPuzzle(idUsuario, idPuzzle, nuevoEstado);
-        }
 
-        // Notificamos éxito y volvemos
         viewModel.notificarActualizacion();
     }
+
+    // ─────────────────────────────────────────────────────
+    // Helpers de dificultad
+    // ─────────────────────────────────────────────────────
 
     private int dificultadAInt(Puzzle.Dificultades d) {
         if (d == null) return 0;

@@ -1,9 +1,8 @@
 package com.ignacio_natalia.puzzleteca.red.posts;
 
-import com.ignacio_natalia.puzzleteca.modelos.ComentarioPost;
-import com.ignacio_natalia.puzzleteca.modelos.Post;
+import com.ignacio_natalia.puzzleteca.modelos.post.Post;
+import com.ignacio_natalia.puzzleteca.modelos.paginacion.PaginacionPost;
 
-import java.util.List;
 import java.util.Map;
 
 import okhttp3.MultipartBody;

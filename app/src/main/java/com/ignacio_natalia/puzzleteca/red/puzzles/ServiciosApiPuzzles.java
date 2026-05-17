@@ -1,12 +1,12 @@
 package com.ignacio_natalia.puzzleteca.red.puzzles;
 
-import com.ignacio_natalia.puzzleteca.modelos.Puzzle;
+import com.ignacio_natalia.puzzleteca.modelos.clases.Puzzle;
 
 import java.util.List;
 
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
-import com.ignacio_natalia.puzzleteca.modelos.ActualizarPuzzleRequest;
+import com.ignacio_natalia.puzzleteca.modelos.actualizar.ActualizarPuzzleRequest;
 
 import retrofit2.Call;
 import retrofit2.http.Body;

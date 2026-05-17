@@ -1,4 +1,4 @@
-package com.ignacio_natalia.puzzleteca.modelos;
+package com.ignacio_natalia.puzzleteca.modelos.actualizar;
 
 public class ActualizarPuzzleRequest {
 

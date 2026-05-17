@@ -1,4 +1,4 @@
-package com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos;
+package com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos.ranking;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -28,7 +28,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ignacio_natalia.puzzleteca.R;
-import com.ignacio_natalia.puzzleteca.modelos.RankingUsuario;
+import com.ignacio_natalia.puzzleteca.modelos.ranking.RankingUsuario;
 import com.ignacio_natalia.puzzleteca.repositorios.RankingRepositorio;
 import com.ignacio_natalia.puzzleteca.utilidades.GestorSesion;
 

@@ -5,7 +5,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.ignacio_natalia.puzzleteca.modelos.LoginRespuesta;
+import com.ignacio_natalia.puzzleteca.modelos.login.LoginRespuesta;
 import com.ignacio_natalia.puzzleteca.repositorios.UsuarioRepositorio;
 
 import retrofit2.Call;

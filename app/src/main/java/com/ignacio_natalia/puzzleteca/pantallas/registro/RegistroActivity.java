@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
-import android.text.Html;
 import android.text.InputType;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -31,7 +30,7 @@ import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.ignacio_natalia.puzzleteca.R;
-import com.ignacio_natalia.puzzleteca.modelos.Usuario;
+import com.ignacio_natalia.puzzleteca.modelos.clases.Usuario;
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.AppPrincipal;
 import com.ignacio_natalia.puzzleteca.pantallas.login.LoginViewModel;
 import com.ignacio_natalia.puzzleteca.utilidades.GestorSesion;

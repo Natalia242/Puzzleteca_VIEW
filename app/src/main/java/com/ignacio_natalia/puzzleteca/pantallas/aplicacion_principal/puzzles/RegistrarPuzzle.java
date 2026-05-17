@@ -24,7 +24,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.google.android.material.slider.LabelFormatter;
 import com.google.android.material.slider.Slider;
 import com.ignacio_natalia.puzzleteca.R;
-import com.ignacio_natalia.puzzleteca.modelos.Puzzle;
+import com.ignacio_natalia.puzzleteca.modelos.clases.Puzzle;
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.AppPrincipal;
 import com.ignacio_natalia.puzzleteca.utilidades.GestorSesion;
 

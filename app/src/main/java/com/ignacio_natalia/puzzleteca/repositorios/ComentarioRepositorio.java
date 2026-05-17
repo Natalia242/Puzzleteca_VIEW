@@ -1,9 +1,9 @@
 package com.ignacio_natalia.puzzleteca.repositorios;
 
-import com.ignacio_natalia.puzzleteca.modelos.Comentario;
+import com.ignacio_natalia.puzzleteca.modelos.comentarios.Comentario;
 import com.ignacio_natalia.puzzleteca.red.comentarios.ComentarioApi;
 import com.ignacio_natalia.puzzleteca.red.comentarios.ServicioApiComentario;
-import com.ignacio_natalia.puzzleteca.utilidades.PaginacionComentarios;
+import com.ignacio_natalia.puzzleteca.modelos.paginacion.PaginacionComentarios;
 
 import retrofit2.Call;
 import retrofit2.Callback;

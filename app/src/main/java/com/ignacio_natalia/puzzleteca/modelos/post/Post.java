@@ -1,6 +1,7 @@
-package com.ignacio_natalia.puzzleteca.modelos;
+package com.ignacio_natalia.puzzleteca.modelos.post;
 
 import com.google.gson.annotations.SerializedName;
+import com.ignacio_natalia.puzzleteca.modelos.clases.Puzzle;
 
 /**
  * Modelo de Post del foro.

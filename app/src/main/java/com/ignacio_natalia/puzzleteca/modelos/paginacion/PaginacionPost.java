@@ -1,7 +1,7 @@
-package com.ignacio_natalia.puzzleteca.red.posts;
+package com.ignacio_natalia.puzzleteca.modelos.paginacion;
 
 import com.google.gson.annotations.SerializedName;
-import com.ignacio_natalia.puzzleteca.modelos.Post;
+import com.ignacio_natalia.puzzleteca.modelos.post.Post;
 import java.util.List;
 
 /**
