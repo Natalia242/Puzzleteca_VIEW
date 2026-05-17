@@ -980,9 +980,7 @@ public class Foro extends Fragment {
 
     private void actualizarLikeUI(ImageView icon, TextView txt, boolean liked, int count) {
         icon.setImageResource(liked ? R.drawable.like : R.drawable.no_like);
-        icon.setColorFilter(liked ? ContextCompat.getColor(requireContext(), R.color.app_rosa) : ContextCompat.getColor(requireContext(), R.color.app_texto));
         txt.setText(String.valueOf(count));
-        txt.setTextColor(liked ? ContextCompat.getColor(requireContext(), R.color.app_rosa) : ContextCompat.getColor(requireContext(), R.color.app_texto));
     }
 
     private void confirmarEliminar(Integer idPost, int idUsuario) {

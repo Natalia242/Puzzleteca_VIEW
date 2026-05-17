@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.LinearGradient;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.RectF;
 import android.graphics.Shader;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -284,7 +285,7 @@ public class PuzzleDialogFragment extends DialogFragment {
         frameParams.bottomMargin = dp(16);
         imagenFrame.setLayoutParams(frameParams);
 
-        // Recorte redondeado para el frame entero
+        // Recorte redondeado para todo el frame
         android.graphics.drawable.GradientDrawable frameBg =
                 new android.graphics.drawable.GradientDrawable();
         frameBg.setCornerRadius(dp(12));
@@ -372,92 +373,167 @@ public class PuzzleDialogFragment extends DialogFragment {
         cardValParams.bottomMargin = dp(20);
         cardValoracion.setLayoutParams(cardValParams);
 
-        TextView labelValorar = new TextView(requireContext());
-        labelValorar.setText("Valorar este puzzle");
-        labelValorar.setTextSize(14);
-        labelValorar.setTypeface(null, Typeface.BOLD);
-        labelValorar.setTextColor(Color.parseColor("#616161"));
-        labelValorar.setPadding(0, 0, 0, dp(10));
+        int idUsuario = GestorSesion.obtenerId_usuario(requireContext());
+        boolean esMioPuzzle  = puzzle.getIdUsuario() != null
+                && puzzle.getIdUsuario().equals(idUsuario);
+        boolean esInvitado   = "Invitado".equals(GestorSesion.obtenerRol(requireContext()));
+        boolean yaValorado   = puzzle.getValoracion() != null && puzzle.getValoracion() > 0
+                && !esMioPuzzle; // si es mío la valoración es la media, no la mía
 
-        RoundedStarRatingView starView = new RoundedStarRatingView(requireContext());
-        LinearLayout.LayoutParams starParams = new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        starParams.bottomMargin = dp(8);
-        starView.setLayoutParams(starParams);
+        boolean soloLectura  = esMioPuzzle || esInvitado || yaValorado;
 
-        TextView tvEstado = new TextView(requireContext());
-        tvEstado.setText("Toca las estrellas para valorar");
-        tvEstado.setTextSize(12);
-        tvEstado.setTextColor(Color.parseColor("#9E9E9E"));
-        tvEstado.setPadding(0, dp(4), 0, 0);
+        if (soloLectura) {
+            // ── Vista de solo lectura ─────────────────────────────────────
+            String labelTexto = esMioPuzzle  ? "Valoración media"
+                    : esInvitado   ? "Valoración"
+                    :                "Tu valoración";
 
-        starView.setOnRatingChangeListener((stars, fromUser) -> {
-            if (!fromUser) return;
+            String subTexto   = esMioPuzzle  ? (puzzle.getValoracion() != null && puzzle.getValoracion() > 0
+                    ? puzzle.getValoracion() + "/5 — valorado por otros usuarios"
+                    : "Aún sin valoraciones")
+                    : esInvitado   ? "Inicia sesión para poder valorar"
+                    :                "Ya has valorado este puzzle";
 
-            String token      = GestorSesion.obtenerToken(requireContext());
-            int    idUsuario  = GestorSesion.obtenerId_usuario(requireContext());
+            TextView labelMio = new TextView(requireContext());
+            labelMio.setText(labelTexto);
+            labelMio.setTextSize(14);
+            labelMio.setTypeface(null, Typeface.BOLD);
+            labelMio.setTextColor(Color.parseColor("#616161"));
+            labelMio.setPadding(0, 0, 0, dp(10));
 
-            if (puzzle.getIdUsuario() != null && puzzle.getIdUsuario().equals(idUsuario)) {
-                Toast.makeText(requireContext(),
-                        "No puedes valorar tu propio puzzle",
-                        Toast.LENGTH_SHORT).show();
-                starView.setRating(0);
-                return;
+            RoundedStarRatingView starViewReadOnly = new RoundedStarRatingView(requireContext());
+            int valActual = puzzle.getValoracion() != null ? puzzle.getValoracion() : 0;
+            starViewReadOnly.setRating(valActual);
+            starViewReadOnly.setEnabled(false);
+            LinearLayout.LayoutParams starROParams = new LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            starROParams.bottomMargin = dp(6);
+            starViewReadOnly.setLayoutParams(starROParams);
+
+            TextView tvSub = new TextView(requireContext());
+            tvSub.setText(subTexto);
+            tvSub.setTextSize(12);
+            tvSub.setTextColor(Color.parseColor("#9E9E9E"));
+            tvSub.setPadding(0, dp(2), 0, 0);
+
+            cardValoracion.addView(labelMio);
+            cardValoracion.addView(starViewReadOnly);
+            cardValoracion.addView(tvSub);
+
+            // ── Botón de iniciar sesión solo para Invitados ───────────────
+            if (esInvitado) {
+                espaciado(cardValoracion, dp(10));
+
+                TextView btnLogin = new TextView(requireContext());
+                btnLogin.setText("🔑  Iniciar sesión");
+                btnLogin.setTextSize(14);
+                btnLogin.setTypeface(null, Typeface.BOLD);
+                btnLogin.setTextColor(Color.WHITE);
+                btnLogin.setGravity(Gravity.CENTER);
+                btnLogin.setPadding(0, dp(12), 0, dp(12));
+                btnLogin.setClickable(true);
+                btnLogin.setFocusable(true);
+                LinearLayout.LayoutParams btnLP = new LinearLayout.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                btnLogin.setLayoutParams(btnLP);
+                android.graphics.drawable.GradientDrawable btnBg =
+                        new android.graphics.drawable.GradientDrawable();
+                btnBg.setColor(Color.parseColor("#2E7D6E"));
+                btnBg.setCornerRadius(dp(12));
+                btnLogin.setBackground(btnBg);
+                btnLogin.setOnClickListener(v -> {
+                    dismiss();
+                    android.content.Intent intent = new android.content.Intent(
+                            requireContext(),
+                            com.ignacio_natalia.puzzleteca.pantallas.login.LoginActivity.class);
+                    intent.setFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK
+                            | android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                });
+
+                cardValoracion.addView(btnLogin);
             }
 
-            tvEstado.setText("Enviando valoración…");
-            tvEstado.setTextColor(Color.parseColor("#9E9E9E"));
-            starView.setEnabled(false);
+        } else {
+            // ── Vista interactiva para otros usuarios ─────────────────────
+            TextView labelValorar = new TextView(requireContext());
+            labelValorar.setText("Valorar este puzzle");
+            labelValorar.setTextSize(14);
+            labelValorar.setTypeface(null, Typeface.BOLD);
+            labelValorar.setTextColor(Color.parseColor("#616161"));
+            labelValorar.setPadding(0, 0, 0, dp(10));
 
-            rankingRepositorio.valorarPuzzle(
-                    token,
-                    puzzle.getId(),
-                    idUsuario,
-                    stars,
-                    new Callback<Void>() {
-                        @Override
-                        public void onResponse(@NonNull Call<Void> call,
-                                               @NonNull Response<Void> response) {
-                            if (!isAdded()) return;
-                            if (response.isSuccessful()) {
-                                puzzle.setValoracion(stars);
-                                tvEstado.setText("✅ Valorado con " + stars + " estrella" + (stars != 1 ? "s" : ""));
-                                tvEstado.setTextColor(Color.parseColor("#43A047"));
-                                Toast.makeText(requireContext(),
-                                        "Has valorado con " + stars + " estrellas",
-                                        Toast.LENGTH_SHORT).show();
-                            } else if (response.code() == 409) {
-                                tvEstado.setText("Ya valoraste este puzzle");
-                                tvEstado.setTextColor(Color.parseColor("#FB8C00"));
-                                starView.setEnabled(false);
-                                Toast.makeText(requireContext(),
-                                        "Ya has valorado este puzzle",
-                                        Toast.LENGTH_SHORT).show();
-                            } else {
-                                tvEstado.setText("Error al valorar. Inténtalo de nuevo");
+            RoundedStarRatingView starView = new RoundedStarRatingView(requireContext());
+            LinearLayout.LayoutParams starParams = new LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            starParams.bottomMargin = dp(8);
+            starView.setLayoutParams(starParams);
+
+            TextView tvEstado = new TextView(requireContext());
+            tvEstado.setText("Toca las estrellas para valorar");
+            tvEstado.setTextSize(12);
+            tvEstado.setTextColor(Color.parseColor("#9E9E9E"));
+            tvEstado.setPadding(0, dp(4), 0, 0);
+
+            starView.setOnRatingChangeListener((stars, fromUser) -> {
+                if (!fromUser) return;
+
+                String token = GestorSesion.obtenerToken(requireContext());
+
+                tvEstado.setText("Enviando valoración…");
+                tvEstado.setTextColor(Color.parseColor("#9E9E9E"));
+                starView.setEnabled(false);
+
+                rankingRepositorio.valorarPuzzle(
+                        token,
+                        puzzle.getId(),
+                        idUsuario,
+                        stars,
+                        new Callback<Void>() {
+                            @Override
+                            public void onResponse(@NonNull Call<Void> call,
+                                                   @NonNull Response<Void> response) {
+                                if (!isAdded()) return;
+                                if (response.isSuccessful()) {
+                                    puzzle.setValoracion(stars);
+                                    tvEstado.setText("✅ Valorado con " + stars + " estrella" + (stars != 1 ? "s" : ""));
+                                    tvEstado.setTextColor(Color.parseColor("#43A047"));
+                                    Toast.makeText(requireContext(),
+                                            "Has valorado con " + stars + " estrellas",
+                                            Toast.LENGTH_SHORT).show();
+                                } else if (response.code() == 409) {
+                                    tvEstado.setText("Ya valoraste este puzzle");
+                                    tvEstado.setTextColor(Color.parseColor("#FB8C00"));
+                                    starView.setEnabled(false);
+                                    Toast.makeText(requireContext(),
+                                            "Ya has valorado este puzzle",
+                                            Toast.LENGTH_SHORT).show();
+                                } else {
+                                    tvEstado.setText("Error al valorar. Inténtalo de nuevo");
+                                    tvEstado.setTextColor(Color.parseColor("#E53935"));
+                                    starView.setEnabled(true);
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(@NonNull Call<Void> call,
+                                                  @NonNull Throwable t) {
+                                if (!isAdded()) return;
+                                tvEstado.setText("Sin conexión. Inténtalo de nuevo");
                                 tvEstado.setTextColor(Color.parseColor("#E53935"));
                                 starView.setEnabled(true);
+                                Toast.makeText(requireContext(),
+                                        "Error de red",
+                                        Toast.LENGTH_SHORT).show();
                             }
                         }
+                );
+            });
 
-                        @Override
-                        public void onFailure(@NonNull Call<Void> call,
-                                              @NonNull Throwable t) {
-                            if (!isAdded()) return;
-                            tvEstado.setText("Sin conexión. Inténtalo de nuevo");
-                            tvEstado.setTextColor(Color.parseColor("#E53935"));
-                            starView.setEnabled(true);
-                            Toast.makeText(requireContext(),
-                                    "Error de red",
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                    }
-            );
-        });
-
-        cardValoracion.addView(labelValorar);
-        cardValoracion.addView(starView);
-        cardValoracion.addView(tvEstado);
+            cardValoracion.addView(labelValorar);
+            cardValoracion.addView(starView);
+            cardValoracion.addView(tvEstado);
+        }
 
         // ── Botón cerrar ──────────────────────────────────────────────────
         Button cerrar = new Button(requireContext());
@@ -550,5 +626,12 @@ public class PuzzleDialogFragment extends DialogFragment {
 
     private int dp(int v) {
         return (int) (v * requireContext().getResources().getDisplayMetrics().density);
+    }
+
+    private void espaciado(LinearLayout layout, int px) {
+        View v = new View(requireContext());
+        v.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, px));
+        layout.addView(v);
     }
 }

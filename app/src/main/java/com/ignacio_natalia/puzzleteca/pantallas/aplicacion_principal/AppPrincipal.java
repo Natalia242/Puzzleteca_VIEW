@@ -18,6 +18,7 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
@@ -27,8 +28,10 @@ import com.bumptech.glide.Glide;
 
 import com.ignacio_natalia.puzzleteca.R;
 import com.ignacio_natalia.puzzleteca.modelos.Puzzle;
+import com.ignacio_natalia.puzzleteca.modelos.Usuario;
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos.MisPuzzles;
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.puzzles.PuzzleDialogFragment;
+import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.usuarios.UsuarioDialogFragment;
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos.foro.Foro;
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos.PanelAdmin;
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos.PanelUsuario;
@@ -48,7 +51,7 @@ public class AppPrincipal extends AppCompatActivity {
     private FrameLayout contenedorFragmento;
     private ImageView tituloPantalla;
 
-    // Tabs
+    // Tabs (ahora LinearLayout en lugar de TextView)
     private LinearLayout botonInicio, botonPuzzles, botonRanking, botonForo, botonPerfil;
     // Indicador deslizante
     private View indicadorActivo;
@@ -59,7 +62,7 @@ public class AppPrincipal extends AppCompatActivity {
     protected void onCreate(Bundle instanciaEstadoGuardado) {
         super.onCreate(instanciaEstadoGuardado);
 
-        getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.app_green_light));
+        getWindow().setStatusBarColor(Color.parseColor("#DFF5C9"));
 
         if ("Bloqueado".equals(GestorSesion.obtenerRol(this))) {
             mostrarPantallaBloqueo();
@@ -68,7 +71,7 @@ public class AppPrincipal extends AppCompatActivity {
 
         GradientDrawable fondo = new GradientDrawable(
                 GradientDrawable.Orientation.TOP_BOTTOM,
-                new int[]{ContextCompat.getColor(this, R.color.app_rosa_burbuja), ContextCompat.getColor(this, R.color.app_rosa_fondo)}
+                new int[]{Color.parseColor("#F1B2CA"), Color.parseColor("#FFF6F9")}
         );
 
         LinearLayout root = new LinearLayout(this);
@@ -204,7 +207,7 @@ public class AppPrincipal extends AppCompatActivity {
 
         // Indicador deslizante superior
         indicadorActivo = new View(this);
-        indicadorActivo.setBackgroundColor(ContextCompat.getColor(this, R.color.app_rosa));
+        indicadorActivo.setBackgroundColor(Color.parseColor("#F06292"));
         LinearLayout.LayoutParams parametrosIndicador = new LinearLayout.LayoutParams(dpToPx(32), dpToPx(3));
         parametrosIndicador.gravity = Gravity.START;
         indicadorActivo.setLayoutParams(parametrosIndicador);
@@ -303,14 +306,14 @@ public class AppPrincipal extends AppCompatActivity {
 
         ImageView imagen = new ImageView(this);
         imagen.setImageDrawable(icono);
-        imagen.setColorFilter(ContextCompat.getColor(this, R.color.app_subtexto_label));
+        imagen.setColorFilter(Color.parseColor("#90A4AE"));
         LinearLayout.LayoutParams parametrosImagen = new LinearLayout.LayoutParams(dpToPx(22), dpToPx(22));
         imagen.setLayoutParams(parametrosImagen);
 
         TextView texto = new TextView(this);
         texto.setText(etiqueta);
         texto.setTextSize(10f);
-        texto.setTextColor(ContextCompat.getColor(this, R.color.app_subtexto_label));
+        texto.setTextColor(Color.parseColor("#90A4AE"));
         texto.setGravity(Gravity.CENTER);
 
         LinearLayout.LayoutParams parametrosTexto = new LinearLayout.LayoutParams(
@@ -336,8 +339,8 @@ public class AppPrincipal extends AppCompatActivity {
 
     private void marcarTab(LinearLayout tab) {
 
-        int colorActivo   = ContextCompat.getColor(this, R.color.app_rosa);
-        int colorInactivo = ContextCompat.getColor(this, R.color.app_subtexto_label);
+        int colorActivo   = Color.parseColor("#F06292");
+        int colorInactivo = Color.parseColor("#90A4AE");
 
         for (LinearLayout boton : new LinearLayout[] {botonInicio, botonPuzzles, botonForo, botonRanking, botonPerfil}) {
 
@@ -352,7 +355,7 @@ public class AppPrincipal extends AppCompatActivity {
                     if (activo) {
                         imagen.clearColorFilter();
                     } else {
-                        imagen.setColorFilter(ContextCompat.getColor(this, R.color.app_subtexto_label));
+                        imagen.setColorFilter(Color.parseColor("#90A4AE"));
                     }
 
                 } else {
@@ -408,7 +411,7 @@ public class AppPrincipal extends AppCompatActivity {
 
         GradientDrawable fondo = new GradientDrawable(
                 GradientDrawable.Orientation.TOP_BOTTOM,
-                new int[] {ContextCompat.getColor(this, R.color.app_green_light), ContextCompat.getColor(this, R.color.app_green_medium)}
+                new int[] {Color.parseColor("#DFF5C9"), Color.parseColor("#B8E6A5")}
         );
 
         FrameLayout layout = new FrameLayout(this);
@@ -429,7 +432,7 @@ public class AppPrincipal extends AppCompatActivity {
         textoMensaje.setText("Usuario bloqueado");
         textoMensaje.setTextSize(22);
         textoMensaje.setTypeface(null, Typeface.BOLD);
-        textoMensaje.setTextColor(ContextCompat.getColor(this, R.color.app_peligro_dark));
+        textoMensaje.setTextColor(Color.parseColor("#C62828"));
         textoMensaje.setGravity(Gravity.CENTER);
         LinearLayout.LayoutParams parametrosMensaje = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -460,160 +463,270 @@ public class AppPrincipal extends AppCompatActivity {
 
     @SuppressLint("SetTextI18n")
     private LinearLayout crearTarjeta(Puzzle puzzle) {
-        int r = dpToPx(16);
 
-        // ── Tarjeta raíz ─────────────────────────────────────────────────────
+        int r = dpToPx(18);
+
+        // ── Tarjeta raíz ─────────────────────────────────────────────
         LinearLayout tarjeta = new LinearLayout(this);
-        tarjeta.setOrientation(LinearLayout.VERTICAL);
-        tarjeta.setElevation(dpToPx(3));
+        tarjeta.setOrientation(LinearLayout.HORIZONTAL);
+        tarjeta.setGravity(Gravity.CENTER_VERTICAL);
+        tarjeta.setPadding(0, 0, dpToPx(10), 0);
+        tarjeta.setElevation(dpToPx(1));
 
         LinearLayout.LayoutParams cardLP = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT);
-        cardLP.setMargins(0, 0, 0, dpToPx(16));
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        );
+
+        cardLP.setMargins(0, 0, 0, dpToPx(14));
         tarjeta.setLayoutParams(cardLP);
 
         GradientDrawable cardBg = new GradientDrawable();
         cardBg.setColor(Color.WHITE);
         cardBg.setCornerRadius(r);
-        cardBg.setStroke(dpToPx(1), ContextCompat.getColor(this, R.color.app_green_success));
+        cardBg.setStroke(dpToPx(1), Color.parseColor("#ECEFF1"));
+
         tarjeta.setBackground(cardBg);
+
         tarjeta.setClipToOutline(true);
+
         tarjeta.setOutlineProvider(new android.view.ViewOutlineProvider() {
             @Override
-            public void getOutline(View v, android.graphics.Outline o) {
-                o.setRoundRect(0, 0, v.getWidth(), v.getHeight(), r);
+            public void getOutline(View view, android.graphics.Outline outline) {
+                outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), r);
             }
         });
 
-        // ── Bloque superior: imagen con título superpuesto ────────────────────
-        FrameLayout imgFrame = new FrameLayout(this);
-        imgFrame.setLayoutParams(new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, dpToPx(160)));
+        // ── Imagen izquierda ─────────────────────────────────────────
+        int imgSize = dpToPx(110);
 
         ImageView imagen = new ImageView(this);
-        imagen.setLayoutParams(new FrameLayout.LayoutParams(
-                FrameLayout.LayoutParams.MATCH_PARENT,
-                FrameLayout.LayoutParams.MATCH_PARENT));
+
+        LinearLayout.LayoutParams imgLP = new LinearLayout.LayoutParams(
+                imgSize,
+                imgSize
+        );
+
+        imagen.setLayoutParams(imgLP);
+
         imagen.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        imagen.setBackgroundColor(ContextCompat.getColor(this, R.color.app_fondo_gris_light));
+
+        imagen.setBackgroundColor(Color.parseColor("#F5F5F5"));
+
+        imagen.setClipToOutline(true);
+
+        imagen.setOutlineProvider(new android.view.ViewOutlineProvider() {
+            @Override
+            public void getOutline(View view, android.graphics.Outline outline) {
+                outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), r);
+            }
+        });
 
         String url = puzzle.getImagenUrl();
+
         if (url != null && !url.isEmpty()) {
+
             Glide.with(this)
                     .load(url)
                     .placeholder(android.R.drawable.ic_menu_gallery)
                     .error(android.R.drawable.ic_menu_gallery)
+                    .centerCrop()
                     .into(imagen);
+
         } else {
+
             imagen.setImageResource(android.R.drawable.ic_menu_gallery);
+
         }
 
-        // Degradado inferior sobre la imagen
-        View gradOverlay = new View(this);
-        FrameLayout.LayoutParams gradLP = new FrameLayout.LayoutParams(
-                FrameLayout.LayoutParams.MATCH_PARENT, dpToPx(72));
-        gradLP.gravity = Gravity.BOTTOM;
-        gradOverlay.setLayoutParams(gradLP);
-        GradientDrawable grad = new GradientDrawable(
-                GradientDrawable.Orientation.BOTTOM_TOP,
-                new int[]{0xDD000000, 0x00000000});
-        gradOverlay.setBackground(grad);
+        // ── Columna información ──────────────────────────────────────
+        LinearLayout colInfo = new LinearLayout(this);
 
-        // Título del puzzle sobre el degradado
-        TextView tvTitulo = new TextView(this);
-        tvTitulo.setText(puzzle.getTitulo());
-        tvTitulo.setTextSize(16);
-        tvTitulo.setTypeface(null, Typeface.BOLD);
-        tvTitulo.setTextColor(Color.WHITE);
-        tvTitulo.setShadowLayer(4f, 0f, 2f, 0x99000000);
-        tvTitulo.setMaxLines(1);
-        tvTitulo.setEllipsize(android.text.TextUtils.TruncateAt.END);
-        FrameLayout.LayoutParams titLP = new FrameLayout.LayoutParams(
-                FrameLayout.LayoutParams.MATCH_PARENT,
-                FrameLayout.LayoutParams.WRAP_CONTENT);
-        titLP.gravity = Gravity.BOTTOM;
-        titLP.setMargins(dpToPx(14), 0, dpToPx(14), dpToPx(10));
-        tvTitulo.setLayoutParams(titLP);
+        colInfo.setOrientation(LinearLayout.VERTICAL);
 
-        imgFrame.addView(imagen);
-        imgFrame.addView(gradOverlay);
-        imgFrame.addView(tvTitulo);
+        colInfo.setGravity(Gravity.CENTER_VERTICAL);
 
-        // ── Bloque inferior: autor + estrellas + flecha ───────────────────────
-        LinearLayout infoRow = new LinearLayout(this);
-        infoRow.setOrientation(LinearLayout.HORIZONTAL);
-        infoRow.setGravity(Gravity.CENTER_VERTICAL);
-        infoRow.setPadding(dpToPx(14), dpToPx(10), dpToPx(12), dpToPx(12));
+        colInfo.setPadding(
+                dpToPx(14),
+                dpToPx(12),
+                dpToPx(8),
+                dpToPx(12)
+        );
 
-        // Avatar circular con inicial del autor
+        LinearLayout.LayoutParams infoLP = new LinearLayout.LayoutParams(
+                0,
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                1f
+        );
+
+        colInfo.setLayoutParams(infoLP);
+
+        // ⚠️ Es nombre de usuario
+        String nombreUsuario = puzzle.getAutor() != null
+                ? puzzle.getAutor()
+                : "Usuario";
+
+        // ── Fila superior usuario ────────────────────────────────────
+        LinearLayout filaUsuario = new LinearLayout(this);
+
+        filaUsuario.setOrientation(LinearLayout.HORIZONTAL);
+
+        filaUsuario.setGravity(Gravity.CENTER_VERTICAL);
+
+        // ── Avatar circular ──────────────────────────────────────────
         TextView avatar = new TextView(this);
-        String autorStr = puzzle.getAutor() != null ? puzzle.getAutor() : "?";
-        avatar.setText(String.valueOf(autorStr.charAt(0)).toUpperCase());
-        avatar.setTextSize(14);
+
+        avatar.setText(
+                String.valueOf(nombreUsuario.charAt(0)).toUpperCase()
+        );
+
+        avatar.setTextSize(13);
+
         avatar.setTypeface(null, Typeface.BOLD);
+
         avatar.setTextColor(Color.WHITE);
+
         avatar.setGravity(Gravity.CENTER);
-        int avatarSize = dpToPx(34);
-        LinearLayout.LayoutParams avatarLP = new LinearLayout.LayoutParams(avatarSize, avatarSize);
-        avatarLP.setMargins(0, 0, dpToPx(10), 0);
+
+        int avatarSize = dpToPx(28);
+
+        LinearLayout.LayoutParams avatarLP = new LinearLayout.LayoutParams(
+                avatarSize,
+                avatarSize
+        );
+
+        avatarLP.rightMargin = dpToPx(8);
+
         avatar.setLayoutParams(avatarLP);
+
         GradientDrawable avatarBg = new GradientDrawable();
+
         avatarBg.setShape(GradientDrawable.OVAL);
-        avatarBg.setColor(ContextCompat.getColor(this, R.color.app_teal_dark));
+
+        avatarBg.setColor(Color.parseColor("#4DB6AC"));
+
         avatar.setBackground(avatarBg);
 
-        // Columna: nombre autor + estrellas
-        LinearLayout colInfo = new LinearLayout(this);
-        colInfo.setOrientation(LinearLayout.VERTICAL);
-        colInfo.setLayoutParams(new LinearLayout.LayoutParams(0,
-                LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
+        avatar.setClickable(true);
 
-        TextView tvAutor = new TextView(this);
-        tvAutor.setText(autorStr);
-        tvAutor.setTextSize(13);
-        tvAutor.setTypeface(null, Typeface.BOLD);
-        tvAutor.setTextColor(ContextCompat.getColor(this, R.color.app_texto));
-        tvAutor.setMaxLines(1);
-        tvAutor.setEllipsize(android.text.TextUtils.TruncateAt.END);
+        avatar.setFocusable(true);
 
-        // Estrellas mini visuales
-        MiniStarsView miniStars = new MiniStarsView(this, puzzle.getValoracion());
-        LinearLayout.LayoutParams starsLP = new LinearLayout.LayoutParams(
+        avatar.setOnClickListener(v -> {
+
+            Usuario u = new Usuario();
+
+            u.setId(puzzle.getIdUsuario());
+
+            u.setNombre(nombreUsuario);
+
+            UsuarioDialogFragment dialog =
+                    UsuarioDialogFragment.newInstance(u);
+
+            dialog.show(getSupportFragmentManager(), "usuario_dialog");
+
+        });
+
+        // ── Nombre usuario ───────────────────────────────────────────
+        TextView tvUsuario = new TextView(this);
+
+        tvUsuario.setText(nombreUsuario);
+
+        tvUsuario.setTextSize(13);
+
+        tvUsuario.setTypeface(null, Typeface.NORMAL);
+
+        tvUsuario.setTextColor(Color.parseColor("#78909C"));
+
+        tvUsuario.setMaxLines(1);
+
+        tvUsuario.setEllipsize(android.text.TextUtils.TruncateAt.END);
+
+        filaUsuario.addView(avatar);
+        filaUsuario.addView(tvUsuario);
+
+        // ── Título puzzle ────────────────────────────────────────────
+        TextView tvTitulo = new TextView(this);
+
+        tvTitulo.setText(puzzle.getTitulo());
+
+        tvTitulo.setTextSize(19);
+
+        tvTitulo.setTypeface(null, Typeface.BOLD);
+
+        tvTitulo.setTextColor(Color.parseColor("#263238"));
+
+        tvTitulo.setMaxLines(2);
+
+        tvTitulo.setEllipsize(android.text.TextUtils.TruncateAt.END);
+
+        LinearLayout.LayoutParams tituloLP = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT);
-        starsLP.setMargins(0, dpToPx(3), 0, 0);
-        miniStars.setLayoutParams(starsLP);
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        );
 
-        colInfo.addView(tvAutor);
-        colInfo.addView(miniStars);
+        tituloLP.topMargin = dpToPx(6);
 
-        // Flecha derecha
+        tvTitulo.setLayoutParams(tituloLP);
+
+        // ── Línea decorativa ─────────────────────────────────────────
+        View linea = new View(this);
+
+        LinearLayout.LayoutParams lineaLP = new LinearLayout.LayoutParams(
+                dpToPx(36),
+                dpToPx(3)
+        );
+
+        lineaLP.topMargin = dpToPx(10);
+
+        linea.setLayoutParams(lineaLP);
+
+        GradientDrawable lineaBg = new GradientDrawable();
+
+        lineaBg.setCornerRadius(dpToPx(10));
+
+        lineaBg.setColor(Color.parseColor("#F8BBD0"));
+
+        linea.setBackground(lineaBg);
+
+        // ── Flecha derecha ───────────────────────────────────────────
         TextView flecha = new TextView(this);
+
         flecha.setText("›");
-        flecha.setTextSize(28);
-        flecha.setTextColor(ContextCompat.getColor(this, R.color.app_green_border));
+
+        flecha.setTextSize(22);
+
         flecha.setTypeface(null, Typeface.BOLD);
-        flecha.setGravity(Gravity.CENTER_VERTICAL);
+
+        flecha.setTextColor(Color.parseColor("#CFD8DC"));
+
         LinearLayout.LayoutParams flechaLP = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
-                LinearLayout.LayoutParams.MATCH_PARENT);
-        flechaLP.setMargins(dpToPx(6), 0, dpToPx(4), 0);
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        );
+
+        flechaLP.leftMargin = dpToPx(4);
+
+        flechaLP.rightMargin = dpToPx(10);
+
         flechaLP.gravity = Gravity.CENTER_VERTICAL;
+
         flecha.setLayoutParams(flechaLP);
 
-        infoRow.addView(avatar);
-        infoRow.addView(colInfo);
-        infoRow.addView(flecha);
+        // ── Montaje ──────────────────────────────────────────────────
+        colInfo.addView(filaUsuario);
+        colInfo.addView(tvTitulo);
+        colInfo.addView(linea);
 
-        // ── Montaje ───────────────────────────────────────────────────────────
-        tarjeta.addView(imgFrame);
-        tarjeta.addView(infoRow);
+        tarjeta.addView(imagen);
+        tarjeta.addView(colInfo);
+        tarjeta.addView(flecha);
 
-        // Feedback táctil + abrir dialog
+        // ── Click tarjeta ────────────────────────────────────────────
         tarjeta.setOnClickListener(v ->
-                PuzzleDialogFragment.newInstance(puzzle)
-                        .show(getSupportFragmentManager(), "puzzle_dialog"));
+                PuzzleDialogFragment
+                        .newInstance(puzzle)
+                        .show(getSupportFragmentManager(), "puzzle_dialog")
+        );
 
         return tarjeta;
     }
@@ -660,8 +773,8 @@ public class AppPrincipal extends AppCompatActivity {
                 if (i < rating) {
                     pFill.setShader(new LinearGradient(
                             ox, 0, ox, sizePx,
-                            ContextCompat.getColor(getContext(), R.color.app_estrella_light),
-                            ContextCompat.getColor(getContext(), R.color.app_naranja),
+                            Color.parseColor("#FFD740"),
+                            Color.parseColor("#FF8F00"),
                             Shader.TileMode.CLAMP));
                     canvas.drawPath(roundedStar(cx + ox, cy, sizePx * 0.45f,
                             sizePx * 0.18f, crPx), pFill);
