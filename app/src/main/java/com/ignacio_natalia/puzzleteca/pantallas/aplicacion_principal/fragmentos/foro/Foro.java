@@ -22,8 +22,8 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.bumptech.glide.Glide;
 import com.ignacio_natalia.puzzleteca.R;
-import com.ignacio_natalia.puzzleteca.modelos.Post;
-import com.ignacio_natalia.puzzleteca.modelos.Puzzle;
+import com.ignacio_natalia.puzzleteca.modelos.post.Post;
+import com.ignacio_natalia.puzzleteca.modelos.clases.Puzzle;
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.AppPrincipal;
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.puzzles.PuzzleDialogFragment;
 import com.ignacio_natalia.puzzleteca.pantallas.inicio.PantallaInicio;
@@ -31,7 +31,7 @@ import com.ignacio_natalia.puzzleteca.repositorios.PostRepositorio;
 import com.ignacio_natalia.puzzleteca.repositorios.PuzzleRepositorio;
 import com.ignacio_natalia.puzzleteca.utilidades.GestorSesion;
 import com.ignacio_natalia.puzzleteca.utilidades.UtilidadesSesion;
-import com.ignacio_natalia.puzzleteca.modelos.Comentario;
+import com.ignacio_natalia.puzzleteca.modelos.comentarios.Comentario;
 
 import java.io.File;
 import java.io.FileOutputStream;

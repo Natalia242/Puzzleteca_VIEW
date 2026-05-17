@@ -1,6 +1,7 @@
 package com.ignacio_natalia.puzzleteca.repositorios;
 
-import com.ignacio_natalia.puzzleteca.modelos.Puzzle;
+import com.ignacio_natalia.puzzleteca.modelos.clases.Puzzle;
+import com.ignacio_natalia.puzzleteca.modelos.actualizar.ActualizarPuzzleRequest;
 import com.ignacio_natalia.puzzleteca.red.puzzles.PuzzleApi;
 import com.ignacio_natalia.puzzleteca.red.puzzles.ServiciosApiPuzzles;
 
@@ -10,7 +11,6 @@ import java.util.List;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
-import retrofit2.Call;
 import retrofit2.Callback;
 
 public class PuzzleRepositorio {
@@ -65,8 +65,8 @@ public class PuzzleRepositorio {
     public void actualizarPuzzle(String token, int idUsuario, int idPuzzle,
                                  String atributo, String cambio,
                                  retrofit2.Callback<Void> callback) {
-        com.ignacio_natalia.puzzleteca.modelos.ActualizarPuzzleRequest dto =
-                new com.ignacio_natalia.puzzleteca.modelos.ActualizarPuzzleRequest(
+        ActualizarPuzzleRequest dto =
+                new ActualizarPuzzleRequest(
                         idUsuario, idPuzzle, atributo, cambio);
         api.actualizarPuzzle("Bearer " + token, dto).enqueue(callback);
     }

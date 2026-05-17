@@ -4,9 +4,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.ignacio_natalia.puzzleteca.modelos.Puzzle;
-import com.ignacio_natalia.puzzleteca.modelos.Usuario;
-import com.ignacio_natalia.puzzleteca.repositorios.PuzzleRepositorio;
+import com.ignacio_natalia.puzzleteca.modelos.clases.Usuario;
 import com.ignacio_natalia.puzzleteca.repositorios.UsuarioRepositorio;
 
 import java.util.ArrayList;

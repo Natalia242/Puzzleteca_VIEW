@@ -1,4 +1,4 @@
-package com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos;
+package com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos.panel;
 
 import android.annotation.SuppressLint;
 import android.graphics.Typeface;
@@ -16,11 +16,12 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.ignacio_natalia.puzzleteca.R;
-import com.ignacio_natalia.puzzleteca.modelos.RankingUsuario;
+import com.ignacio_natalia.puzzleteca.modelos.ranking.RankingUsuario;
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.AppPrincipal;
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos.chats.MisChats;
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos.gestionesAdministrador.puzzles.GestionPuzzles;
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos.gestionesAdministrador.usuarios.GestionUsuarios;
+import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos.perfil.EditarPerfil;
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.puzzles.RegistrarPuzzle;
 import com.ignacio_natalia.puzzleteca.repositorios.RankingRepositorio;
 import com.ignacio_natalia.puzzleteca.utilidades.GestorSesion;

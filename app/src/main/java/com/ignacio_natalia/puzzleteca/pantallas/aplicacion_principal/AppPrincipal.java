@@ -18,7 +18,6 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
@@ -27,15 +26,15 @@ import android.widget.*;
 import com.bumptech.glide.Glide;
 
 import com.ignacio_natalia.puzzleteca.R;
-import com.ignacio_natalia.puzzleteca.modelos.Puzzle;
-import com.ignacio_natalia.puzzleteca.modelos.Usuario;
-import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos.MisPuzzles;
+import com.ignacio_natalia.puzzleteca.modelos.clases.Puzzle;
+import com.ignacio_natalia.puzzleteca.modelos.clases.Usuario;
+import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos.misPuzzles.MisPuzzles;
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.puzzles.PuzzleDialogFragment;
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.usuarios.UsuarioDialogFragment;
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos.foro.Foro;
-import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos.PanelAdmin;
-import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos.PanelUsuario;
-import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos.Ranking;
+import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos.panel.PanelAdmin;
+import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos.panel.PanelUsuario;
+import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos.ranking.Ranking;
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.puzzles.PuzzleViewModel;
 import com.ignacio_natalia.puzzleteca.utilidades.GestorSesion;
 
@@ -562,9 +561,13 @@ public class AppPrincipal extends AppCompatActivity {
         colInfo.setLayoutParams(infoLP);
 
         // ⚠️ Es nombre de usuario
-        String nombreUsuario = puzzle.getAutor() != null
-                ? puzzle.getAutor()
-                : "Usuario";
+        String nombreUsuario;
+        if (puzzle.getUsuario() != null && puzzle.getUsuario().getNombre() != null
+                && !puzzle.getUsuario().getNombre().isEmpty()) {
+            nombreUsuario = puzzle.getUsuario().getNombre();
+        } else {
+            nombreUsuario = puzzle.getAutor() != null ? puzzle.getAutor() : "Usuario";
+        }
 
         // ── Fila superior usuario ────────────────────────────────────
         LinearLayout filaUsuario = new LinearLayout(this);
@@ -612,18 +615,15 @@ public class AppPrincipal extends AppCompatActivity {
         avatar.setFocusable(true);
 
         avatar.setOnClickListener(v -> {
-
-            Usuario u = new Usuario();
-
-            u.setId(puzzle.getIdUsuario());
-
-            u.setNombre(nombreUsuario);
-
-            UsuarioDialogFragment dialog =
-                    UsuarioDialogFragment.newInstance(u);
-
+            Usuario u = puzzle.getUsuario() != null
+                    ? puzzle.getUsuario()
+                    : new Usuario();
+            if (puzzle.getUsuario() == null) {
+                u.setId(puzzle.getIdUsuario());
+                u.setNombre(nombreUsuario);
+            }
+            UsuarioDialogFragment dialog = UsuarioDialogFragment.newInstance(u);
             dialog.show(getSupportFragmentManager(), "usuario_dialog");
-
         });
 
         // ── Nombre usuario ───────────────────────────────────────────

@@ -1,6 +1,6 @@
-package com.ignacio_natalia.puzzleteca.utilidades;
+package com.ignacio_natalia.puzzleteca.modelos.paginacion;
 
-import com.ignacio_natalia.puzzleteca.modelos.Comentario;
+import com.ignacio_natalia.puzzleteca.modelos.comentarios.Comentario;
 
 import java.util.List;
 

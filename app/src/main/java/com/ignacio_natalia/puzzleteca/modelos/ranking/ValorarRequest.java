@@ -1,4 +1,4 @@
-package com.ignacio_natalia.puzzleteca.modelos;
+package com.ignacio_natalia.puzzleteca.modelos.ranking;
 
 /**
  * Body JSON para POST /ranking/valorar
