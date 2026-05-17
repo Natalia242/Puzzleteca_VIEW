@@ -373,8 +373,11 @@ public class PuzzleDialogFragment extends DialogFragment {
         cardValoracion.setLayoutParams(cardValParams);
 
         int idUsuario = GestorSesion.obtenerId_usuario(requireContext());
-        boolean esMioPuzzle  = puzzle.getIdUsuario() != null
-                && puzzle.getIdUsuario().equals(idUsuario);
+
+        boolean esMioPuzzle = puzzle.getUsuario() != null
+                && puzzle.getUsuario().getId() != null
+
+                && puzzle.getUsuario().getId().equals(idUsuario);
         boolean esInvitado   = "Invitado".equals(GestorSesion.obtenerRol(requireContext()));
         boolean yaValorado   = puzzle.getValoracion() != null && puzzle.getValoracion() > 0
                 && !esMioPuzzle; // si es mío la valoración es la media, no la mía
