@@ -400,8 +400,8 @@ public class MisPuzzles extends Fragment {
         stars.setLayoutParams(starsLP);
 
         TextView tvVal = new TextView(getContext());
-        String valTxt = (puzzle.getValoracion() != null && puzzle.getValoracion() > 0)
-                ? puzzle.getValoracion() + "/5"
+        @SuppressLint("DefaultLocale") String valTxt = (puzzle.getValoracion() != null && puzzle.getValoracion() > 0)
+                ? String.format("%.1f", puzzle.getValoracion()) + "/5"
                 : "Sin valorar";
         tvVal.setText(valTxt);
         tvVal.setTextSize(12);
@@ -662,13 +662,13 @@ public class MisPuzzles extends Fragment {
         private final float sizePx, gapPx, crPx;
         private final int   rating;
 
-        public MiniStarsView(android.content.Context ctx, Integer rating) {
+        public MiniStarsView(android.content.Context ctx, Double rating) {
             super(ctx);
             float d = ctx.getResources().getDisplayMetrics().density;
             sizePx  = SIZE * d;
             gapPx   = GAP  * d;
             crPx    = CR   * d;
-            this.rating = (rating != null) ? Math.max(0, Math.min(NUM, rating)) : 0;
+            this.rating = (rating != null) ? Math.max(0, Math.min(NUM, (int) Math.round(rating))) : 0;
             pFill.setStyle(Paint.Style.FILL);
             pEmpty.setStyle(Paint.Style.FILL);
             pEmpty.setColor(Color.parseColor("#DDDDDD"));

@@ -21,10 +21,14 @@ public class RankingRepositorio {
         api.obtenerRankingDiario("Bearer " + token).enqueue(callback);
     }
 
-    public void valorarPuzzle(String token, Integer idPuzzle,
-                              Integer idUsuario, Integer valoracion,
+    public void valorarPuzzle(String token,
+                              Integer idPuzzle,
+                              Float valoracion,
                               Callback<Void> callback) {
-        ValorarRequest body = new ValorarRequest(idPuzzle, idUsuario, valoracion);
-        api.valorarPuzzle("Bearer " + token, body).enqueue(callback);
+
+        ValorarRequest body = new ValorarRequest(idPuzzle, valoracion);
+
+        api.valorarPuzzle("Bearer " + token, body)
+                .enqueue(callback);
     }
 }

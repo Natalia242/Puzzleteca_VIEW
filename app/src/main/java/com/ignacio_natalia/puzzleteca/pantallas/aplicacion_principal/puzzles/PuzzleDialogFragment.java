@@ -49,7 +49,7 @@ public class PuzzleDialogFragment extends DialogFragment {
     public static class RoundedStarRatingView extends View {
 
         public interface OnRatingChangeListener {
-            void onRatingChanged(int stars, boolean fromUser);
+            void onRatingChanged(float stars, boolean fromUser);
         }
 
         private static final int   NUM_STARS      = 5;
@@ -61,7 +61,7 @@ public class PuzzleDialogFragment extends DialogFragment {
         private final Paint paintEmpty    = new Paint(Paint.ANTI_ALIAS_FLAG);
         private final Paint paintStroke   = new Paint(Paint.ANTI_ALIAS_FLAG);
 
-        private int   currentRating = 0;
+        private float   currentRating = 0f;
         private boolean enabled     = true;
 
         private float starSizePx;
@@ -112,30 +112,70 @@ public class PuzzleDialogFragment extends DialogFragment {
             float cy = starSizePx / 2f;
 
             for (int i = 0; i < NUM_STARS; i++) {
-                float offsetX = i * (starSizePx + starGapPx);
-                boolean filled = (i < currentRating);
 
-                // Gradiente dorado para las estrellas rellenas
-                if (filled) {
+                float offsetX = i * (starSizePx + starGapPx);
+
+                float starValue = currentRating - i;
+
+                Path star = buildRoundedStar(
+                        cx + offsetX,
+                        cy,
+                        starSizePx * 0.45f,
+                        starSizePx * 0.18f
+                );
+
+                // ─────────────────────────────
+                // Dibujar estrella vacía
+                // ─────────────────────────────
+
+                canvas.drawPath(star, paintEmpty);
+                canvas.drawPath(star, paintStroke);
+
+                // ─────────────────────────────
+                // Dibujar relleno
+                // ─────────────────────────────
+
+                if (starValue > 0f) {
+
                     LinearGradient gradient = new LinearGradient(
-                            offsetX, 0,
-                            offsetX, starSizePx,
+                            offsetX,
+                            0,
+                            offsetX,
+                            starSizePx,
                             Color.parseColor("#FFD740"),
                             Color.parseColor("#FF8F00"),
-                            Shader.TileMode.CLAMP);
+                            Shader.TileMode.CLAMP
+                    );
+
                     paintFilled.setShader(gradient);
-                }
 
-                Path star = buildRoundedStar(cx + offsetX, cy, starSizePx * 0.45f, starSizePx * 0.18f);
+                    canvas.save();
 
-                canvas.drawPath(star, filled ? paintFilled : paintEmpty);
+                    // estrella completa
+                    if (starValue >= 1f) {
 
-                if (!filled) {
-                    canvas.drawPath(star, paintStroke);
+                        canvas.clipPath(star);
+
+                    }
+                    // media estrella
+                    else {
+
+                        canvas.clipRect(
+                                offsetX,
+                                0,
+                                offsetX + (starSizePx * starValue),
+                                getHeight()
+                        );
+
+                        canvas.clipPath(star);
+                    }
+
+                    canvas.drawPath(star, paintFilled);
+
+                    canvas.restore();
                 }
             }
         }
-
         /**
          * Construye un camino de estrella de 5 puntas con esquinas redondeadas.
          * Alterna vértices externos (puntas) e internos (valles).
@@ -201,37 +241,62 @@ public class PuzzleDialogFragment extends DialogFragment {
         @SuppressLint("ClickableViewAccessibility")
         @Override
         public boolean onTouchEvent(MotionEvent event) {
+
             if (!enabled) return false;
+
             if (event.getAction() == MotionEvent.ACTION_DOWN
                     || event.getAction() == MotionEvent.ACTION_MOVE) {
 
                 float x = event.getX();
-                int stars = 0;
+
+                float newRating = 0f;
+
                 for (int i = 0; i < NUM_STARS; i++) {
-                    float starEnd = (i + 1) * starSizePx + i * starGapPx;
-                    if (x <= starEnd) {
-                        stars = i + 1;
+
+                    float start = i * (starSizePx + starGapPx);
+                    float end = start + starSizePx;
+
+                    if (x >= start && x <= end) {
+
+                        float relative = x - start;
+
+                        if (relative < starSizePx / 2f) {
+                            newRating = i + 0.5f;
+                        } else {
+                            newRating = i + 1f;
+                        }
+
                         break;
                     }
                 }
-                if (stars == 0) stars = NUM_STARS;
 
-                if (currentRating != stars) {
-                    currentRating = stars;
-                    invalidate();
-                    if (listener != null) listener.onRatingChanged(stars, true);
+                if (newRating == 0f) {
+                    newRating = NUM_STARS;
                 }
+
+                if (currentRating != newRating) {
+
+                    currentRating = newRating;
+
+                    invalidate();
+
+                    if (listener != null) {
+                        listener.onRatingChanged(newRating, true);
+                    }
+                }
+
                 return true;
             }
+
             return super.onTouchEvent(event);
         }
 
-        public void setRating(int stars) {
-            currentRating = Math.max(0, Math.min(NUM_STARS, stars));
+        public void setRating(float stars) {
+            currentRating = Math.max(0f, Math.min(NUM_STARS, stars));
             invalidate();
         }
 
-        public int getRating() { return currentRating; }
+        public float getRating() { return currentRating; }
 
         public void setEnabled(boolean enabled) {
             this.enabled = enabled;
@@ -376,11 +441,11 @@ public class PuzzleDialogFragment extends DialogFragment {
 
         boolean esMioPuzzle = puzzle.getUsuario() != null
                 && puzzle.getUsuario().getId() != null
-
                 && puzzle.getUsuario().getId().equals(idUsuario);
         boolean esInvitado   = "Invitado".equals(GestorSesion.obtenerRol(requireContext()));
-        boolean yaValorado   = puzzle.getValoracion() != null && puzzle.getValoracion() > 0
-                && !esMioPuzzle; // si es mío la valoración es la media, no la mía
+        // yaValorado: solo se marca si el servidor lo indicó explícitamente (campo separado).
+        // No se usa puzzle.getValoracion() > 0 porque eso es la media global, no la del usuario.
+        boolean yaValorado   = puzzle.isYaValoradoPorUsuario() && !esMioPuzzle;
 
         boolean soloLectura  = esMioPuzzle || esInvitado || yaValorado;
 
@@ -390,8 +455,8 @@ public class PuzzleDialogFragment extends DialogFragment {
                     : esInvitado   ? "Valoración"
                     :                "Tu valoración";
 
-            String subTexto   = esMioPuzzle  ? (puzzle.getValoracion() != null && puzzle.getValoracion() > 0
-                    ? puzzle.getValoracion() + "/5 — valorado por otros usuarios"
+            @SuppressLint("DefaultLocale") String subTexto   = esMioPuzzle  ? (puzzle.getValoracion() != null && puzzle.getValoracion() > 0
+                    ? String.format("%.1f", puzzle.getValoracion()) + "/5 — valorado por otros usuarios"
                     : "Aún sin valoraciones")
                     : esInvitado   ? "Inicia sesión para poder valorar"
                     :                "Ya has valorado este puzzle";
@@ -404,8 +469,13 @@ public class PuzzleDialogFragment extends DialogFragment {
             labelMio.setPadding(0, 0, 0, dp(10));
 
             RoundedStarRatingView starViewReadOnly = new RoundedStarRatingView(requireContext());
-            int valActual = puzzle.getValoracion() != null ? puzzle.getValoracion() : 0;
-            starViewReadOnly.setRating(valActual);
+
+            float valActual = 0f;
+
+            if (puzzle.getValoracion() != null) {
+                valActual = Math.round(puzzle.getValoracion() * 2f) / 2f;
+            }            starViewReadOnly.setRating(valActual);
+
             starViewReadOnly.setEnabled(false);
             LinearLayout.LayoutParams starROParams = new LinearLayout.LayoutParams(
                     ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -489,7 +559,6 @@ public class PuzzleDialogFragment extends DialogFragment {
                 rankingRepositorio.valorarPuzzle(
                         token,
                         puzzle.getId(),
-                        idUsuario,
                         stars,
                         new Callback<Void>() {
                             @Override
@@ -497,7 +566,13 @@ public class PuzzleDialogFragment extends DialogFragment {
                                                    @NonNull Response<Void> response) {
                                 if (!isAdded()) return;
                                 if (response.isSuccessful()) {
-                                    puzzle.setValoracion(stars);
+                                    // Marcamos el puzzle como valorado localmente sin sobreescribir
+                                    // la media con la puntuación individual del usuario.
+                                    // La media real se actualizó en el servidor; se verá
+                                    // correctamente la próxima vez que se cargue la lista.
+                                    if (puzzle.getValoracion() == null || puzzle.getValoracion() == 0) {
+                                        puzzle.setValoracion((double) stars);
+                                    }
                                     tvEstado.setText("✅ Valorado con " + stars + " estrella" + (stars != 1 ? "s" : ""));
                                     tvEstado.setTextColor(Color.parseColor("#43A047"));
                                     Toast.makeText(requireContext(),

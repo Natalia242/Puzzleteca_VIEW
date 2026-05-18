@@ -19,10 +19,12 @@ public class Puzzle implements Serializable {
     private Dificultades dificultad;
     private String descripcion;
     private Boolean color;
-    private Integer valoracion;
+    private Double valoracion;
     private Integer idUsuario;
     private Estados estado;
     private String imagenUrl;
+    /** true si el usuario autenticado ya valoró este puzzle (lo devuelve el backend). */
+    private boolean yaValoradoPorUsuario;
 
     // ---------- GETTERS ----------
     public Integer getId() { return id; }
@@ -34,11 +36,12 @@ public class Puzzle implements Serializable {
     public Dificultades getDificultad() { return dificultad; }
     public String getDescripcion() { return descripcion; }
     public Boolean isColor() { return color; }
-    public Integer getValoracion() { return valoracion; }
+    public Double getValoracion() { return valoracion; }
     public Integer getIdUsuario() { return idUsuario; }
     public Estados getEstado() { return estado; }
     public String getImagenUrl() { return imagenUrl; }
     public boolean isPublico() { return estado == Estados.Publico; }
+    public boolean isYaValoradoPorUsuario() { return yaValoradoPorUsuario; }
 
     // ---------- SETTERS ----------
     public void setId(Integer id) { this.id = id; }
@@ -50,10 +53,11 @@ public class Puzzle implements Serializable {
     public void setDificultad(Dificultades dificultad) { this.dificultad = dificultad; }
     public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
     public void setColor(Boolean color) { this.color = color; }
-    public void setValoracion(Integer valoracion) { this.valoracion = valoracion; }
+    public void setValoracion(Double valoracion) { this.valoracion = valoracion; }
     public void setIdUsuario(Integer idUsuario) { this.idUsuario = idUsuario; }
     public void setEstado(Estados estado) { this.estado = estado; }
     public void setImagenUrl(String imagenUrl) { this.imagenUrl = imagenUrl; }
+    public void setYaValoradoPorUsuario(boolean yaValoradoPorUsuario) { this.yaValoradoPorUsuario = yaValoradoPorUsuario; }
 
     @NonNull
     @Override
