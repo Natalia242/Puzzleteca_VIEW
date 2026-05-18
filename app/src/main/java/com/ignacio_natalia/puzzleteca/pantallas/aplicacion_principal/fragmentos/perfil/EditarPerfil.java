@@ -19,6 +19,7 @@ import androidx.fragment.app.Fragment;
 
 import com.ignacio_natalia.puzzleteca.R;
 import com.ignacio_natalia.puzzleteca.modelos.actualizar.ActualizarUsuarioRequest;
+import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.AppPrincipal;
 import com.ignacio_natalia.puzzleteca.repositorios.UsuarioRepositorio;
 import com.ignacio_natalia.puzzleteca.utilidades.GestorSesion;
 import com.ignacio_natalia.puzzleteca.utilidades.UtilidadesSesion;
@@ -105,12 +106,20 @@ public class EditarPerfil extends Fragment {
         LinearLayout.LayoutParams headerLP = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT);
-        headerLP.setMargins(-dp(16), 0, -dp(16), dp(20));
+        headerLP.setMargins(0, dp(12), 0, dp(20));
         header.setLayoutParams(headerLP);
 
         GradientDrawable headerBg = new GradientDrawable(
                 GradientDrawable.Orientation.TL_BR,
-                new int[]{ContextCompat.getColor(requireContext(), R.color.app_teal_dark), ContextCompat.getColor(requireContext(), R.color.app_teal)});
+                new int[]{
+                        ContextCompat.getColor(requireContext(), R.color.app_teal_dark),
+                        ContextCompat.getColor(requireContext(), R.color.app_teal)
+                });
+
+        headerBg.setCornerRadius(dp(28)); // ← esquinas redondeadas
+        headerBg.setStroke(dp(1),
+                ContextCompat.getColor(requireContext(), R.color.app_teal_borde));
+
         header.setBackground(headerBg);
 
         // Círculo avatar con inicial
@@ -678,4 +687,5 @@ public class EditarPerfil extends Fragment {
     private int dp(int v) {
         return Math.round(v * requireContext().getResources().getDisplayMetrics().density);
     }
+
 }

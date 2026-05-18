@@ -19,9 +19,10 @@ import androidx.lifecycle.ViewModelProvider;
 import com.google.android.material.slider.LabelFormatter;
 import com.google.android.material.slider.Slider;
 import com.ignacio_natalia.puzzleteca.modelos.clases.Puzzle;
+import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.AppPrincipal;
 import com.ignacio_natalia.puzzleteca.utilidades.GestorSesion;
 
-public class ActualizarPuzzle extends Fragment {
+public class EditarPuzzle extends Fragment {
 
     private static final String ARG_PUZZLE = "puzzle";
 
@@ -34,22 +35,26 @@ public class ActualizarPuzzle extends Fragment {
     @SuppressLint("UseSwitchCompatOrMaterialCode")
     private Switch   switchColor, switchEstado;
 
-    private boolean dificultadAutomatica = false;
+    private boolean dificultadAutomatica = true;
 
     private static final int
+            COLOR_FONDO     = Color.parseColor("#F8FBF8"),
             COLOR_CARD      = Color.WHITE,
-            COLOR_ACENTO    = Color.parseColor("#F06292"),
-            COLOR_BORDE     = Color.parseColor("#A5D6A7"),
-            COLOR_TEXTO     = Color.parseColor("#263238"),
+            COLOR_ACENTO    = Color.parseColor("#E91E8C"),
+            COLOR_ACENTO2   = Color.parseColor("#FF6BB5"),
+            COLOR_BORDE     = Color.parseColor("#C8E6C9"),
+            COLOR_TEXTO     = Color.parseColor("#1A2E1A"),
             COLOR_HINT      = Color.parseColor("#90A4AE"),
             COLOR_SUBTITULO = Color.parseColor("#546E7A"),
-            COLOR_FACIL     = Color.parseColor("#7BCF9E"),
-            COLOR_MEDIA     = Color.parseColor("#F2C66D"),
-            COLOR_DIFICIL   = Color.parseColor("#F6A06A"),
-            COLOR_EXTREMO   = Color.parseColor("#E57373");
+            COLOR_HEADER_INI= Color.parseColor("#FCE4EC"),
+            COLOR_HEADER_FIN= Color.parseColor("#E8F5E9"),
+            COLOR_FACIL     = Color.parseColor("#66BB6A"),
+            COLOR_MEDIA     = Color.parseColor("#FFA726"),
+            COLOR_DIFICIL   = Color.parseColor("#EF5350"),
+            COLOR_EXTREMO   = Color.parseColor("#B71C1C");
 
-    public static ActualizarPuzzle newInstance(Puzzle puzzle) {
-        ActualizarPuzzle f = new ActualizarPuzzle();
+    public static EditarPuzzle newInstance(Puzzle puzzle) {
+        EditarPuzzle f = new EditarPuzzle();
         Bundle args = new Bundle();
         args.putSerializable(ARG_PUZZLE, puzzle);
         f.setArguments(args);
@@ -83,90 +88,213 @@ public class ActualizarPuzzle extends Fragment {
 
         LinearLayout root = new LinearLayout(getContext());
         root.setOrientation(LinearLayout.VERTICAL);
-        root.setPadding(dp(20), dp(24), dp(20), dp(40));
 
-        // ── Título pantalla ──
+        // ── Fondo gradiente: instancias SEPARADAS para scroll y root ──
+        scroll.setBackground(new GradientDrawable(
+                GradientDrawable.Orientation.TL_BR,
+                new int[]{COLOR_HEADER_INI, COLOR_HEADER_FIN}
+        ));
+        root.setBackground(new GradientDrawable(
+                GradientDrawable.Orientation.TL_BR,
+                new int[]{COLOR_HEADER_INI, COLOR_HEADER_FIN}
+        ));
+
+        // ═══════════════════════════════════════════════════
+        //  HEADER con gradiente y título decorado
+        // ═══════════════════════════════════════════════════
+        FrameLayout header = new FrameLayout(getContext());
+        header.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        header.setPadding(dp(24), dp(56), dp(24), dp(32));
+        // Sin fondo propio — hereda el gradiente del root
+
+        LinearLayout headerContent = new LinearLayout(getContext());
+        headerContent.setOrientation(LinearLayout.VERTICAL);
+        headerContent.setGravity(Gravity.CENTER_HORIZONTAL);
+        FrameLayout.LayoutParams flp = new FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT);
+        headerContent.setLayoutParams(flp);
+
+        // Insignia/chip sobre el título
+        TextView tvBadge = new TextView(getContext());
+        tvBadge.setText("✏️  Edición");
+        tvBadge.setTextSize(12);
+        tvBadge.setTextColor(COLOR_ACENTO);
+        tvBadge.setTypeface(null, Typeface.BOLD);
+        tvBadge.setPadding(dp(14), dp(6), dp(14), dp(6));
+        GradientDrawable badgeBg = new GradientDrawable();
+        badgeBg.setColor(Color.WHITE);
+        badgeBg.setCornerRadius(dp(20));
+        badgeBg.setStroke(dp(1), COLOR_ACENTO2);
+        tvBadge.setBackground(badgeBg);
+        LinearLayout.LayoutParams badgeParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        badgeParams.gravity = Gravity.CENTER_HORIZONTAL;
+        badgeParams.setMargins(0, 0, 0, dp(14));
+        tvBadge.setLayoutParams(badgeParams);
+
+        // Título principal grande
         TextView tvTitulo = new TextView(getContext());
         tvTitulo.setText("Editar Puzzle");
-        tvTitulo.setTextSize(26);
+        tvTitulo.setTextSize(30);
         tvTitulo.setTypeface(null, Typeface.BOLD);
         tvTitulo.setTextColor(COLOR_TEXTO);
         tvTitulo.setGravity(Gravity.CENTER_HORIZONTAL);
+        LinearLayout.LayoutParams tituloParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        tituloParams.setMargins(0, 0, 0, dp(8));
+        tvTitulo.setLayoutParams(tituloParams);
 
+        // Nombre del puzzle como subtítulo
+        String nombrePuzzle = puzzle.getTitulo() != null ? "\"" + puzzle.getTitulo() + "\"" : "";
+        TextView tvNombrePuzzle = new TextView(getContext());
+        tvNombrePuzzle.setText(nombrePuzzle);
+        tvNombrePuzzle.setTextSize(15);
+        tvNombrePuzzle.setTextColor(COLOR_ACENTO);
+        tvNombrePuzzle.setGravity(Gravity.CENTER_HORIZONTAL);
+        tvNombrePuzzle.setTypeface(null, Typeface.ITALIC);
+        LinearLayout.LayoutParams nombreParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        nombreParams.setMargins(0, 0, 0, dp(6));
+        tvNombrePuzzle.setLayoutParams(nombreParams);
+
+        // Subtítulo informativo
         TextView tvSubtitulo = new TextView(getContext());
         tvSubtitulo.setText("Modifica los campos que desees");
-        tvSubtitulo.setTextSize(14);
+        tvSubtitulo.setTextSize(13);
         tvSubtitulo.setTextColor(COLOR_SUBTITULO);
         tvSubtitulo.setGravity(Gravity.CENTER_HORIZONTAL);
-        LinearLayout.LayoutParams paramsSub = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        paramsSub.setMargins(0, dp(4), 0, dp(20));
-        tvSubtitulo.setLayoutParams(paramsSub);
 
-        root.addView(tvTitulo);
-        root.addView(tvSubtitulo);
+        // Línea decorativa bajo el header
+        View lineaDecorada = new View(getContext());
+        LinearLayout.LayoutParams lineaParams = new LinearLayout.LayoutParams(dp(48), dp(4));
+        lineaParams.gravity = Gravity.CENTER_HORIZONTAL;
+        lineaParams.setMargins(0, dp(16), 0, 0);
+        lineaDecorada.setLayoutParams(lineaParams);
+        GradientDrawable lineaBg = new GradientDrawable(
+                GradientDrawable.Orientation.LEFT_RIGHT,
+                new int[]{COLOR_ACENTO, COLOR_ACENTO2});
+        lineaBg.setCornerRadius(dp(4));
+        lineaDecorada.setBackground(lineaBg);
+
+        headerContent.addView(tvBadge);
+        headerContent.addView(tvTitulo);
+        if (!nombrePuzzle.isEmpty()) headerContent.addView(tvNombrePuzzle);
+        headerContent.addView(tvSubtitulo);
+        headerContent.addView(lineaDecorada);
+
+        header.addView(headerContent);
+        root.addView(header);
+
+        // ── Contenido con padding ──
+        LinearLayout contenido = new LinearLayout(getContext());
+        contenido.setOrientation(LinearLayout.VERTICAL);
+        contenido.setPadding(dp(20), dp(24), dp(20), dp(40));
+        // Sin fondo propio — transparente para mostrar el gradiente del root
 
         // ── Sección: Información básica ──
-        root.addView(tituloSeccion("Información básica"));
+        contenido.addView(tituloSeccion("📋  Información básica"));
         LinearLayout cardBasica = crearCard();
         campoTitulo = crearCampo("Título del puzzle", puzzle.getTitulo());
         campoAutor  = crearCampo("Autor", puzzle.getAutor());
         cardBasica.addView(campoTitulo);
         cardBasica.addView(separador());
         cardBasica.addView(campoAutor);
-        root.addView(cardBasica);
-        root.addView(espacio(dp(14)));
+        contenido.addView(cardBasica);
+        contenido.addView(espacio(dp(18)));
 
         // ── Sección: Detalles ──
-        root.addView(tituloSeccion("Detalles"));
+        contenido.addView(tituloSeccion("🧩  Detalles"));
         LinearLayout cardDetalles = crearCard();
 
-        campoTiempo      = crearCampoNumero("Tiempo (Horas)",
+        campoTiempo      = crearCampoNumero("Tiempo (horas)",
                 puzzle.getTiempo() != null ? String.valueOf(puzzle.getTiempo()) : "");
         campoPiezas      = crearCampoNumero("Número de piezas",
                 puzzle.getPiezas() != null ? String.valueOf(puzzle.getPiezas()) : "");
         campoDescripcion = crearCampoMultilinea("Descripción", puzzle.getDescripcion());
 
-        // ── Fila dificultad: label + checkbox auto ──
+        // ── Fila dificultad ──
         LinearLayout filaDificultad = new LinearLayout(getContext());
         filaDificultad.setOrientation(LinearLayout.HORIZONTAL);
         filaDificultad.setGravity(Gravity.CENTER_VERTICAL);
+        filaDificultad.setPadding(dp(4), dp(12), dp(4), dp(4));
         filaDificultad.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
 
+        LinearLayout difTextos = new LinearLayout(getContext());
+        difTextos.setOrientation(LinearLayout.VERTICAL);
+        difTextos.setLayoutParams(new LinearLayout.LayoutParams(
+                0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
+
         TextView tvDifLabel = new TextView(getContext());
         tvDifLabel.setText("Dificultad");
-        tvDifLabel.setTextSize(13);
-        tvDifLabel.setTextColor(COLOR_SUBTITULO);
-        tvDifLabel.setPadding(dp(4), dp(10), dp(4), 0);
-        tvDifLabel.setLayoutParams(new LinearLayout.LayoutParams(
-                0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
+        tvDifLabel.setTextSize(15);
+        tvDifLabel.setTextColor(COLOR_TEXTO);
+        tvDifLabel.setTypeface(null, Typeface.BOLD);
+
+        TextView tvDifAuto = new TextView(getContext());
+        tvDifAuto.setText("Automática según piezas");
+        tvDifAuto.setTextSize(11);
+        tvDifAuto.setTextColor(COLOR_SUBTITULO);
+
+        difTextos.addView(tvDifLabel);
+        difTextos.addView(tvDifAuto);
 
         CheckBox autoCheck = new CheckBox(getContext());
         autoCheck.setText("Auto");
-        autoCheck.setChecked(false); // al editar, por defecto se respeta la dificultad guardada
+        autoCheck.setTextSize(12);
+        autoCheck.setTextColor(COLOR_SUBTITULO);
+        autoCheck.setChecked(true);
 
         sliderDificultad = new Slider(getContext());
         sliderDificultad.setValueFrom(0);
         sliderDificultad.setValueTo(3);
         sliderDificultad.setStepSize(1);
         sliderDificultad.setValue(dificultadAInt(puzzle.getDificultad()));
-        sliderDificultad.setTrackInactiveTintList(ColorStateList.valueOf(Color.TRANSPARENT));
+        sliderDificultad.setTrackInactiveTintList(ColorStateList.valueOf(Color.parseColor("#ECEFF1")));
         sliderDificultad.setLabelBehavior(LabelFormatter.LABEL_GONE);
-        sliderDificultad.setEnabled(true); // empieza habilitado (modo manual)
+        sliderDificultad.setEnabled(false);
+
+        LinearLayout.LayoutParams sliderParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        sliderParams.setMargins(0, dp(4), 0, dp(4));
+        sliderDificultad.setLayoutParams(sliderParams);
+
+        // Etiquetas del slider
+        LinearLayout etiquetasDif = new LinearLayout(getContext());
+        etiquetasDif.setOrientation(LinearLayout.HORIZONTAL);
+        etiquetasDif.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        String[] niveles = {"Fácil", "Media", "Difícil", "Extremo"};
+        int[] coloresNivel = {COLOR_FACIL, COLOR_MEDIA, COLOR_DIFICIL, COLOR_EXTREMO};
+        for (int i = 0; i < niveles.length; i++) {
+            TextView chip = new TextView(getContext());
+            chip.setText(niveles[i]);
+            chip.setTextSize(10);
+            chip.setTextColor(coloresNivel[i]);
+            chip.setGravity(Gravity.CENTER);
+            LinearLayout.LayoutParams chipParams = new LinearLayout.LayoutParams(
+                    0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f);
+            chip.setLayoutParams(chipParams);
+            etiquetasDif.addView(chip);
+        }
 
         tvDifValor = new TextView(getContext());
-        tvDifValor.setTextColor(COLOR_SUBTITULO);
+        tvDifValor.setTextSize(13);
+        tvDifValor.setTypeface(null, Typeface.BOLD);
+        tvDifValor.setGravity(Gravity.CENTER);
+        LinearLayout.LayoutParams difValorParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        difValorParams.setMargins(0, dp(15), 0, dp(8));
+        tvDifValor.setLayoutParams(difValorParams);
         actualizarColorDificultad((int) sliderDificultad.getValue());
 
-        // Checkbox: activar/desactivar modo automático
         autoCheck.setOnCheckedChangeListener((buttonView, isChecked) -> {
             dificultadAutomatica = isChecked;
             sliderDificultad.setEnabled(!isChecked);
             if (isChecked) recalcularDificultad();
         });
 
-        // Slider: si el usuario lo mueve manualmente, desactivar auto
         sliderDificultad.addOnChangeListener((slider, value, fromUser) -> {
             if (fromUser) {
                 dificultadAutomatica = false;
@@ -176,7 +304,6 @@ public class ActualizarPuzzle extends Fragment {
             actualizarColorDificultad((int) value);
         });
 
-        // Piezas: recalcular si auto está activo
         campoPiezas.addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
@@ -186,7 +313,7 @@ public class ActualizarPuzzle extends Fragment {
             }
         });
 
-        filaDificultad.addView(tvDifLabel);
+        filaDificultad.addView(difTextos);
         filaDificultad.addView(autoCheck);
 
         cardDetalles.addView(campoTiempo);
@@ -197,27 +324,25 @@ public class ActualizarPuzzle extends Fragment {
         cardDetalles.addView(separador());
         cardDetalles.addView(filaDificultad);
         cardDetalles.addView(sliderDificultad);
+        cardDetalles.addView(etiquetasDif);
         cardDetalles.addView(tvDifValor);
-        root.addView(cardDetalles);
-        root.addView(espacio(dp(14)));
+        contenido.addView(cardDetalles);
+        contenido.addView(espacio(dp(18)));
 
         // ── Sección: Opciones ──
-        root.addView(tituloSeccion("Opciones"));
+        contenido.addView(tituloSeccion("⚙️  Opciones"));
         LinearLayout cardOpciones = crearCard();
 
-        // Switch color
         LinearLayout filaColor = crearFilaSwitch();
-        LinearLayout textoColor = textoDoble("Color del puzzle", "El puzzle tiene más de un color");
+        LinearLayout textoColor = textoDoble("🎨  Color del puzzle", "El puzzle tiene más de un color");
         switchColor = new Switch(getContext());
         switchColor.setChecked(puzzle.isColor() != null && puzzle.isColor());
-        // Al cambiar color, recalcular si auto está activo
         switchColor.setOnCheckedChangeListener((btn, isChecked) -> recalcularDificultad());
         filaColor.addView(textoColor);
         filaColor.addView(switchColor);
         cardOpciones.addView(filaColor);
         cardOpciones.addView(separador());
 
-        // Switch estado
         LinearLayout filaEstado = crearFilaSwitch();
         LinearLayout contenidoEstado = new LinearLayout(getContext());
         contenidoEstado.setOrientation(LinearLayout.HORIZONTAL);
@@ -231,7 +356,7 @@ public class ActualizarPuzzle extends Fragment {
                 LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
 
         TextView tvEstadoTitulo = new TextView(getContext());
-        tvEstadoTitulo.setText("Visibilidad");
+        tvEstadoTitulo.setText("🔒  Visibilidad");
         tvEstadoTitulo.setTextSize(16);
         tvEstadoTitulo.setTextColor(COLOR_TEXTO);
         tvEstadoTitulo.setTypeface(null, Typeface.BOLD);
@@ -254,27 +379,28 @@ public class ActualizarPuzzle extends Fragment {
         filaEstado.addView(contenidoEstado);
         filaEstado.addView(switchEstado);
         cardOpciones.addView(filaEstado);
-        root.addView(cardOpciones);
-        root.addView(espacio(dp(28)));
+        contenido.addView(cardOpciones);
+        contenido.addView(espacio(dp(32)));
 
         // ── Botón guardar ──
         Button btnGuardar = crearBotonPrincipal("Guardar cambios");
         btnGuardar.setOnClickListener(v -> guardarCambios());
-        root.addView(btnGuardar);
-        root.addView(espacio(dp(12)));
+        contenido.addView(btnGuardar);
+        contenido.addView(espacio(dp(12)));
 
         // ── Botón cancelar ──
         Button btnCancelar = crearBotonSecundario("Cancelar");
         btnCancelar.setOnClickListener(v ->
                 requireActivity().getSupportFragmentManager().popBackStack());
-        root.addView(btnCancelar);
+        contenido.addView(btnCancelar);
 
+        root.addView(contenido);
         scroll.addView(root);
 
         // ── Observers ──
         viewModel.getPuzzleActualizado().observe(getViewLifecycleOwner(), ok -> {
             if (ok != null && ok) {
-                Toast.makeText(getContext(), "Puzzle actualizado ✔", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "✔ Puzzle actualizado", Toast.LENGTH_SHORT).show();
                 requireActivity().getSupportFragmentManager().popBackStack();
             }
         });
@@ -285,7 +411,7 @@ public class ActualizarPuzzle extends Fragment {
     }
 
     // ─────────────────────────────────────────────────────
-    // Lógica de dificultad
+    //  Lógica de dificultad
     // ─────────────────────────────────────────────────────
 
     private int calcularDificultad(int piezas, boolean color) {
@@ -309,7 +435,7 @@ public class ActualizarPuzzle extends Fragment {
     }
 
     // ─────────────────────────────────────────────────────
-    // Guardar cambios
+    //  Guardar cambios
     // ─────────────────────────────────────────────────────
 
     private void guardarCambios() {
@@ -361,7 +487,7 @@ public class ActualizarPuzzle extends Fragment {
     }
 
     // ─────────────────────────────────────────────────────
-    // Helpers de dificultad
+    //  Helpers de dificultad
     // ─────────────────────────────────────────────────────
 
     private int dificultadAInt(Puzzle.Dificultades d) {
@@ -387,19 +513,21 @@ public class ActualizarPuzzle extends Fragment {
     private void actualizarColorDificultad(int v) {
         int color;
         String texto;
+        String emoji;
         switch (v) {
-            case 1: texto = "Media";   color = COLOR_MEDIA;   break;
-            case 2: texto = "Difícil"; color = COLOR_DIFICIL; break;
-            case 3: texto = "Extremo"; color = COLOR_EXTREMO; break;
-            default: texto = "Fácil";  color = COLOR_FACIL;   break;
+            case 1: texto = "Media";   color = COLOR_MEDIA;   emoji = "🟡"; break;
+            case 2: texto = "Difícil"; color = COLOR_DIFICIL; emoji = "🟠"; break;
+            case 3: texto = "Extremo"; color = COLOR_EXTREMO; emoji = "🔴"; break;
+            default: texto = "Fácil";  color = COLOR_FACIL;   emoji = "🟢"; break;
         }
-        tvDifValor.setText(texto);
+        tvDifValor.setText(emoji + "  " + texto);
+        tvDifValor.setTextColor(color);
         sliderDificultad.setTrackActiveTintList(ColorStateList.valueOf(color));
         sliderDificultad.setThumbTintList(ColorStateList.valueOf(color));
     }
 
     // ─────────────────────────────────────────────────────
-    // Helpers UI
+    //  Helpers UI
     // ─────────────────────────────────────────────────────
 
     private int dp(int dp) {
@@ -409,14 +537,18 @@ public class ActualizarPuzzle extends Fragment {
     private LinearLayout crearCard() {
         LinearLayout card = new LinearLayout(getContext());
         card.setOrientation(LinearLayout.VERTICAL);
-        card.setPadding(dp(16), dp(12), dp(16), dp(12));
+        card.setPadding(dp(18), dp(14), dp(18), dp(14));
+
         GradientDrawable bg = new GradientDrawable();
         bg.setColor(COLOR_CARD);
-        bg.setCornerRadius(dp(16));
+        bg.setCornerRadius(dp(20));
         bg.setStroke(dp(1), COLOR_BORDE);
         card.setBackground(bg);
-        card.setLayoutParams(new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        card.setElevation(dp(2));
+
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        card.setLayoutParams(params);
         return card;
     }
 
@@ -427,7 +559,7 @@ public class ActualizarPuzzle extends Fragment {
         et.setTextColor(COLOR_TEXTO);
         et.setTextSize(15);
         et.setBackground(null);
-        et.setPadding(dp(4), dp(10), dp(4), dp(10));
+        et.setPadding(dp(4), dp(12), dp(4), dp(12));
         et.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
         if (valor != null) et.setText(valor);
@@ -451,12 +583,13 @@ public class ActualizarPuzzle extends Fragment {
     private TextView tituloSeccion(String texto) {
         TextView tv = new TextView(getContext());
         tv.setText(texto);
-        tv.setTextSize(15);
+        tv.setTextSize(13);
         tv.setTypeface(null, Typeface.BOLD);
         tv.setTextColor(COLOR_SUBTITULO);
+        tv.setLetterSpacing(0.08f);
         LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        p.setMargins(dp(4), 0, 0, dp(6));
+        p.setMargins(dp(4), 0, 0, dp(8));
         tv.setLayoutParams(p);
         return tv;
     }
@@ -465,9 +598,10 @@ public class ActualizarPuzzle extends Fragment {
         View v = new View(getContext());
         LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, dp(1));
-        p.setMargins(dp(4), dp(4), dp(4), dp(4));
+        p.setMargins(0, dp(2), 0, dp(2));
         v.setLayoutParams(p);
         v.setBackgroundColor(Color.parseColor("#E8F5E9"));
+        v.setAlpha(0.45f);
         return v;
     }
 
@@ -482,10 +616,24 @@ public class ActualizarPuzzle extends Fragment {
         LinearLayout fila = new LinearLayout(getContext());
         fila.setOrientation(LinearLayout.HORIZONTAL);
         fila.setGravity(Gravity.CENTER_VERTICAL);
-        fila.setPadding(dp(4), dp(10), dp(4), dp(10));
+        fila.setPadding(dp(4), dp(12), dp(4), dp(12));
         fila.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
         return fila;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        AppPrincipal activity = (AppPrincipal) requireActivity();
+        activity.ocultarTitulo();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        AppPrincipal activity = (AppPrincipal) requireActivity();
+        activity.mostrarTitulo();
     }
 
     private LinearLayout textoDoble(String titulo, String desc) {
@@ -511,13 +659,16 @@ public class ActualizarPuzzle extends Fragment {
         Button btn = new Button(getContext());
         btn.setText(texto);
         btn.setTextColor(Color.WHITE);
-        btn.setTextSize(17);
+        btn.setTextSize(16);
         btn.setAllCaps(false);
-        btn.setPadding(dp(20), dp(16), dp(20), dp(16));
-        GradientDrawable bg = new GradientDrawable();
-        bg.setColor(COLOR_ACENTO);
+        btn.setTypeface(null, Typeface.BOLD);
+        btn.setPadding(dp(20), dp(18), dp(20), dp(18));
+        GradientDrawable bg = new GradientDrawable(
+                GradientDrawable.Orientation.LEFT_RIGHT,
+                new int[]{COLOR_ACENTO, COLOR_ACENTO2});
         bg.setCornerRadius(dp(30));
         btn.setBackground(bg);
+        btn.setElevation(dp(4));
         btn.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
         return btn;
@@ -526,14 +677,14 @@ public class ActualizarPuzzle extends Fragment {
     private Button crearBotonSecundario(String texto) {
         Button btn = new Button(getContext());
         btn.setText(texto);
-        btn.setTextColor(COLOR_ACENTO);
+        btn.setTextColor(COLOR_SUBTITULO);
         btn.setTextSize(15);
         btn.setAllCaps(false);
-        btn.setPadding(dp(20), dp(12), dp(20), dp(12));
+        btn.setPadding(dp(20), dp(14), dp(20), dp(14));
         GradientDrawable bg = new GradientDrawable();
-        bg.setColor(Color.WHITE);
+        bg.setColor(Color.TRANSPARENT);
         bg.setCornerRadius(dp(24));
-        bg.setStroke(dp(2), COLOR_ACENTO);
+        bg.setStroke(dp(1), COLOR_BORDE);
         btn.setBackground(bg);
         btn.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));

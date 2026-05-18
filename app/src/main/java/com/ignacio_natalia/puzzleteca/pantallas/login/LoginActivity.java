@@ -34,6 +34,9 @@ public class LoginActivity extends AppCompatActivity {
     private EditText emailEditText;
     private EditText contrasenaEditText;
 
+    // ✅ Campo de instancia para que el observer pueda leerlo
+    private String emailPendiente = "";
+
     @SuppressLint({"ClickableViewAccessibility", "SetTextI18n"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -162,6 +165,7 @@ public class LoginActivity extends AppCompatActivity {
         loginViewModel = new ViewModelProvider(this).get(LoginViewModel.class);
 
         loginViewModel.getLoginExitoso().observe(this, loginRespuesta -> {
+            GestorSesion.guardarEmail(this, emailPendiente);
             GestorSesion.guardarToken(this, loginRespuesta.getToken());
             GestorSesion.guardarRol(this, loginRespuesta.getTipoUsuario());
             if (loginRespuesta.getId_usuario() != null)
@@ -183,7 +187,7 @@ public class LoginActivity extends AppCompatActivity {
                 Toast.makeText(this, "Completa todos los campos", Toast.LENGTH_SHORT).show();
                 return;
             }
-            GestorSesion.guardarEmail(this, email);
+            emailPendiente = email;
             loginViewModel.iniciarSesion(email, contrasena);
         });
     }

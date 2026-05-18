@@ -121,7 +121,6 @@ public class RegistroActivity extends AppCompatActivity {
         checkPoliticas.setPadding(60, 20, 60, 20);
 
         checkPoliticas.setOnCheckedChangeListener((buttonView, isChecked) -> {
-
             if (isChecked) {
                 mostrarPoliticas(checkPoliticas);
             } else {
@@ -159,12 +158,44 @@ public class RegistroActivity extends AppCompatActivity {
 
         setContentView(layout);
 
-        // ---------- VIEWMODEL ----------
+        // ---------- VIEWMODELS ----------
         registroViewModel = new ViewModelProvider(this).get(RegistroViewModel.class);
+        // ✅ LoginViewModel se inicializa aquí, una sola vez, no dentro del onClick
+        loginViewModel = new ViewModelProvider(this).get(LoginViewModel.class);
+
+        // ✅ Observers registrados una sola vez en onCreate, no dentro del onClick
+        registroViewModel.getUsuarioCreado().observe(this, exito -> {
+            if (exito) {
+                // El registro fue exitoso: lanzamos el login automático
+                String email = emailEditText.getText().toString().trim();
+                String contrasena = contrasenaEditText.getText().toString().trim();
+                loginViewModel.iniciarSesion(email, contrasena);
+            } else {
+                Log.e("RegistroActivity", "Error al registrar usuario");
+                Toast.makeText(this, "Error al registrar el usuario", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        loginViewModel.getLoginExitoso().observe(this, loginRespuesta -> {
+            // ✅ Se guardan TODOS los datos de sesión, igual que en LoginActivity
+            GestorSesion.guardarToken(this, loginRespuesta.getToken());
+            GestorSesion.guardarRol(this, loginRespuesta.getTipoUsuario());
+            GestorSesion.guardarEmail(this, emailEditText.getText().toString().trim());
+            if (loginRespuesta.getId_usuario() != null)
+                GestorSesion.guardarId_usuario(this, loginRespuesta.getId_usuario());
+            if (loginRespuesta.getNombre() != null)
+                GestorSesion.guardarNombre(this, loginRespuesta.getNombre());
+
+            startActivity(new Intent(this, AppPrincipal.class));
+            finish();
+        });
+
+        loginViewModel.getError().observe(this, mensaje ->
+                Toast.makeText(this, "Login automático fallido: " + mensaje,
+                        Toast.LENGTH_SHORT).show());
 
         // ---------- REGISTRO ----------
         botonRegistro.setOnClickListener(v -> {
-
             if (!politicasAceptadas) {
                 Toast.makeText(this,
                         "Debes aceptar las políticas para registrarte",
@@ -186,34 +217,6 @@ public class RegistroActivity extends AppCompatActivity {
                     Usuario.TipoUsuario.Usuario);
 
             registroViewModel.crearUsuario(usuario);
-
-            registroViewModel.getUsuarioCreado().observe(this, exito -> {
-
-                if (exito) {
-
-                    loginViewModel = new ViewModelProvider(this).get(LoginViewModel.class);
-                    loginViewModel.iniciarSesion(email, contrasena);
-
-                    loginViewModel.getLoginExitoso().observe(this, loginRespuesta -> {
-                        GestorSesion.guardarToken(this, loginRespuesta.getToken());
-
-                        startActivity(new Intent(this, AppPrincipal.class));
-                        finish();
-                    });
-
-                    loginViewModel.getError().observe(this, mensaje -> {
-                        Toast.makeText(this,
-                                "Login automático fallido: " + mensaje,
-                                Toast.LENGTH_SHORT).show();
-                    });
-
-                } else {
-                    Log.e("RegistroActivity", "Error al registrar usuario");
-                    Toast.makeText(this,
-                            "Error al registrar el usuario",
-                            Toast.LENGTH_SHORT).show();
-                }
-            });
         });
     }
 
@@ -546,5 +549,4 @@ public class RegistroActivity extends AppCompatActivity {
     private int dp(int v) {
         return Math.round(v * getResources().getDisplayMetrics().density);
     }
-
 }

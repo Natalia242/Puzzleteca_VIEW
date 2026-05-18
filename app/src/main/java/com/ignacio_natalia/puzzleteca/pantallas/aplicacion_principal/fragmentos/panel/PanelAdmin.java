@@ -22,7 +22,7 @@ import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos.
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos.gestionesAdministrador.puzzles.GestionPuzzles;
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos.gestionesAdministrador.usuarios.GestionUsuarios;
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos.perfil.EditarPerfil;
-import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.puzzles.RegistrarPuzzle;
+import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.puzzles.NuevoPuzzle;
 import com.ignacio_natalia.puzzleteca.repositorios.RankingRepositorio;
 import com.ignacio_natalia.puzzleteca.utilidades.GestorSesion;
 import com.ignacio_natalia.puzzleteca.utilidades.UtilidadesSesion;
@@ -210,7 +210,7 @@ public class PanelAdmin extends Fragment {
         // ── Sección Gestión ──────────────────────────────────────────────
         layout.addView(crearEtiquetaSeccion("GESTIÓN"));
         LinearLayout opCrearPuzzle = crearOpcion("➕", "Crear Nuevo Puzzle", R.color.app_rosa_soft, R.color.app_rosa);
-        opCrearPuzzle.setOnClickListener(v -> irA(new RegistrarPuzzle()));
+        opCrearPuzzle.setOnClickListener(v -> irA(new NuevoPuzzle()));
         layout.addView(opCrearPuzzle);
         espacio(layout, 6);
         LinearLayout opGestionPuzzles = crearOpcion("🧩", "Gestionar Puzzles", R.color.app_naranja_soft, R.color.app_naranja);

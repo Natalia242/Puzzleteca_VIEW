@@ -87,6 +87,7 @@ public class GestorSesion {
                 .remove(KEY_ROL)
                 .remove(KEY_ID_USUARIO)
                 .remove(KEY_NOMBRE)
+                .remove(KEY_EMAIL)
                 .apply();
     }
 

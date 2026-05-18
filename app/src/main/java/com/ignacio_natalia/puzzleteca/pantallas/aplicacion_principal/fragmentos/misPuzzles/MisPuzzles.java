@@ -28,8 +28,8 @@ import androidx.fragment.app.Fragment;
 import com.bumptech.glide.Glide;
 import com.ignacio_natalia.puzzleteca.modelos.clases.Puzzle;
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.AppPrincipal;
-import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.puzzles.ActualizarPuzzle;
-import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.puzzles.RegistrarPuzzle;
+import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.puzzles.EditarPuzzle;
+import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.puzzles.NuevoPuzzle;
 import com.ignacio_natalia.puzzleteca.repositorios.PuzzleRepositorio;
 import com.ignacio_natalia.puzzleteca.utilidades.GestorSesion;
 
@@ -629,7 +629,7 @@ public class MisPuzzles extends Fragment {
     private void irAEditar(Puzzle puzzle) {
         requireActivity().getSupportFragmentManager()
                 .beginTransaction()
-                .replace(AppPrincipal.FRAGMENTO_ID, ActualizarPuzzle.newInstance(puzzle))
+                .replace(AppPrincipal.FRAGMENTO_ID, EditarPuzzle.newInstance(puzzle))
                 .addToBackStack(null)
                 .commit();
     }
@@ -637,7 +637,7 @@ public class MisPuzzles extends Fragment {
     private void irARegistrar() {
         requireActivity().getSupportFragmentManager()
                 .beginTransaction()
-                .replace(AppPrincipal.FRAGMENTO_ID, new RegistrarPuzzle())
+                .replace(AppPrincipal.FRAGMENTO_ID, new NuevoPuzzle())
                 .addToBackStack(null)
                 .commit();
     }

@@ -19,7 +19,7 @@ import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.AppPrincipa
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos.chats.MisChats;
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos.misPuzzles.MisPuzzles;
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos.perfil.EditarPerfil;
-import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.puzzles.RegistrarPuzzle;
+import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.puzzles.NuevoPuzzle;
 import com.ignacio_natalia.puzzleteca.modelos.ranking.RankingUsuario;
 import com.ignacio_natalia.puzzleteca.repositorios.RankingRepositorio;
 import com.ignacio_natalia.puzzleteca.utilidades.GestorSesion;
@@ -223,7 +223,7 @@ public class PanelUsuario extends Fragment {
 
         // ── Botón Crear Nuevo Puzzle ─────────────────────────────────
         Button botonCrearPuzzle = crearBotonPrimario("➕  Crear Nuevo Puzzle", "#F06292");
-        botonCrearPuzzle.setOnClickListener(v -> irA(new RegistrarPuzzle(), 0));
+        botonCrearPuzzle.setOnClickListener(v -> irA(new NuevoPuzzle(), 0));
         layout.addView(botonCrearPuzzle);
         espacio(layout, 28);
 
