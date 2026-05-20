@@ -212,7 +212,7 @@ public class MisPuzzles extends Fragment {
             lp.bottomMargin = dp(16);
             block.setLayoutParams(lp);
             GradientDrawable bg = new GradientDrawable();
-            bg.setColor(Color.parseColor("#E0E0E0"));
+            bg.setColor(ContextCompat.getColor(requireContext(), R.color.app_borde_gris));
             bg.setCornerRadius(dp(16));
             block.setBackground(bg);
             col.addView(block);
@@ -260,7 +260,7 @@ public class MisPuzzles extends Fragment {
                 FrameLayout.LayoutParams.MATCH_PARENT,
                 FrameLayout.LayoutParams.MATCH_PARENT));
         imagen.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        imagen.setBackgroundColor(Color.parseColor("#F0F4F8"));
+        imagen.setBackgroundColor(Color.parseColor("app_fondo_gris_light"));
 
         String url = puzzle.getImagenUrl();
         if (url != null && !url.isEmpty()) {
@@ -274,7 +274,7 @@ public class MisPuzzles extends Fragment {
             // Fondo de color degradado cuando no hay imagen
             GradientDrawable placeholder = new GradientDrawable(
                     GradientDrawable.Orientation.TL_BR,
-                    new int[]{Color.parseColor("#B2DFDB"), Color.parseColor("#80CBC4")});
+                    new int[]{ContextCompat.getColor(requireContext(), R.color.app_teal_borde), ContextCompat.getColor(requireContext(), R.color.app_teal_borde_light)});
             imagen.setBackground(placeholder);
             // Emoji centrado como placeholder
             imagen.setImageResource(android.R.drawable.ic_menu_gallery);
@@ -660,7 +660,7 @@ public class MisPuzzles extends Fragment {
             this.rating = (rating != null) ? Math.max(0, Math.min(NUM, (int) Math.round(rating))) : 0;
             pFill.setStyle(Paint.Style.FILL);
             pEmpty.setStyle(Paint.Style.FILL);
-            pEmpty.setColor(Color.parseColor("#DDDDDD"));
+            pEmpty.setColor(ContextCompat.getColor(getContext(), R.color.app_borde_gris_light));
         }
 
         @Override
@@ -677,8 +677,8 @@ public class MisPuzzles extends Fragment {
                 if (i < rating) {
                     pFill.setShader(new LinearGradient(
                             ox, 0, ox, sizePx,
-                            Color.parseColor("#FFD740"),
-                            Color.parseColor("#FF8F00"),
+                            ContextCompat.getColor(getContext(), R.color.app_estrella_light),
+                            ContextCompat.getColor(getContext(), R.color.app_estrella_dark),
                             Shader.TileMode.CLAMP));
                     canvas.drawPath(roundedStar(cx + ox, cy,
                             sizePx * 0.45f, sizePx * 0.18f, crPx), pFill);
