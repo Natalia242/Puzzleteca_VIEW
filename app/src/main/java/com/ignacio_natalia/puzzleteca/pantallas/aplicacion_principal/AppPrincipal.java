@@ -61,7 +61,7 @@ public class AppPrincipal extends AppCompatActivity {
     protected void onCreate(Bundle instanciaEstadoGuardado) {
         super.onCreate(instanciaEstadoGuardado);
 
-        getWindow().setStatusBarColor(Color.parseColor("#DFF5C9"));
+        getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.app_green_light));
 
         if ("Bloqueado".equals(GestorSesion.obtenerRol(this))) {
             mostrarPantallaBloqueo();

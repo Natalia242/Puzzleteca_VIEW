@@ -1,10 +1,11 @@
 package com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos.gestionesAdministrador.usuarios;
 
 import android.annotation.SuppressLint;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,97 +14,83 @@ import android.widget.*;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.ignacio_natalia.puzzleteca.R;
 import com.ignacio_natalia.puzzleteca.modelos.clases.Usuario;
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.usuarios.UsuarioDialogFragment;
 import com.ignacio_natalia.puzzleteca.utilidades.GestorSesion;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class GestionUsuarios extends Fragment {
 
-    // ── Paleta ────────────────────────────────────────────────────────────────
-    private static final String C_TEAL      = "#2E7D6E";
-    private static final String C_TEAL_SOFT = "#E0F2F1";
-    private static final String C_ADMIN     = "#5C6BC0";
-    private static final String C_ADMIN_SF  = "#E8EAF6";
-    private static final String C_BLOQ      = "#E53935";
-    private static final String C_BLOQ_SF   = "#FFEBEE";
-    private static final String C_TEXTO     = "#37474F";
-    private static final String C_SUBTEXTO  = "#78909C";
-    private static final String C_BORDE     = "#ECEFF1";
-
     private GestionUsuarioViewModel viewModel;
-    private LinearLayout contenedorUsuarios;
+    private LinearLayout contenedor;
+    private EditText buscador;
 
-    @SuppressLint("SetTextI18n")
+    private List<Usuario> listaTodos = new ArrayList<>();
+    private String filtroRol = null; // null = todos
+
+    private TextView chipTodos, chipUsuario, chipAdmin, chipBloqueado;
+
+    // ══════════════════════════════════════════════════════════════════════
+    //  onCreateView
+    // ══════════════════════════════════════════════════════════════════════
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
 
-        FrameLayout root = new FrameLayout(requireContext());
+        LinearLayout root = new LinearLayout(requireContext());
+        root.setOrientation(LinearLayout.VERTICAL);
 
-        ScrollView scroll = new ScrollView(requireContext());
-        scroll.setLayoutParams(new FrameLayout.LayoutParams(
-                FrameLayout.LayoutParams.MATCH_PARENT,
-                FrameLayout.LayoutParams.MATCH_PARENT));
+        GradientDrawable gradient = new GradientDrawable(
+                GradientDrawable.Orientation.TOP_BOTTOM,
+                new int[]{
+                        ContextCompat.getColor(requireContext(), R.color.app_admin_indigo_soft),
+                        ContextCompat.getColor(requireContext(), R.color.jungle_green)
+                }
+        );
 
-        LinearLayout layout = new LinearLayout(requireContext());
-        layout.setOrientation(LinearLayout.VERTICAL);
-        layout.setPadding(dp(16), dp(16), dp(16), dp(24));
+        root.setBackground(gradient);
 
-        // ── Cabecera ──────────────────────────────────────────────────────────
-        LinearLayout cab = new LinearLayout(requireContext());
-        cab.setOrientation(LinearLayout.HORIZONTAL);
-        cab.setGravity(Gravity.CENTER_VERTICAL);
-        LinearLayout.LayoutParams cabLP = new LinearLayout.LayoutParams(
+        // Cabecera
+        root.addView(crearCabecera());
+
+        // Buscador
+        root.addView(crearBuscador());
+
+        // Chips de filtro
+        LinearLayout filtrosRow = crearFiltros();
+        LinearLayout.LayoutParams filtrosLP = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        cabLP.bottomMargin = dp(16);
-        cab.setLayoutParams(cabLP);
+        filtrosLP.setMargins(dp(16), 0, dp(16), dp(8));
+        filtrosRow.setLayoutParams(filtrosLP);
+        root.addView(filtrosRow);
 
-        LinearLayout cabTextos = new LinearLayout(requireContext());
-        cabTextos.setOrientation(LinearLayout.VERTICAL);
-        cabTextos.setLayoutParams(new LinearLayout.LayoutParams(0,
-                LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
+        // Lista con scroll
+        ScrollView scroll = new ScrollView(requireContext());
+        scroll.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, 0, 1f));
+        scroll.setFillViewport(true);
 
-        TextView titulo = new TextView(requireContext());
-        titulo.setText("Gestión de usuarios");
-        titulo.setTextSize(22);
-        titulo.setTypeface(null, Typeface.BOLD);
-        titulo.setTextColor(Color.parseColor(C_TEXTO));
+        contenedor = new LinearLayout(requireContext());
+        contenedor.setOrientation(LinearLayout.VERTICAL);
+        contenedor.setPadding(dp(16), dp(8), dp(16), dp(24));
+        scroll.addView(contenedor);
+        root.addView(scroll);
 
-        TextView tvContador = new TextView(requireContext());
-        tvContador.setTextSize(13);
-        tvContador.setTextColor(Color.parseColor(C_SUBTEXTO));
-
-        cabTextos.addView(titulo);
-        cabTextos.addView(tvContador);
-        cab.addView(cabTextos);
-
-        TextView emoji = new TextView(requireContext());
-        emoji.setText("👥");
-        emoji.setTextSize(26);
-        cab.addView(emoji);
-
-        layout.addView(cab);
-
-        // ── Contenedor de tarjetas ────────────────────────────────────────────
-        contenedorUsuarios = new LinearLayout(requireContext());
-        contenedorUsuarios.setOrientation(LinearLayout.VERTICAL);
-        layout.addView(contenedorUsuarios);
-
-        // ── ViewModel ─────────────────────────────────────────────────────────
+        // ViewModel
         viewModel = new ViewModelProvider(this).get(GestionUsuarioViewModel.class);
 
-        viewModel.getUsuarios().observe(getViewLifecycleOwner(), usuarios -> {
-            renderizarUsuarios(usuarios);
-            if (usuarios != null) {
-                tvContador.setText(usuarios.size() + (usuarios.size() == 1 ? " usuario" : " usuarios"));
-            }
+        viewModel.getUsuarios().observe(getViewLifecycleOwner(), lista -> {
+            listaTodos = lista != null ? lista : new ArrayList<>();
+            aplicarFiltros();
         });
 
         viewModel.getError().observe(getViewLifecycleOwner(), error ->
@@ -113,163 +100,289 @@ public class GestionUsuarios extends Fragment {
         String email = GestorSesion.obtenerEmail(requireContext());
         viewModel.cargarUsuarios(token, email);
 
-        scroll.addView(layout);
-        root.addView(scroll);
         return root;
     }
 
-    // ══════════════════════════════════════════════════════════════════════════
-    //  Renderizado
-    // ══════════════════════════════════════════════════════════════════════════
+    // ══════════════════════════════════════════════════════════════════════
+    //  Cabecera
+    // ══════════════════════════════════════════════════════════════════════
+    private View crearCabecera() {
+        LinearLayout header = new LinearLayout(requireContext());
+        header.setOrientation(LinearLayout.VERTICAL);
+        header.setPadding(dp(16), dp(20), dp(16), dp(12));
 
-    @SuppressLint("SetTextI18n")
-    private void renderizarUsuarios(List<Usuario> usuarios) {
-        contenedorUsuarios.removeAllViews();
+        TextView titulo = new TextView(requireContext());
+        titulo.setText("👥  Gestión de Usuarios");
+        titulo.setTextSize(20);
+        titulo.setTypeface(null, Typeface.BOLD);
+        titulo.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_teal_dark));
+        titulo.setGravity(Gravity.START);
+        header.addView(titulo);
 
-        if (usuarios == null || usuarios.isEmpty()) {
-            LinearLayout vacio = new LinearLayout(requireContext());
-            vacio.setOrientation(LinearLayout.VERTICAL);
-            vacio.setGravity(Gravity.CENTER_HORIZONTAL);
-            vacio.setPadding(dp(32), dp(60), dp(32), dp(40));
-            vacio.setLayoutParams(new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT));
+        TextView subtitulo = new TextView(requireContext());
+        subtitulo.setText("Administra los roles y accesos de los usuarios");
+        subtitulo.setTextSize(12);
+        subtitulo.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_subtexto));
+        subtitulo.setPadding(0, dp(2), 0, 0);
+        header.addView(subtitulo);
 
-            TextView tvEmoji = new TextView(requireContext());
-            tvEmoji.setText("👤");
-            tvEmoji.setTextSize(40);
-            tvEmoji.setGravity(Gravity.CENTER);
-            tvEmoji.setLayoutParams(new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        return header;
+    }
 
-            TextView tvMsg = new TextView(requireContext());
-            tvMsg.setText("No hay usuarios registrados");
-            tvMsg.setTextSize(16);
-            tvMsg.setTextColor(Color.parseColor(C_SUBTEXTO));
-            tvMsg.setGravity(Gravity.CENTER);
-            tvMsg.setLayoutParams(new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+    // ══════════════════════════════════════════════════════════════════════
+    //  Buscador
+    // ══════════════════════════════════════════════════════════════════════
+    private View crearBuscador() {
+        LinearLayout wrap = new LinearLayout(requireContext());
+        wrap.setOrientation(LinearLayout.HORIZONTAL);
+        wrap.setGravity(Gravity.CENTER_VERTICAL);
+        LinearLayout.LayoutParams wrapLP = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        wrapLP.setMargins(dp(16), dp(8), dp(16), dp(8));
+        wrap.setLayoutParams(wrapLP);
 
-            vacio.addView(tvEmoji);
-            vacio.addView(tvMsg);
-            contenedorUsuarios.addView(vacio);
-            return;
+        GradientDrawable bg = new GradientDrawable();
+        bg.setColor(ContextCompat.getColor(requireContext(), R.color.white));
+        bg.setCornerRadius(dp(24));
+        bg.setStroke(dp(1), ContextCompat.getColor(requireContext(), R.color.app_teal_soft));
+        wrap.setBackground(bg);
+        wrap.setPadding(dp(14), dp(10), dp(14), dp(10));
+
+        TextView lupa = new TextView(requireContext());
+        lupa.setText("🔍");
+        lupa.setTextSize(16);
+        lupa.setPadding(0, 0, dp(8), 0);
+        wrap.addView(lupa);
+
+        buscador = new EditText(requireContext());
+        buscador.setHint("Buscar por nombre, apellido o email...");
+        buscador.setHintTextColor(ContextCompat.getColor(requireContext(), R.color.app_subtexto_label));
+        buscador.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_texto));
+        buscador.setTextSize(14);
+        buscador.setBackground(null);
+        buscador.setSingleLine(true);
+        buscador.setLayoutParams(new LinearLayout.LayoutParams(
+                0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
+        buscador.addTextChangedListener(new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int st, int c, int a) {}
+            @Override public void onTextChanged(CharSequence s, int st, int b, int c) { aplicarFiltros(); }
+            @Override public void afterTextChanged(Editable s) {}
+        });
+        wrap.addView(buscador);
+
+        return wrap;
+    }
+
+    // ══════════════════════════════════════════════════════════════════════
+    //  Chips de filtro
+    // ══════════════════════════════════════════════════════════════════════
+    private LinearLayout crearFiltros() {
+        LinearLayout row = new LinearLayout(requireContext());
+        row.setOrientation(LinearLayout.HORIZONTAL);
+        row.setGravity(Gravity.CENTER_VERTICAL);
+
+        chipTodos     = crearChip("Todos",      null,        true);
+        chipUsuario   = crearChip("Usuario",    "Usuario",   false);
+        chipAdmin     = crearChip("Admin",      "Admin",     false);
+        chipBloqueado = crearChip("Bloqueado",  "Bloqueado", false);
+
+        row.addView(chipTodos);
+        row.addView(chipUsuario);
+        row.addView(chipAdmin);
+        row.addView(chipBloqueado);
+
+        return row;
+    }
+
+    private TextView crearChip(String etiqueta, String rolFiltro, boolean activo) {
+        TextView chip = new TextView(requireContext());
+        chip.setText(etiqueta);
+        chip.setTextSize(12);
+        chip.setTypeface(null, Typeface.BOLD);
+        chip.setPadding(dp(14), dp(6), dp(14), dp(6));
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        lp.setMargins(0, 0, dp(8), 0);
+        chip.setLayoutParams(lp);
+        aplicarEstiloChip(chip, activo, rolFiltro);
+
+        chip.setOnClickListener(v -> {
+            filtroRol = rolFiltro;
+            aplicarEstiloChip(chipTodos,     filtroRol == null,               null);
+            aplicarEstiloChip(chipUsuario,   "Usuario".equals(filtroRol),     "Usuario");
+            aplicarEstiloChip(chipAdmin,     "Admin".equals(filtroRol),       "Admin");
+            aplicarEstiloChip(chipBloqueado, "Bloqueado".equals(filtroRol),   "Bloqueado");
+            aplicarFiltros();
+        });
+
+        return chip;
+    }
+
+    private void aplicarEstiloChip(TextView chip, boolean activo, String rol) {
+        GradientDrawable bg = new GradientDrawable();
+        bg.setCornerRadius(dp(20));
+        int colorTexto;
+
+        if (activo) {
+            int colorFondo;
+            if ("Admin".equals(rol)) {
+                colorFondo = ContextCompat.getColor(requireContext(), R.color.app_admin_indigo);
+                colorTexto = ContextCompat.getColor(requireContext(), R.color.white);
+            } else if ("Bloqueado".equals(rol)) {
+                colorFondo = ContextCompat.getColor(requireContext(), R.color.app_peligro);
+                colorTexto = ContextCompat.getColor(requireContext(), R.color.white);
+            } else if ("Usuario".equals(rol)) {
+                colorFondo = ContextCompat.getColor(requireContext(), R.color.app_teal);
+                colorTexto = ContextCompat.getColor(requireContext(), R.color.white);
+            } else {
+                colorFondo = ContextCompat.getColor(requireContext(), R.color.app_teal_dark);
+                colorTexto = ContextCompat.getColor(requireContext(), R.color.white);
+            }
+            bg.setColor(colorFondo);
+        } else {
+            bg.setColor(ContextCompat.getColor(requireContext(), R.color.app_fondo_pagina));
+            bg.setStroke(dp(1), ContextCompat.getColor(requireContext(), R.color.app_borde_gris));
+            colorTexto = ContextCompat.getColor(requireContext(), R.color.app_subtexto);
         }
 
-        for (Usuario u : usuarios) {
-            contenedorUsuarios.addView(crearTarjetaUsuario(u));
+        chip.setBackground(bg);
+        chip.setTextColor(colorTexto);
+    }
+
+    // ══════════════════════════════════════════════════════════════════════
+    //  Filtrado y renderizado
+    // ══════════════════════════════════════════════════════════════════════
+    private void aplicarFiltros() {
+        String query = buscador != null ? buscador.getText().toString().trim().toLowerCase() : "";
+
+        List<Usuario> filtrados = new ArrayList<>();
+        for (Usuario u : listaTodos) {
+            boolean pasaRol = filtroRol == null
+                    || (u.getTipoUsuario() != null && filtroRol.equals(u.getTipoUsuario().name()));
+            boolean pasaBusqueda = query.isEmpty()
+                    || (u.getNombre()   != null && u.getNombre().toLowerCase().contains(query))
+                    || (u.getApellido() != null && u.getApellido().toLowerCase().contains(query))
+                    || (u.getEmail()    != null && u.getEmail().toLowerCase().contains(query));
+            if (pasaRol && pasaBusqueda) filtrados.add(u);
+        }
+
+        contenedor.removeAllViews();
+        if (filtrados.isEmpty()) {
+            mostrarVacio();
+        } else {
+            for (Usuario u : filtrados) {
+                contenedor.addView(crearTarjetaUsuario(u));
+                espacio(contenedor, dp(10));
+            }
         }
     }
 
-    // ══════════════════════════════════════════════════════════════════════════
-    //  Tarjeta de usuario
-    // ══════════════════════════════════════════════════════════════════════════
-
+    // ══════════════════════════════════════════════════════════════════════
+    //  Tarjeta de usuario — layout horizontal compacto
+    // ══════════════════════════════════════════════════════════════════════
     @SuppressLint("SetTextI18n")
-    private LinearLayout crearTarjetaUsuario(Usuario usuario) {
-        LinearLayout tarjeta = new LinearLayout(requireContext());
-        tarjeta.setOrientation(LinearLayout.HORIZONTAL);
-        tarjeta.setGravity(Gravity.CENTER_VERTICAL);
-        tarjeta.setPadding(dp(14), dp(14), dp(12), dp(14));
-        tarjeta.setElevation(dp(2));
+    private View crearTarjetaUsuario(Usuario usuario) {
+        LinearLayout card = new LinearLayout(requireContext());
+        card.setOrientation(LinearLayout.HORIZONTAL);
+        card.setGravity(Gravity.CENTER_VERTICAL);
+        card.setPadding(dp(14), dp(14), dp(14), dp(14));
+        card.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
 
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        lp.bottomMargin = dp(10);
-        tarjeta.setLayoutParams(lp);
+        GradientDrawable cardBg = new GradientDrawable();
+        cardBg.setColor(ContextCompat.getColor(requireContext(), R.color.white));
+        cardBg.setCornerRadius(dp(14));
+        cardBg.setStroke(dp(1), ContextCompat.getColor(requireContext(), R.color.app_borde_light));
+        card.setBackground(cardBg);
 
-        int r = dp(14);
-        GradientDrawable bg = new GradientDrawable();
-        bg.setColor(Color.WHITE);
-        bg.setCornerRadius(r);
-        bg.setStroke(dp(1), Color.parseColor(C_BORDE));
-        tarjeta.setBackground(bg);
-        tarjeta.setClipToOutline(true);
-        tarjeta.setOutlineProvider(new android.view.ViewOutlineProvider() {
-            @Override
-            public void getOutline(View v, android.graphics.Outline o) {
-                o.setRoundRect(0, 0, v.getWidth(), v.getHeight(), r);
-            }
-        });
-
-        // ── Avatar circular ───────────────────────────────────────────────────
+        // ── Avatar circular con inicial ───────────────────────────────────
         String nombre = usuario.getNombre() != null ? usuario.getNombre() : "?";
         String inicial = nombre.substring(0, 1).toUpperCase();
-        String[] colores = colorPorTipo(usuario.getTipoUsuario());
+        int[] colores = coloresPorRol(usuario.getTipoUsuario());
 
         TextView avatar = new TextView(requireContext());
         avatar.setText(inicial);
         avatar.setTextSize(18);
         avatar.setTypeface(null, Typeface.BOLD);
-        avatar.setTextColor(Color.parseColor(colores[0]));
+        avatar.setTextColor(ContextCompat.getColor(requireContext(), colores[0]));
         avatar.setGravity(Gravity.CENTER);
-        int avSize = dp(44);
+        int avSize = dp(48);
         LinearLayout.LayoutParams avLP = new LinearLayout.LayoutParams(avSize, avSize);
         avLP.setMargins(0, 0, dp(12), 0);
         avatar.setLayoutParams(avLP);
         GradientDrawable avBg = new GradientDrawable();
         avBg.setShape(GradientDrawable.OVAL);
-        avBg.setColor(Color.parseColor(colores[1]));
+        avBg.setColor(ContextCompat.getColor(requireContext(), colores[1]));
         avatar.setBackground(avBg);
+        card.addView(avatar);
 
-        // ── Columna central: nombre + chip de rol ─────────────────────────────
-        LinearLayout colInfo = new LinearLayout(requireContext());
-        colInfo.setOrientation(LinearLayout.VERTICAL);
-        colInfo.setLayoutParams(new LinearLayout.LayoutParams(0,
+        // ── Columna de info ───────────────────────────────────────────────
+        LinearLayout info = new LinearLayout(requireContext());
+        info.setOrientation(LinearLayout.VERTICAL);
+        info.setLayoutParams(new LinearLayout.LayoutParams(0,
                 LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
 
-        String nombreCompleto = nombre + (usuario.getApellido() != null
-                ? " " + usuario.getApellido() : "");
+        // Fila 1: nombre completo
+        String nombreCompleto = nombre
+                + (usuario.getApellido() != null ? " " + usuario.getApellido() : "");
         TextView tvNombre = new TextView(requireContext());
         tvNombre.setText(nombreCompleto);
-        tvNombre.setTextSize(15);
+        tvNombre.setTextSize(14);
         tvNombre.setTypeface(null, Typeface.BOLD);
-        tvNombre.setTextColor(Color.parseColor(C_TEXTO));
+        tvNombre.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_texto_dark));
         tvNombre.setMaxLines(1);
         tvNombre.setEllipsize(android.text.TextUtils.TruncateAt.END);
+        info.addView(tvNombre);
 
-        // Mini chip de rol debajo del nombre
-        TextView chipRol = new TextView(requireContext());
-        chipRol.setText(emojiTipo(usuario.getTipoUsuario())
-                + " " + labelTipo(usuario.getTipoUsuario()));
-        chipRol.setTextSize(11);
-        chipRol.setTypeface(null, Typeface.BOLD);
-        chipRol.setTextColor(Color.parseColor(colores[0]));
-        chipRol.setPadding(dp(8), dp(3), dp(8), dp(3));
+        // Fila 2: email
+        if (usuario.getEmail() != null) {
+            TextView tvEmail = new TextView(requireContext());
+            tvEmail.setText("✉ " + usuario.getEmail());
+            tvEmail.setTextSize(12);
+            tvEmail.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_subtexto));
+            tvEmail.setMaxLines(1);
+            tvEmail.setEllipsize(android.text.TextUtils.TruncateAt.END);
+            LinearLayout.LayoutParams emailLP = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            emailLP.topMargin = dp(2);
+            tvEmail.setLayoutParams(emailLP);
+            info.addView(tvEmail);
+        }
+
+        // Fila 3: chip de rol
+        TextView chipRol = crearBadgeRol(usuario.getTipoUsuario());
         LinearLayout.LayoutParams chipLP = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        chipLP.topMargin = dp(4);
+        chipLP.topMargin = dp(5);
         chipRol.setLayoutParams(chipLP);
-        GradientDrawable chipBg = new GradientDrawable();
-        chipBg.setColor(Color.parseColor(colores[1]));
-        chipBg.setCornerRadius(dp(20));
-        chipRol.setBackground(chipBg);
+        info.addView(chipRol);
 
-        colInfo.addView(tvNombre);
-        colInfo.addView(chipRol);
+        card.addView(info);
 
-        // ── Flecha derecha ────────────────────────────────────────────────────
-        TextView flecha = new TextView(requireContext());
-        flecha.setText("›");
-        flecha.setTextSize(28);
-        flecha.setTypeface(null, Typeface.BOLD);
-        flecha.setTextColor(Color.parseColor("#A5D6A7"));
-        flecha.setGravity(Gravity.CENTER_VERTICAL);
-        LinearLayout.LayoutParams flechaLP = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.WRAP_CONTENT,
-                LinearLayout.LayoutParams.MATCH_PARENT);
-        flechaLP.gravity = Gravity.CENTER_VERTICAL;
-        flechaLP.setMargins(dp(6), 0, dp(2), 0);
-        flecha.setLayoutParams(flechaLP);
+        // ── Columna derecha: botón ciclo de rol + botón ver ───────────────
+        LinearLayout derecha = new LinearLayout(requireContext());
+        derecha.setOrientation(LinearLayout.VERTICAL);
+        derecha.setGravity(Gravity.CENTER);
+        LinearLayout.LayoutParams derechaLP = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT);
+        derechaLP.setMargins(dp(8), 0, 0, 0);
+        derecha.setLayoutParams(derechaLP);
 
-        tarjeta.addView(avatar);
-        tarjeta.addView(colInfo);
-        tarjeta.addView(flecha);
+        // Botón ver detalle → abre UsuarioDialogFragment
+        TextView btnVer = new TextView(requireContext());
+        btnVer.setText("👁");
+        btnVer.setTextSize(18);
+        btnVer.setGravity(Gravity.CENTER);
+        GradientDrawable btnVerBg = new GradientDrawable();
+        btnVerBg.setColor(ContextCompat.getColor(requireContext(), R.color.app_teal_soft));
+        btnVerBg.setCornerRadius(dp(8));
+        btnVer.setBackground(btnVerBg);
+        btnVer.setPadding(dp(10), dp(8), dp(10), dp(8));
+        btnVer.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
 
-        // Click → abrir UsuarioDialogFragment
-        tarjeta.setOnClickListener(v -> {
-            UsuarioDialogFragment dialog =
-                    UsuarioDialogFragment.newInstance(usuario);
+        btnVer.setOnClickListener(v -> {
+            UsuarioDialogFragment dialog = UsuarioDialogFragment.newInstance(usuario);
             dialog.setOnUsuarioModificadoListener(() ->
                     viewModel.cargarUsuarios(
                             GestorSesion.obtenerToken(requireContext()),
@@ -277,38 +390,130 @@ public class GestionUsuarios extends Fragment {
             dialog.show(getChildFragmentManager(), "usuario_dialog");
         });
 
-        return tarjeta;
+        derecha.addView(btnVer);
+        card.addView(derecha);
+
+        return card;
     }
 
-    // ══════════════════════════════════════════════════════════════════════════
-    //  Helpers
-    // ══════════════════════════════════════════════════════════════════════════
+    // ══════════════════════════════════════════════════════════════════════
+    //  Helpers de badge de rol
+    // ══════════════════════════════════════════════════════════════════════
+    private TextView crearBadgeRol(Usuario.TipoUsuario tipo) {
+        TextView badge = new TextView(requireContext());
+        actualizarBadgeRol(badge, tipo);
+        return badge;
+    }
 
-    private String[] colorPorTipo(Usuario.TipoUsuario tipo) {
-        if (tipo == null) return new String[]{C_TEAL, C_TEAL_SOFT};
-        switch (tipo) {
-            case Admin:    return new String[]{C_ADMIN, C_ADMIN_SF};
-            case Bloqueado:return new String[]{C_BLOQ,  C_BLOQ_SF};
-            default:       return new String[]{C_TEAL,  C_TEAL_SOFT};
+    private void actualizarBadgeRol(TextView badge, Usuario.TipoUsuario tipo) {
+        String texto;
+        int colorTexto, colorFondo;
+
+        if (tipo == null || tipo == Usuario.TipoUsuario.Usuario) {
+            texto = "🧩 Usuario";
+            colorTexto = ContextCompat.getColor(requireContext(), R.color.app_teal_dark);
+            colorFondo = ContextCompat.getColor(requireContext(), R.color.app_teal_soft);
+        } else if (tipo == Usuario.TipoUsuario.Admin) {
+            texto = "🛡️ Admin";
+            colorTexto = ContextCompat.getColor(requireContext(), R.color.app_admin_indigo);
+            colorFondo = ContextCompat.getColor(requireContext(), R.color.app_admin_indigo_soft);
+        } else {
+            texto = "🚫 Bloqueado";
+            colorTexto = ContextCompat.getColor(requireContext(), R.color.app_peligro_dark);
+            colorFondo = ContextCompat.getColor(requireContext(), R.color.app_peligro_bg);
+        }
+
+        badge.setText(texto);
+        badge.setTextSize(11);
+        badge.setTypeface(null, Typeface.BOLD);
+        badge.setTextColor(colorTexto);
+        badge.setPadding(dp(8), dp(3), dp(8), dp(3));
+
+        GradientDrawable bg = new GradientDrawable();
+        bg.setColor(colorFondo);
+        bg.setCornerRadius(dp(12));
+        badge.setBackground(bg);
+    }
+
+    // ══════════════════════════════════════════════════════════════════════
+    //  Lógica de ciclo de roles
+    // ══════════════════════════════════════════════════════════════════════
+    private Usuario.TipoUsuario siguienteRol(Usuario.TipoUsuario actual) {
+        if (actual == null) return Usuario.TipoUsuario.Admin;
+        switch (actual) {
+            case Usuario:   return Usuario.TipoUsuario.Admin;
+            case Admin:     return Usuario.TipoUsuario.Bloqueado;
+            default:        return Usuario.TipoUsuario.Usuario;
         }
     }
 
-    private String emojiTipo(Usuario.TipoUsuario tipo) {
-        if (tipo == null) return "👤";
+    private String emojiRol(Usuario.TipoUsuario tipo) {
+        if (tipo == null) return "🧩";
         switch (tipo) {
-            case Admin:    return "🛡️";
-            case Bloqueado:return "🚫";
-            default:       return "🧩";
+            case Admin:     return "🛡️";
+            case Bloqueado: return "🚫";
+            default:        return "🧩";
         }
     }
 
-    private String labelTipo(Usuario.TipoUsuario tipo) {
-        if (tipo == null) return "Usuario";
+    // ══════════════════════════════════════════════════════════════════════
+    //  Colores por rol [color texto, color fondo] como R.color IDs
+    // ══════════════════════════════════════════════════════════════════════
+    private int[] coloresPorRol(Usuario.TipoUsuario tipo) {
+        if (tipo == null) return new int[]{R.color.app_teal_dark, R.color.app_teal_soft};
         switch (tipo) {
-            case Admin:    return "Admin";
-            case Bloqueado:return "Bloqueado";
-            default:       return "Usuario";
+            case Admin:     return new int[]{R.color.app_admin_indigo, R.color.app_admin_indigo_soft};
+            case Bloqueado: return new int[]{R.color.app_peligro_dark, R.color.app_peligro_bg};
+            default:        return new int[]{R.color.app_teal_dark, R.color.app_teal_soft};
         }
+    }
+
+    // ══════════════════════════════════════════════════════════════════════
+    //  Estado vacío
+    // ══════════════════════════════════════════════════════════════════════
+    private void mostrarVacio() {
+        contenedor.removeAllViews();
+
+        LinearLayout wrap = new LinearLayout(requireContext());
+        wrap.setOrientation(LinearLayout.VERTICAL);
+        wrap.setGravity(Gravity.CENTER);
+        wrap.setPadding(dp(32), dp(48), dp(32), dp(48));
+        wrap.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+
+        TextView emoji = new TextView(requireContext());
+        emoji.setText("👤");
+        emoji.setTextSize(48);
+        emoji.setGravity(Gravity.CENTER);
+        wrap.addView(emoji);
+
+        TextView msg = new TextView(requireContext());
+        msg.setText("No hay usuarios que mostrar");
+        msg.setTextSize(15);
+        msg.setTypeface(null, Typeface.BOLD);
+        msg.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_subtexto));
+        msg.setGravity(Gravity.CENTER);
+        msg.setPadding(0, dp(12), 0, 0);
+        wrap.addView(msg);
+
+        TextView hint = new TextView(requireContext());
+        hint.setText("Prueba a cambiar el filtro o la búsqueda");
+        hint.setTextSize(13);
+        hint.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_subtexto_label));
+        hint.setGravity(Gravity.CENTER);
+        hint.setPadding(0, dp(4), 0, 0);
+        wrap.addView(hint);
+
+        contenedor.addView(wrap);
+    }
+
+    // ══════════════════════════════════════════════════════════════════════
+    //  Utilidades
+    // ══════════════════════════════════════════════════════════════════════
+    private void espacio(LinearLayout layout, int px) {
+        View v = new View(requireContext());
+        v.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, px));
+        layout.addView(v);
     }
 
     private int dp(int v) {

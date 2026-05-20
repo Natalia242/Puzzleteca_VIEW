@@ -18,6 +18,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -31,6 +32,7 @@ import com.ignacio_natalia.puzzleteca.utilidades.GestorSesion;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.util.Objects;
 
 public class NuevoPuzzle extends Fragment {
 
@@ -47,21 +49,6 @@ public class NuevoPuzzle extends Fragment {
 
     private File imagenSeleccionada = null;
     private ActivityResultLauncher<Intent> launcher;
-
-    private static final int
-            COLOR_CARD       = Color.WHITE,
-            COLOR_ACENTO     = Color.parseColor("#E91E8C"),
-            COLOR_ACENTO2    = Color.parseColor("#FF6BB5"),
-            COLOR_BORDE      = Color.parseColor("#C8E6C9"),
-            COLOR_TEXTO      = Color.parseColor("#1A2E1A"),
-            COLOR_HINT       = Color.parseColor("#90A4AE"),
-            COLOR_SUBTITULO  = Color.parseColor("#546E7A"),
-            COLOR_HEADER_INI = Color.parseColor("#FCE4EC"),
-            COLOR_HEADER_FIN = Color.parseColor("#E8F5E9"),
-            COLOR_FACIL      = Color.parseColor("#66BB6A"),
-            COLOR_MEDIA      = Color.parseColor("#FFA726"),
-            COLOR_DIFICIL    = Color.parseColor("#EF5350"),
-            COLOR_EXTREMO    = Color.parseColor("#B71C1C");
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -104,11 +91,11 @@ public class NuevoPuzzle extends Fragment {
         // ── Fondo gradiente (dos instancias separadas) ──
         scroll.setBackground(new GradientDrawable(
                 GradientDrawable.Orientation.TL_BR,
-                new int[]{COLOR_HEADER_INI, COLOR_HEADER_FIN}
+                new int[]{ContextCompat.getColor(requireContext(), R.color.app_rosa_soft), ContextCompat.getColor(requireContext(), R.color.app_green_success)}
         ));
         root.setBackground(new GradientDrawable(
                 GradientDrawable.Orientation.TL_BR,
-                new int[]{COLOR_HEADER_INI, COLOR_HEADER_FIN}
+                new int[]{ContextCompat.getColor(requireContext(), R.color.app_rosa_soft), ContextCompat.getColor(requireContext(), R.color.app_green_success)}
         ));
 
         // ═══════════════════════════════════════════════════
@@ -129,13 +116,13 @@ public class NuevoPuzzle extends Fragment {
         TextView tvBadge = new TextView(getContext());
         tvBadge.setText("➕  Nuevo");
         tvBadge.setTextSize(12);
-        tvBadge.setTextColor(COLOR_ACENTO);
+        tvBadge.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_rosa_acento));
         tvBadge.setTypeface(null, Typeface.BOLD);
         tvBadge.setPadding(dp(14), dp(6), dp(14), dp(6));
         GradientDrawable badgeBg = new GradientDrawable();
-        badgeBg.setColor(Color.WHITE);
+        badgeBg.setColor(ContextCompat.getColor(requireContext(), R.color.white));
         badgeBg.setCornerRadius(dp(20));
-        badgeBg.setStroke(dp(1), COLOR_ACENTO2);
+        badgeBg.setStroke(dp(1), ContextCompat.getColor(requireContext(), R.color.app_rosa_acento_light));
         tvBadge.setBackground(badgeBg);
         LinearLayout.LayoutParams badgeParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -148,7 +135,7 @@ public class NuevoPuzzle extends Fragment {
         tvTitulo.setText("Nuevo Puzzle");
         tvTitulo.setTextSize(30);
         tvTitulo.setTypeface(null, Typeface.BOLD);
-        tvTitulo.setTextColor(COLOR_TEXTO);
+        tvTitulo.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_green_texto_oscuro));
         tvTitulo.setGravity(Gravity.CENTER_HORIZONTAL);
         LinearLayout.LayoutParams tituloParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -159,7 +146,7 @@ public class NuevoPuzzle extends Fragment {
         TextView tvSubtitulo = new TextView(getContext());
         tvSubtitulo.setText("Completa los datos de tu puzzle");
         tvSubtitulo.setTextSize(13);
-        tvSubtitulo.setTextColor(COLOR_SUBTITULO);
+        tvSubtitulo.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_subtexto_dark));
         tvSubtitulo.setGravity(Gravity.CENTER_HORIZONTAL);
 
         // Línea decorativa
@@ -170,7 +157,8 @@ public class NuevoPuzzle extends Fragment {
         lineaDecorada.setLayoutParams(lineaParams);
         GradientDrawable lineaBg = new GradientDrawable(
                 GradientDrawable.Orientation.LEFT_RIGHT,
-                new int[]{COLOR_ACENTO, COLOR_ACENTO2});
+                new int[]{ContextCompat.getColor(requireContext(), R.color.app_rosa_acento),
+                        ContextCompat.getColor(requireContext(), R.color.app_rosa_acento_light)});
         lineaBg.setCornerRadius(dp(4));
         lineaDecorada.setBackground(lineaBg);
 
@@ -220,13 +208,13 @@ public class NuevoPuzzle extends Fragment {
         TextView tvDifLabel = new TextView(getContext());
         tvDifLabel.setText("Dificultad");
         tvDifLabel.setTextSize(15);
-        tvDifLabel.setTextColor(COLOR_TEXTO);
+        tvDifLabel.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_green_texto_oscuro));
         tvDifLabel.setTypeface(null, Typeface.BOLD);
 
         TextView tvDifAuto = new TextView(getContext());
         tvDifAuto.setText("Automática según piezas");
         tvDifAuto.setTextSize(11);
-        tvDifAuto.setTextColor(COLOR_SUBTITULO);
+        tvDifAuto.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_subtexto_dark));
 
         difTextos.addView(tvDifLabel);
         difTextos.addView(tvDifAuto);
@@ -240,7 +228,7 @@ public class NuevoPuzzle extends Fragment {
         dificultadSlider.setStepSize(1);
         dificultadSlider.setValue(0);
         dificultadSlider.setTrackInactiveTintList(
-                ColorStateList.valueOf(Color.parseColor("#ECEFF1")));
+                ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.app_borde)));
         dificultadSlider.setLabelBehavior(LabelFormatter.LABEL_GONE);
         dificultadSlider.setEnabled(false);
 
@@ -255,7 +243,7 @@ public class NuevoPuzzle extends Fragment {
         etiquetasDif.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
         String[] niveles = {"Fácil", "Media", "Difícil", "Extremo"};
-        int[] coloresNivel = {COLOR_FACIL, COLOR_MEDIA, COLOR_DIFICIL, COLOR_EXTREMO};
+        int[] coloresNivel = {ContextCompat.getColor(requireContext(), R.color.app_avatar_green), ContextCompat.getColor(requireContext(), R.color.app_naranja_amber_light), ContextCompat.getColor(requireContext(), R.color.app_peligro_medium), ContextCompat.getColor(requireContext(), R.color.app_peligro_darker)};
         for (int i = 0; i < niveles.length; i++) {
             TextView chip = new TextView(getContext());
             chip.setText(niveles[i]);
@@ -347,13 +335,13 @@ public class NuevoPuzzle extends Fragment {
         TextView tvEstadoT = new TextView(getContext());
         tvEstadoT.setText("🔒  Visibilidad");
         tvEstadoT.setTextSize(16);
-        tvEstadoT.setTextColor(COLOR_TEXTO);
+        tvEstadoT.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_green_texto_oscuro));
         tvEstadoT.setTypeface(null, Typeface.BOLD);
 
         TextView tvEstadoD = new TextView(getContext());
         tvEstadoD.setText("Público");
         tvEstadoD.setTextSize(12);
-        tvEstadoD.setTextColor(COLOR_SUBTITULO);
+        tvEstadoD.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_subtexto_dark));
 
         ImageView iconoEstado = new ImageView(getContext());
         LinearLayout.LayoutParams iconParams = new LinearLayout.LayoutParams(dp(24), dp(24));
@@ -393,8 +381,8 @@ public class NuevoPuzzle extends Fragment {
         imagenPreview.setScaleType(ImageView.ScaleType.CENTER_CROP);
         GradientDrawable imgBg = new GradientDrawable();
         imgBg.setCornerRadius(dp(12));
-        imgBg.setStroke(dp(1), COLOR_BORDE);
-        imgBg.setColor(Color.parseColor("#F5F5F5"));
+        imgBg.setStroke(dp(1), ContextCompat.getColor(requireContext(), R.color.app_green_borde_alt));
+        imgBg.setColor(ContextCompat.getColor(requireContext(), R.color.app_fondo_card));
         imagenPreview.setBackground(imgBg);
 
         Button btnImagen = crearBotonSecundario("Seleccionar imagen");
@@ -469,10 +457,10 @@ public class NuevoPuzzle extends Fragment {
         String texto;
         String emoji;
         switch (v) {
-            case 1: texto = "Media";   color = COLOR_MEDIA;   emoji = "🟡"; break;
-            case 2: texto = "Difícil"; color = COLOR_DIFICIL; emoji = "🟠"; break;
-            case 3: texto = "Extremo"; color = COLOR_EXTREMO; emoji = "🔴"; break;
-            default: texto = "Fácil";  color = COLOR_FACIL;   emoji = "🟢"; break;
+            case 1: texto = "Media";   color = ContextCompat.getColor(requireContext(), R.color.app_naranja_amber_light);   emoji = "🟡"; break;
+            case 2: texto = "Difícil"; color = ContextCompat.getColor(requireContext(), R.color.app_peligro_medium); emoji = "🟠"; break;
+            case 3: texto = "Extremo"; color = ContextCompat.getColor(requireContext(), R.color.app_peligro_darker); emoji = "🔴"; break;
+            default: texto = "Fácil";  color = ContextCompat.getColor(requireContext(), R.color.app_avatar_green);   emoji = "🟢"; break;
         }
         tvDifValor.setText(emoji + "  " + texto);
         tvDifValor.setTextColor(color);
@@ -551,9 +539,9 @@ public class NuevoPuzzle extends Fragment {
         card.setOrientation(LinearLayout.VERTICAL);
         card.setPadding(dp(18), dp(14), dp(18), dp(14));
         GradientDrawable bg = new GradientDrawable();
-        bg.setColor(COLOR_CARD);
+        bg.setColor(ContextCompat.getColor(requireContext(), R.color.white));
         bg.setCornerRadius(dp(20));
-        bg.setStroke(dp(1), COLOR_BORDE);
+        bg.setStroke(dp(1), ContextCompat.getColor(requireContext(), R.color.app_green_borde_alt));
         card.setBackground(bg);
         card.setElevation(dp(2));
         card.setLayoutParams(new LinearLayout.LayoutParams(
@@ -564,8 +552,8 @@ public class NuevoPuzzle extends Fragment {
     private EditText crearCampo(String hint) {
         EditText et = new EditText(getContext());
         et.setHint(hint);
-        et.setHintTextColor(COLOR_HINT);
-        et.setTextColor(COLOR_TEXTO);
+        et.setHintTextColor(ContextCompat.getColor(requireContext(), R.color.app_subtexto_label));
+        et.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_green_texto_oscuro));
         et.setTextSize(15);
         et.setBackground(null);
         et.setPadding(dp(4), dp(12), dp(4), dp(12));
@@ -593,7 +581,7 @@ public class NuevoPuzzle extends Fragment {
         tv.setText(texto);
         tv.setTextSize(13);
         tv.setTypeface(null, Typeface.BOLD);
-        tv.setTextColor(COLOR_SUBTITULO);
+        tv.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_subtexto_dark));
         tv.setLetterSpacing(0.08f);
         LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -608,7 +596,7 @@ public class NuevoPuzzle extends Fragment {
                 LinearLayout.LayoutParams.MATCH_PARENT, dp(1));
         p.setMargins(0, dp(2), 0, dp(2));
         v.setLayoutParams(p);
-        v.setBackgroundColor(Color.parseColor("#E8F5E9"));
+        v.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.app_green_success));
         v.setAlpha(0.45f);
         return v;
     }
@@ -638,12 +626,12 @@ public class NuevoPuzzle extends Fragment {
         TextView tvT = new TextView(getContext());
         tvT.setText(titulo);
         tvT.setTextSize(16);
-        tvT.setTextColor(COLOR_TEXTO);
+        tvT.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_green_texto_oscuro));
         tvT.setTypeface(null, Typeface.BOLD);
         TextView tvD = new TextView(getContext());
         tvD.setText(desc);
         tvD.setTextSize(12);
-        tvD.setTextColor(COLOR_SUBTITULO);
+        tvD.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_subtexto_dark));
         ll.addView(tvT);
         ll.addView(tvD);
         return ll;
@@ -652,14 +640,15 @@ public class NuevoPuzzle extends Fragment {
     private Button crearBotonPrincipal(String texto) {
         Button btn = new Button(getContext());
         btn.setText(texto);
-        btn.setTextColor(Color.WHITE);
+        btn.setTextColor(ContextCompat.getColor(requireContext(), R.color.white));
         btn.setTextSize(16);
         btn.setAllCaps(false);
         btn.setTypeface(null, Typeface.BOLD);
         btn.setPadding(dp(20), dp(18), dp(20), dp(18));
         GradientDrawable bg = new GradientDrawable(
                 GradientDrawable.Orientation.LEFT_RIGHT,
-                new int[]{COLOR_ACENTO, COLOR_ACENTO2});
+                new int[]{ContextCompat.getColor(requireContext(), R.color.app_rosa_acento),
+                        ContextCompat.getColor(requireContext(), R.color.app_rosa_acento_light)});
         bg.setCornerRadius(dp(30));
         btn.setBackground(bg);
         btn.setElevation(dp(4));
@@ -671,14 +660,14 @@ public class NuevoPuzzle extends Fragment {
     private Button crearBotonSecundario(String texto) {
         Button btn = new Button(getContext());
         btn.setText(texto);
-        btn.setTextColor(COLOR_SUBTITULO);
+        btn.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_subtexto_dark));
         btn.setTextSize(15);
         btn.setAllCaps(false);
         btn.setPadding(dp(20), dp(14), dp(20), dp(14));
         GradientDrawable bg = new GradientDrawable();
         bg.setColor(Color.TRANSPARENT);
         bg.setCornerRadius(dp(24));
-        bg.setStroke(dp(1), COLOR_BORDE);
+        bg.setStroke(dp(1), ContextCompat.getColor(requireContext(), R.color.app_green_borde_alt));
         btn.setBackground(bg);
         btn.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));

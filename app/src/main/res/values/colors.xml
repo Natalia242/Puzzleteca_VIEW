@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Truco
+        //ContextCompat.getColor(requireContext(), R.color.app_green_light)
+    -->
     <!-- ── Colores del sistema Material (originales) ── -->
     <color name="purple_200">#FFBB86FC</color>
     <color name="purple_500">#FF6200EE</color>
@@ -12,7 +15,7 @@
     <!-- ── Paleta principal de Puzzleteca ── -->
     <color name="pink">#FFDA90B2</color>
     <color name="dark_pink">#FFF06292</color>
-    <color name="jungle_green">#FF26A69A</color>
+    <color name="jungle_green">#26A69A</color>
     <color name="peach">#FFFFCFA8</color>
     <color name="teal">#FF6BA3A3</color>
     <color name="green">#FFCBEC9C</color>
@@ -131,4 +134,25 @@
 
     <!-- Barra de progreso ranking -->
     <color name="app_barra_bg">#F8E0E8</color>
+
+    <!-- ── Colores adicionales ── -->
+    <color name="app_gris_medio">#9E9E9E</color>
+    <color name="app_gris_oscuro">#616161</color>
+    <color name="app_gris_muy_oscuro">#424242</color>
+    <color name="app_gris_claro">#EEEEEE</color>
+    <color name="app_blue_grey_light">#CFD8DC</color>
+    <color name="app_rosa_light_alt">#F8BBD0</color>
+    <color name="app_rosa_gradient_start">#F1B2CA</color>
+    <color name="app_rosa_gradient_end">#FFF6F9</color>
+    <color name="app_rosa_fondo_alt">#FFF0F4</color>
+    <color name="app_naranja_fondo_alt">#FFF8F0</color>
+    <color name="app_rosa_acento">#E91E8C</color>
+    <color name="app_rosa_acento_light">#FF6BB5</color>
+    <color name="app_green_borde_alt">#C8E6C9</color>
+    <color name="app_green_texto_oscuro">#1A2E1A</color>
+    <color name="app_naranja_amber_light">#FFA726</color>
+    <color name="app_peligro_medium">#EF5350</color>
+    <color name="app_naranja_fuerte">#FB8C00</color>
+    <color name="app_fondo_verde_suave">#F8FBF8</color>
+    <color name="app_cyan_claro">#7BD8EF</color>
 </resources>

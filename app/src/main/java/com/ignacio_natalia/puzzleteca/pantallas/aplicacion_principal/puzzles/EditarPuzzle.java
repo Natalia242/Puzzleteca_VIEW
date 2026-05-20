@@ -13,11 +13,13 @@ import android.widget.*;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.slider.LabelFormatter;
 import com.google.android.material.slider.Slider;
+import com.ignacio_natalia.puzzleteca.R;
 import com.ignacio_natalia.puzzleteca.modelos.clases.Puzzle;
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.AppPrincipal;
 import com.ignacio_natalia.puzzleteca.utilidades.GestorSesion;
@@ -36,22 +38,6 @@ public class EditarPuzzle extends Fragment {
     private Switch   switchColor, switchEstado;
 
     private boolean dificultadAutomatica = true;
-
-    private static final int
-            COLOR_FONDO     = Color.parseColor("#F8FBF8"),
-            COLOR_CARD      = Color.WHITE,
-            COLOR_ACENTO    = Color.parseColor("#E91E8C"),
-            COLOR_ACENTO2   = Color.parseColor("#FF6BB5"),
-            COLOR_BORDE     = Color.parseColor("#C8E6C9"),
-            COLOR_TEXTO     = Color.parseColor("#1A2E1A"),
-            COLOR_HINT      = Color.parseColor("#90A4AE"),
-            COLOR_SUBTITULO = Color.parseColor("#546E7A"),
-            COLOR_HEADER_INI= Color.parseColor("#FCE4EC"),
-            COLOR_HEADER_FIN= Color.parseColor("#E8F5E9"),
-            COLOR_FACIL     = Color.parseColor("#66BB6A"),
-            COLOR_MEDIA     = Color.parseColor("#FFA726"),
-            COLOR_DIFICIL   = Color.parseColor("#EF5350"),
-            COLOR_EXTREMO   = Color.parseColor("#B71C1C");
 
     public static EditarPuzzle newInstance(Puzzle puzzle) {
         EditarPuzzle f = new EditarPuzzle();
@@ -92,11 +78,11 @@ public class EditarPuzzle extends Fragment {
         // ── Fondo gradiente: instancias SEPARADAS para scroll y root ──
         scroll.setBackground(new GradientDrawable(
                 GradientDrawable.Orientation.TL_BR,
-                new int[]{COLOR_HEADER_INI, COLOR_HEADER_FIN}
+                new int[]{ContextCompat.getColor(requireContext(), R.color.app_rosa_soft), ContextCompat.getColor(requireContext(), R.color.app_green_success)}
         ));
         root.setBackground(new GradientDrawable(
                 GradientDrawable.Orientation.TL_BR,
-                new int[]{COLOR_HEADER_INI, COLOR_HEADER_FIN}
+                new int[]{ContextCompat.getColor(requireContext(), R.color.app_rosa_soft), ContextCompat.getColor(requireContext(), R.color.app_green_success)}
         ));
 
         // ═══════════════════════════════════════════════════
@@ -119,13 +105,13 @@ public class EditarPuzzle extends Fragment {
         TextView tvBadge = new TextView(getContext());
         tvBadge.setText("✏️  Edición");
         tvBadge.setTextSize(12);
-        tvBadge.setTextColor(COLOR_ACENTO);
+        tvBadge.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_rosa_acento));
         tvBadge.setTypeface(null, Typeface.BOLD);
         tvBadge.setPadding(dp(14), dp(6), dp(14), dp(6));
         GradientDrawable badgeBg = new GradientDrawable();
         badgeBg.setColor(Color.WHITE);
         badgeBg.setCornerRadius(dp(20));
-        badgeBg.setStroke(dp(1), COLOR_ACENTO2);
+        badgeBg.setStroke(dp(1), ContextCompat.getColor(requireContext(), R.color.app_rosa_acento_light));
         tvBadge.setBackground(badgeBg);
         LinearLayout.LayoutParams badgeParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -138,7 +124,7 @@ public class EditarPuzzle extends Fragment {
         tvTitulo.setText("Editar Puzzle");
         tvTitulo.setTextSize(30);
         tvTitulo.setTypeface(null, Typeface.BOLD);
-        tvTitulo.setTextColor(COLOR_TEXTO);
+        tvTitulo.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_green_texto_oscuro));
         tvTitulo.setGravity(Gravity.CENTER_HORIZONTAL);
         LinearLayout.LayoutParams tituloParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -150,7 +136,7 @@ public class EditarPuzzle extends Fragment {
         TextView tvNombrePuzzle = new TextView(getContext());
         tvNombrePuzzle.setText(nombrePuzzle);
         tvNombrePuzzle.setTextSize(15);
-        tvNombrePuzzle.setTextColor(COLOR_ACENTO);
+        tvNombrePuzzle.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_rosa_acento));
         tvNombrePuzzle.setGravity(Gravity.CENTER_HORIZONTAL);
         tvNombrePuzzle.setTypeface(null, Typeface.ITALIC);
         LinearLayout.LayoutParams nombreParams = new LinearLayout.LayoutParams(
@@ -162,7 +148,7 @@ public class EditarPuzzle extends Fragment {
         TextView tvSubtitulo = new TextView(getContext());
         tvSubtitulo.setText("Modifica los campos que desees");
         tvSubtitulo.setTextSize(13);
-        tvSubtitulo.setTextColor(COLOR_SUBTITULO);
+        tvSubtitulo.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_subtexto_dark));
         tvSubtitulo.setGravity(Gravity.CENTER_HORIZONTAL);
 
         // Línea decorativa bajo el header
@@ -173,7 +159,7 @@ public class EditarPuzzle extends Fragment {
         lineaDecorada.setLayoutParams(lineaParams);
         GradientDrawable lineaBg = new GradientDrawable(
                 GradientDrawable.Orientation.LEFT_RIGHT,
-                new int[]{COLOR_ACENTO, COLOR_ACENTO2});
+                new int[]{ContextCompat.getColor(requireContext(), R.color.app_rosa_acento), ContextCompat.getColor(requireContext(), R.color.app_rosa_acento_light)});
         lineaBg.setCornerRadius(dp(4));
         lineaDecorada.setBackground(lineaBg);
 
@@ -229,13 +215,13 @@ public class EditarPuzzle extends Fragment {
         TextView tvDifLabel = new TextView(getContext());
         tvDifLabel.setText("Dificultad");
         tvDifLabel.setTextSize(15);
-        tvDifLabel.setTextColor(COLOR_TEXTO);
+        tvDifLabel.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_green_texto_oscuro));
         tvDifLabel.setTypeface(null, Typeface.BOLD);
 
         TextView tvDifAuto = new TextView(getContext());
         tvDifAuto.setText("Automática según piezas");
         tvDifAuto.setTextSize(11);
-        tvDifAuto.setTextColor(COLOR_SUBTITULO);
+        tvDifAuto.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_subtexto_dark));
 
         difTextos.addView(tvDifLabel);
         difTextos.addView(tvDifAuto);
@@ -243,7 +229,7 @@ public class EditarPuzzle extends Fragment {
         CheckBox autoCheck = new CheckBox(getContext());
         autoCheck.setText("Auto");
         autoCheck.setTextSize(12);
-        autoCheck.setTextColor(COLOR_SUBTITULO);
+        autoCheck.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_subtexto_dark));
         autoCheck.setChecked(true);
 
         sliderDificultad = new Slider(getContext());
@@ -266,7 +252,7 @@ public class EditarPuzzle extends Fragment {
         etiquetasDif.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
         String[] niveles = {"Fácil", "Media", "Difícil", "Extremo"};
-        int[] coloresNivel = {COLOR_FACIL, COLOR_MEDIA, COLOR_DIFICIL, COLOR_EXTREMO};
+        int[] coloresNivel = {ContextCompat.getColor(requireContext(), R.color.app_dificultad_facil), ContextCompat.getColor(requireContext(), R.color.app_naranja_amber_light), ContextCompat.getColor(requireContext(), R.color.app_peligro_medium), ContextCompat.getColor(requireContext(), R.color.app_peligro_darker)};
         for (int i = 0; i < niveles.length; i++) {
             TextView chip = new TextView(getContext());
             chip.setText(niveles[i]);
@@ -358,14 +344,14 @@ public class EditarPuzzle extends Fragment {
         TextView tvEstadoTitulo = new TextView(getContext());
         tvEstadoTitulo.setText("🔒  Visibilidad");
         tvEstadoTitulo.setTextSize(16);
-        tvEstadoTitulo.setTextColor(COLOR_TEXTO);
+        tvEstadoTitulo.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_green_texto_oscuro));
         tvEstadoTitulo.setTypeface(null, Typeface.BOLD);
 
         TextView tvEstadoDesc = new TextView(getContext());
         boolean esPublico = puzzle.getEstado() == Puzzle.Estados.Publico;
         tvEstadoDesc.setText(esPublico ? "Público" : "Privado");
         tvEstadoDesc.setTextSize(12);
-        tvEstadoDesc.setTextColor(COLOR_SUBTITULO);
+        tvEstadoDesc.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_subtexto_dark));
 
         textoEstado.addView(tvEstadoTitulo);
         textoEstado.addView(tvEstadoDesc);
@@ -515,10 +501,10 @@ public class EditarPuzzle extends Fragment {
         String texto;
         String emoji;
         switch (v) {
-            case 1: texto = "Media";   color = COLOR_MEDIA;   emoji = "🟡"; break;
-            case 2: texto = "Difícil"; color = COLOR_DIFICIL; emoji = "🟠"; break;
-            case 3: texto = "Extremo"; color = COLOR_EXTREMO; emoji = "🔴"; break;
-            default: texto = "Fácil";  color = COLOR_FACIL;   emoji = "🟢"; break;
+            case 1: texto = "Media";   color = ContextCompat.getColor(requireContext(), R.color.app_naranja_amber_light);   emoji = "🟡"; break;
+            case 2: texto = "Difícil"; color = ContextCompat.getColor(requireContext(), R.color.app_peligro_medium); emoji = "🟠"; break;
+            case 3: texto = "Extremo"; color = ContextCompat.getColor(requireContext(), R.color.app_peligro_darker); emoji = "🔴"; break;
+            default: texto = "Fácil";  color = ContextCompat.getColor(requireContext(), R.color.app_dificultad_facil);   emoji = "🟢"; break;
         }
         tvDifValor.setText(emoji + "  " + texto);
         tvDifValor.setTextColor(color);
@@ -540,9 +526,9 @@ public class EditarPuzzle extends Fragment {
         card.setPadding(dp(18), dp(14), dp(18), dp(14));
 
         GradientDrawable bg = new GradientDrawable();
-        bg.setColor(COLOR_CARD);
+        bg.setColor(ContextCompat.getColor(requireContext(), R.color.white));
         bg.setCornerRadius(dp(20));
-        bg.setStroke(dp(1), COLOR_BORDE);
+        bg.setStroke(dp(1), ContextCompat.getColor(requireContext(), R.color.app_green_borde_alt));
         card.setBackground(bg);
         card.setElevation(dp(2));
 
@@ -555,8 +541,8 @@ public class EditarPuzzle extends Fragment {
     private EditText crearCampo(String hint, String valor) {
         EditText et = new EditText(getContext());
         et.setHint(hint);
-        et.setHintTextColor(COLOR_HINT);
-        et.setTextColor(COLOR_TEXTO);
+        et.setHintTextColor(ContextCompat.getColor(requireContext(), R.color.app_subtexto_label));
+        et.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_green_texto_oscuro));
         et.setTextSize(15);
         et.setBackground(null);
         et.setPadding(dp(4), dp(12), dp(4), dp(12));
@@ -585,7 +571,7 @@ public class EditarPuzzle extends Fragment {
         tv.setText(texto);
         tv.setTextSize(13);
         tv.setTypeface(null, Typeface.BOLD);
-        tv.setTextColor(COLOR_SUBTITULO);
+        tv.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_subtexto_dark));
         tv.setLetterSpacing(0.08f);
         LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -644,12 +630,12 @@ public class EditarPuzzle extends Fragment {
         TextView tvT = new TextView(getContext());
         tvT.setText(titulo);
         tvT.setTextSize(16);
-        tvT.setTextColor(COLOR_TEXTO);
+        tvT.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_green_texto_oscuro));
         tvT.setTypeface(null, Typeface.BOLD);
         TextView tvD = new TextView(getContext());
         tvD.setText(desc);
         tvD.setTextSize(12);
-        tvD.setTextColor(COLOR_SUBTITULO);
+        tvD.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_subtexto_dark));
         ll.addView(tvT);
         ll.addView(tvD);
         return ll;
@@ -665,7 +651,7 @@ public class EditarPuzzle extends Fragment {
         btn.setPadding(dp(20), dp(18), dp(20), dp(18));
         GradientDrawable bg = new GradientDrawable(
                 GradientDrawable.Orientation.LEFT_RIGHT,
-                new int[]{COLOR_ACENTO, COLOR_ACENTO2});
+                new int[]{ContextCompat.getColor(requireContext(), R.color.app_rosa_acento), ContextCompat.getColor(requireContext(), R.color.app_rosa_acento_light)});
         bg.setCornerRadius(dp(30));
         btn.setBackground(bg);
         btn.setElevation(dp(4));
@@ -677,14 +663,14 @@ public class EditarPuzzle extends Fragment {
     private Button crearBotonSecundario(String texto) {
         Button btn = new Button(getContext());
         btn.setText(texto);
-        btn.setTextColor(COLOR_SUBTITULO);
+        btn.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_subtexto_dark));
         btn.setTextSize(15);
         btn.setAllCaps(false);
         btn.setPadding(dp(20), dp(14), dp(20), dp(14));
         GradientDrawable bg = new GradientDrawable();
         bg.setColor(Color.TRANSPARENT);
         bg.setCornerRadius(dp(24));
-        bg.setStroke(dp(1), COLOR_BORDE);
+        bg.setStroke(dp(1), ContextCompat.getColor(requireContext(), R.color.app_green_borde_alt));
         btn.setBackground(bg);
         btn.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
