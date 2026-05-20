@@ -25,9 +25,11 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 
 import com.bumptech.glide.Glide;
+import com.ignacio_natalia.puzzleteca.R;
 import com.ignacio_natalia.puzzleteca.modelos.clases.Puzzle;
 import com.ignacio_natalia.puzzleteca.repositorios.RankingRepositorio;
 import com.ignacio_natalia.puzzleteca.utilidades.GestorSesion;
@@ -88,11 +90,11 @@ public class PuzzleDialogFragment extends DialogFragment {
 
             paintFilled.setStyle(Paint.Style.FILL);
             paintEmpty.setStyle(Paint.Style.FILL);
-            paintEmpty.setColor(Color.parseColor("#E0E0E0"));
+            paintEmpty.setColor(ContextCompat.getColor(getContext(), R.color.app_borde_gris));
 
             paintStroke.setStyle(Paint.Style.STROKE);
             paintStroke.setStrokeWidth(1.5f * density);
-            paintStroke.setColor(Color.parseColor("#BDBDBD"));
+            paintStroke.setColor(ContextCompat.getColor(getContext(), R.color.app_borde_gris_dark));
         }
 
         @Override
@@ -137,13 +139,13 @@ public class PuzzleDialogFragment extends DialogFragment {
 
                 if (starValue > 0f) {
 
-                    LinearGradient gradient = new LinearGradient(
+                    @SuppressLint("DrawAllocation") LinearGradient gradient = new LinearGradient(
                             offsetX,
                             0,
                             offsetX,
                             starSizePx,
-                            Color.parseColor("#FFD740"),
-                            Color.parseColor("#FF8F00"),
+                            ContextCompat.getColor(getContext(), R.color.app_estrella_light),
+                            ContextCompat.getColor(getContext(), R.color.app_estrella_dark),
                             Shader.TileMode.CLAMP
                     );
 
@@ -353,7 +355,7 @@ public class PuzzleDialogFragment extends DialogFragment {
         android.graphics.drawable.GradientDrawable frameBg =
                 new android.graphics.drawable.GradientDrawable();
         frameBg.setCornerRadius(dp(12));
-        frameBg.setColor(Color.parseColor("#F5F5F5"));
+        frameBg.setColor(ContextCompat.getColor(requireContext(), R.color.app_fondo_card));
         imagenFrame.setBackground(frameBg);
         imagenFrame.setClipToOutline(true);
         imagenFrame.setOutlineProvider(new android.view.ViewOutlineProvider() {
@@ -465,7 +467,7 @@ public class PuzzleDialogFragment extends DialogFragment {
             labelMio.setText(labelTexto);
             labelMio.setTextSize(14);
             labelMio.setTypeface(null, Typeface.BOLD);
-            labelMio.setTextColor(Color.parseColor("#616161"));
+            labelMio.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_gris_oscuro));
             labelMio.setPadding(0, 0, 0, dp(10));
 
             RoundedStarRatingView starViewReadOnly = new RoundedStarRatingView(requireContext());
@@ -485,7 +487,7 @@ public class PuzzleDialogFragment extends DialogFragment {
             TextView tvSub = new TextView(requireContext());
             tvSub.setText(subTexto);
             tvSub.setTextSize(12);
-            tvSub.setTextColor(Color.parseColor("#9E9E9E"));
+            tvSub.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_gris_medio));
             tvSub.setPadding(0, dp(2), 0, 0);
 
             cardValoracion.addView(labelMio);
@@ -510,7 +512,7 @@ public class PuzzleDialogFragment extends DialogFragment {
                 btnLogin.setLayoutParams(btnLP);
                 android.graphics.drawable.GradientDrawable btnBg =
                         new android.graphics.drawable.GradientDrawable();
-                btnBg.setColor(Color.parseColor("#2E7D6E"));
+                btnBg.setColor(ContextCompat.getColor(requireContext(), R.color.app_teal_dark));
                 btnBg.setCornerRadius(dp(12));
                 btnLogin.setBackground(btnBg);
                 btnLogin.setOnClickListener(v -> {
@@ -532,7 +534,7 @@ public class PuzzleDialogFragment extends DialogFragment {
             labelValorar.setText("Valorar este puzzle");
             labelValorar.setTextSize(14);
             labelValorar.setTypeface(null, Typeface.BOLD);
-            labelValorar.setTextColor(Color.parseColor("#616161"));
+            labelValorar.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_gris_oscuro));
             labelValorar.setPadding(0, 0, 0, dp(10));
 
             RoundedStarRatingView starView = new RoundedStarRatingView(requireContext());
@@ -544,7 +546,7 @@ public class PuzzleDialogFragment extends DialogFragment {
             TextView tvEstado = new TextView(requireContext());
             tvEstado.setText("Toca las estrellas para valorar");
             tvEstado.setTextSize(12);
-            tvEstado.setTextColor(Color.parseColor("#9E9E9E"));
+            tvEstado.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_gris_medio));
             tvEstado.setPadding(0, dp(4), 0, 0);
 
             starView.setOnRatingChangeListener((stars, fromUser) -> {
@@ -553,7 +555,7 @@ public class PuzzleDialogFragment extends DialogFragment {
                 String token = GestorSesion.obtenerToken(requireContext());
 
                 tvEstado.setText("Enviando valoración…");
-                tvEstado.setTextColor(Color.parseColor("#9E9E9E"));
+                tvEstado.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_gris_medio));
                 starView.setEnabled(false);
 
                 rankingRepositorio.valorarPuzzle(
@@ -574,20 +576,20 @@ public class PuzzleDialogFragment extends DialogFragment {
                                         puzzle.setValoracion((double) stars);
                                     }
                                     tvEstado.setText("✅ Valorado con " + stars + " estrella" + (stars != 1 ? "s" : ""));
-                                    tvEstado.setTextColor(Color.parseColor("#43A047"));
+                                    tvEstado.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_green_success_text_dark));
                                     Toast.makeText(requireContext(),
                                             "Has valorado con " + stars + " estrellas",
                                             Toast.LENGTH_SHORT).show();
                                 } else if (response.code() == 409) {
                                     tvEstado.setText("Ya valoraste este puzzle");
-                                    tvEstado.setTextColor(Color.parseColor("#FB8C00"));
+                                    tvEstado.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_naranja_fuerte));
                                     starView.setEnabled(false);
                                     Toast.makeText(requireContext(),
                                             "Ya has valorado este puzzle",
                                             Toast.LENGTH_SHORT).show();
                                 } else {
                                     tvEstado.setText("Error al valorar. Inténtalo de nuevo");
-                                    tvEstado.setTextColor(Color.parseColor("#E53935"));
+                                    tvEstado.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_peligro));
                                     starView.setEnabled(true);
                                 }
                             }
@@ -597,7 +599,7 @@ public class PuzzleDialogFragment extends DialogFragment {
                                                   @NonNull Throwable t) {
                                 if (!isAdded()) return;
                                 tvEstado.setText("Sin conexión. Inténtalo de nuevo");
-                                tvEstado.setTextColor(Color.parseColor("#E53935"));
+                                tvEstado.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_peligro));
                                 starView.setEnabled(true);
                                 Toast.makeText(requireContext(),
                                         "Error de red",
@@ -623,7 +625,7 @@ public class PuzzleDialogFragment extends DialogFragment {
         android.graphics.drawable.GradientDrawable btnBg =
                 new android.graphics.drawable.GradientDrawable();
         btnBg.setCornerRadius(dp(10));
-        btnBg.setColor(Color.parseColor("#5C6BC0"));
+        btnBg.setColor(ContextCompat.getColor(requireContext(), R.color.app_admin_indigo));
         cerrar.setBackground(btnBg);
         cerrar.setPadding(dp(16), dp(12), dp(16), dp(12));
 
@@ -653,7 +655,7 @@ public class PuzzleDialogFragment extends DialogFragment {
                 new android.graphics.drawable.GradientDrawable();
         bg.setCornerRadius(dp(14));
         bg.setColor(Color.WHITE);
-        bg.setStroke(dp(1), Color.parseColor("#EEEEEE"));
+        bg.setStroke(dp(1), ContextCompat.getColor(requireContext(), R.color.app_gris_claro));
         card.setBackground(bg);
 
         card.setElevation(dp(2));
@@ -661,6 +663,7 @@ public class PuzzleDialogFragment extends DialogFragment {
     }
 
     /** Crea una fila etiqueta + valor dentro de una tarjeta. */
+    @SuppressLint("SetTextI18n")
     private LinearLayout crearFila(String etiqueta, String valor) {
         LinearLayout fila = new LinearLayout(requireContext());
         fila.setOrientation(LinearLayout.HORIZONTAL);
@@ -672,12 +675,12 @@ public class PuzzleDialogFragment extends DialogFragment {
         TextView tvLabel = new TextView(requireContext());
         tvLabel.setText(etiqueta + ": ");
         tvLabel.setTypeface(null, Typeface.BOLD);
-        tvLabel.setTextColor(Color.parseColor("#424242"));
+        tvLabel.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_gris_muy_oscuro));
         tvLabel.setTextSize(14);
 
         TextView tvValor = new TextView(requireContext());
         tvValor.setText(valor != null ? valor : "—");
-        tvValor.setTextColor(Color.parseColor("#616161"));
+        tvValor.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_gris_oscuro));
         tvValor.setTextSize(14);
         LinearLayout.LayoutParams valorParams = new LinearLayout.LayoutParams(
                 0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f);

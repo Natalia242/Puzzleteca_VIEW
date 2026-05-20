@@ -23,6 +23,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -53,22 +54,10 @@ import retrofit2.Response;
  */
 public class Ranking extends Fragment {
 
-    // ── Paleta ────────────────────────────────────────────────────────────
-    private static final String C_TITULO    = "#2E7D6E";
-    private static final String C_SUBTITULO = "#78909C";
-    private static final String C_ROSA      = "#F06292";
-    private static final String C_TEAL      = "#26A69A";
-    private static final String C_NARANJA   = "#FF8A65";
-    private static final String C_NOMBRE    = "#2E4057";
-    private static final String C_GRIS      = "#90A4AE";
-    private static final String C_BARRA_BG  = "#F8E0E8";
-    private static final String C_ESTRELLA  = "#FDD835";
-    private static final String C_LINEA     = "#4DB6AC";
-
     // Fondos tarjeta Top
     private static final String[] BG_TOP    = {"#FFF0F4", "#F0FAFA", "#FFF8F0"};
     private static final String[] BORDE_TOP = {"#F48FB1", "#80CBC4", "#FFAB40"};
-    private static final String[] COLOR_POS = {C_ROSA, C_TEAL, C_NARANJA};
+    private static final String[] COLOR_POS = {"#F06292", "#26A69A", "#FF8A65"};
     private static final int[]    MEDALLAS  = {R.drawable.top1, R.drawable.top2, R.drawable.top3};
 
     // ── Polling ───────────────────────────────────────────────────────────
@@ -125,7 +114,7 @@ public class Ranking extends Fragment {
         tvVacio.setText("Aún no hay valoraciones hoy.\n¡Valora los puzzles de la comunidad!");
         tvVacio.setTextSize(15);
         tvVacio.setGravity(Gravity.CENTER);
-        tvVacio.setTextColor(Color.parseColor(C_GRIS));
+        tvVacio.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_subtexto_label));
         tvVacio.setPadding(dp(24), dp(40), dp(24), 0);
         tvVacio.setVisibility(View.GONE);
         root.addView(tvVacio);
@@ -189,7 +178,7 @@ public class Ranking extends Fragment {
         tvTitulo.setText("Valoraciones de hoy");
         tvTitulo.setTextSize(22);
         tvTitulo.setTypeface(null, Typeface.BOLD);
-        tvTitulo.setTextColor(Color.parseColor(C_TITULO));
+        tvTitulo.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_teal_dark));
         LinearLayout.LayoutParams tp = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         tp.setMargins(dp(14), 0, dp(14), 0);
@@ -216,7 +205,7 @@ public class Ranking extends Fragment {
 
     private View lineaDecorativa() {
         View v = new View(requireContext());
-        v.setBackgroundColor(Color.parseColor(C_LINEA));
+        v.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.app_teal_badge));
         v.setAlpha(0.45f);
         v.setLayoutParams(new LinearLayout.LayoutParams(0, dp(1), 1f));
         return v;
@@ -420,12 +409,13 @@ public class Ranking extends Fragment {
         //  Bind Normal (pos ≥ 4)
         // ─────────────────────────────────────────────────────────────
 
+        @SuppressLint("SetTextI18n")
         private void bindNormal(VHNormal h, RankingUsuario u, int pos) {
 
             // Badge circular teal
             GradientDrawable badge = new GradientDrawable();
             badge.setShape(GradientDrawable.OVAL);
-            badge.setColor(Color.parseColor(C_TEAL));
+            badge.setColor(ContextCompat.getColor(requireContext(), R.color.jungle_green));
             h.viewBadge.setBackground(badge);
 
             h.tvPosicion.setText(String.valueOf(pos));
@@ -541,7 +531,7 @@ public class Ranking extends Fragment {
             TextView tvNombre = new TextView(ctx);
             tvNombre.setTextSize(12);
             tvNombre.setTypeface(null, Typeface.BOLD);
-            tvNombre.setTextColor(Color.parseColor(C_NOMBRE));
+            tvNombre.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_texto_nombre));
             tvNombre.setMaxLines(1);
             tvNombre.setEllipsize(TextUtils.TruncateAt.END);
             tvNombre.setTag("nombre_" + posNum);
@@ -556,7 +546,7 @@ public class Ranking extends Fragment {
             rb.setStepSize(0.5f);
             rb.setIsIndicator(true);
             rb.getProgressDrawable().setColorFilter(
-                    Color.parseColor(C_ESTRELLA), PorterDuff.Mode.SRC_IN);
+                    ContextCompat.getColor(requireContext(), R.color.app_estrella), PorterDuff.Mode.SRC_IN);
             LinearLayout.LayoutParams rbp = new LinearLayout.LayoutParams(
                     ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             rbp.setMargins(0, dp(3), 0, dp(6));
@@ -590,7 +580,7 @@ public class Ranking extends Fragment {
             // ── Total valoraciones ─────────────────────────────────────
             TextView tvTotal = new TextView(ctx);
             tvTotal.setTextSize(10);
-            tvTotal.setTextColor(Color.parseColor(C_GRIS));
+            tvTotal.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_subtexto_label));
             tvTotal.setGravity(Gravity.CENTER_HORIZONTAL);
             LinearLayout.LayoutParams tp = new LinearLayout.LayoutParams(
                     ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -602,7 +592,7 @@ public class Ranking extends Fragment {
             // ── Media numérica ─────────────────────────────────────────
             TextView tvMedia = new TextView(ctx);
             tvMedia.setTextSize(10);
-            tvMedia.setTextColor(Color.parseColor(C_GRIS));
+            tvMedia.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_subtexto_label));
             tvMedia.setGravity(Gravity.CENTER_HORIZONTAL);
             tvMedia.setTag("media_" + posNum);
             card.addView(tvMedia);
@@ -665,7 +655,7 @@ public class Ranking extends Fragment {
             TextView tvNombre = new TextView(parent.getContext());
             tvNombre.setTextSize(15);
             tvNombre.setTypeface(null, Typeface.BOLD);
-            tvNombre.setTextColor(Color.parseColor(C_NOMBRE));
+            tvNombre.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_texto_nombre));
             tvNombre.setMaxLines(1);
             tvNombre.setEllipsize(TextUtils.TruncateAt.END);
             tvNombre.setTag("nombre");
@@ -685,7 +675,7 @@ public class Ranking extends Fragment {
             rb.setStepSize(0.5f);
             rb.setIsIndicator(true);
             rb.getProgressDrawable().setColorFilter(
-                    Color.parseColor(C_ESTRELLA), PorterDuff.Mode.SRC_IN);
+                    ContextCompat.getColor(requireContext(), R.color.app_estrella), PorterDuff.Mode.SRC_IN);
             LinearLayout.LayoutParams rbp = new LinearLayout.LayoutParams(
                     ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             rbp.setMargins(0, 0, dp(10), 0);
@@ -696,7 +686,7 @@ public class Ranking extends Fragment {
             // Pista de la barra
             FrameLayout barraPista = new FrameLayout(parent.getContext());
             GradientDrawable pistaDraw = new GradientDrawable();
-            pistaDraw.setColor(Color.parseColor(C_BARRA_BG));
+            pistaDraw.setColor(ContextCompat.getColor(requireContext(), R.color.app_barra_bg));
             pistaDraw.setCornerRadius(dp(8));
             barraPista.setBackground(pistaDraw);
             barraPista.setLayoutParams(new LinearLayout.LayoutParams(0, dp(10), 1f));
@@ -705,7 +695,7 @@ public class Ranking extends Fragment {
             // Relleno de la barra
             View barraFill = new View(parent.getContext());
             GradientDrawable fillDraw = new GradientDrawable();
-            fillDraw.setColor(Color.parseColor(C_ROSA));
+            fillDraw.setColor(ContextCompat.getColor(requireContext(), R.color.dark_pink));
             fillDraw.setCornerRadius(dp(8));
             barraFill.setBackground(fillDraw);
             FrameLayout.LayoutParams ffp = new FrameLayout.LayoutParams(
@@ -721,7 +711,7 @@ public class Ranking extends Fragment {
             // Total + media
             TextView tvTotal = new TextView(parent.getContext());
             tvTotal.setTextSize(11);
-            tvTotal.setTextColor(Color.parseColor(C_GRIS));
+            tvTotal.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_subtexto_label));
             LinearLayout.LayoutParams tp = new LinearLayout.LayoutParams(
                     ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             tp.setMargins(0, dp(3), 0, 0);
@@ -734,7 +724,7 @@ public class Ranking extends Fragment {
             TextView tvPct = new TextView(parent.getContext());
             tvPct.setTextSize(14);
             tvPct.setTypeface(null, Typeface.BOLD);
-            tvPct.setTextColor(Color.parseColor(C_ROSA));
+            tvPct.setTextColor(ContextCompat.getColor(requireContext(), R.color.dark_pink));
             LinearLayout.LayoutParams pctP = new LinearLayout.LayoutParams(
                     ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             pctP.setMargins(dp(8), 0, 0, 0);
@@ -814,7 +804,7 @@ public class Ranking extends Fragment {
             pistaPaint.setStrokeWidth(grosor);
             pistaPaint.setStrokeCap(android.graphics.Paint.Cap.ROUND);
 
-            arcoPaint.setColor(Color.parseColor(C_ROSA));
+            arcoPaint.setColor(ContextCompat.getColor(getContext(), R.color.dark_pink));
             arcoPaint.setStyle(android.graphics.Paint.Style.STROKE);
             arcoPaint.setStrokeWidth(grosor);
             arcoPaint.setStrokeCap(android.graphics.Paint.Cap.ROUND);
