@@ -23,6 +23,7 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 
+import com.ignacio_natalia.puzzleteca.R;
 import com.ignacio_natalia.puzzleteca.modelos.clases.Usuario;
 import com.ignacio_natalia.puzzleteca.repositorios.UsuarioRepositorio;
 import com.ignacio_natalia.puzzleteca.utilidades.GestorSesion;
@@ -35,22 +36,6 @@ import retrofit2.Response;
 public class UsuarioDialogFragment extends DialogFragment {
 
     private static final String ARG_USUARIO = "usuario";
-
-    // ── Paleta ────────────────────────────────────────────────────────────────
-//    private static final int C_TEAL_SOFT  = ContextCompat.getColor(requireContext(), R.color.app_peligro);
-    private static final String C_ADMIN      = "#5C6BC0";
-    private static final String C_ADMIN_SOFT = "#E8EAF6";
-    private static final String C_BLOQ       = "#E53935";
-    private static final String C_BLOQ_SOFT  = "#FFEBEE";
-    private static final String C_USUARIO    = "#2E7D6E";
-    private static final String C_USU_SOFT   = "#E0F2F1";
-    private static final String C_TEXTO      = "#37474F";
-    private static final String C_SUBTEXTO   = "#78909C";
-    private static final String C_BORDE      = "#ECEFF1";
-    private static final String C_FONDO      = "#F5F7F8";
-    private static final String C_PELIGRO    = "#E53935";
-    private static final String C_PELIGRO_BG = "#FFEBEE";
-    private static final String C_PELIGRO_BD = "#EF9A9A";
 
     private Usuario usuario;
     private UsuarioRepositorio repositorio;
@@ -129,7 +114,7 @@ public class UsuarioDialogFragment extends DialogFragment {
         espaciado(layout, 12);
         TextView btnCerrar = new TextView(requireContext());
         btnCerrar.setText("Cerrar");
-        btnCerrar.setTextColor(Color.parseColor(C_SUBTEXTO));
+        btnCerrar.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_subtexto));
         btnCerrar.setTextSize(14);
         btnCerrar.setTypeface(null, Typeface.BOLD);
         btnCerrar.setGravity(Gravity.CENTER);
@@ -192,7 +177,7 @@ public class UsuarioDialogFragment extends DialogFragment {
         tvNombre.setText(nombreCompleto.trim());
         tvNombre.setTextSize(20);
         tvNombre.setTypeface(null, Typeface.BOLD);
-        tvNombre.setTextColor(Color.parseColor(C_TEXTO));
+        tvNombre.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_texto));
         tvNombre.setGravity(Gravity.CENTER);
         LinearLayout.LayoutParams nomLP = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -247,7 +232,7 @@ public class UsuarioDialogFragment extends DialogFragment {
         bannerLP.bottomMargin = dp(4);
         bannerRow.setLayoutParams(bannerLP);
         GradientDrawable bannerBg = new GradientDrawable();
-        bannerBg.setColor(Color.parseColor(C_ADMIN_SOFT));
+        bannerBg.setColor(ContextCompat.getColor(requireContext(), R.color.app_admin_indigo_soft));
         bannerBg.setCornerRadii(new float[]{dp(12), dp(12), dp(12), dp(12), 0, 0, 0, 0});
         bannerRow.setBackground(bannerBg);
 
@@ -263,7 +248,7 @@ public class UsuarioDialogFragment extends DialogFragment {
         tvBanner.setText("Datos confidenciales — acceso admin");
         tvBanner.setTextSize(12);
         tvBanner.setTypeface(null, Typeface.BOLD);
-        tvBanner.setTextColor(Color.parseColor(C_ADMIN));
+        tvBanner.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_admin_indigo));
 
         bannerRow.addView(tvLock);
         bannerRow.addView(tvBanner);
@@ -292,7 +277,7 @@ public class UsuarioDialogFragment extends DialogFragment {
         tvLabel.setText("Cambiar tipo de usuario");
         tvLabel.setTextSize(13);
         tvLabel.setTypeface(null, Typeface.BOLD);
-        tvLabel.setTextColor(Color.parseColor(C_TEXTO));
+        tvLabel.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_texto));
         LinearLayout.LayoutParams labelLP = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         labelLP.bottomMargin = dp(4);
@@ -301,7 +286,7 @@ public class UsuarioDialogFragment extends DialogFragment {
         TextView tvSub = new TextView(requireContext());
         tvSub.setText("El cambio se aplica de forma inmediata.");
         tvSub.setTextSize(12);
-        tvSub.setTextColor(Color.parseColor(C_SUBTEXTO));
+        tvSub.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_subtexto));
         LinearLayout.LayoutParams subLP = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         subLP.bottomMargin = dp(12);
@@ -320,7 +305,7 @@ public class UsuarioDialogFragment extends DialogFragment {
         GradientDrawable spBg = new GradientDrawable();
         spBg.setColor(Color.WHITE);
         spBg.setCornerRadius(dp(10));
-        spBg.setStroke(dp(1), Color.parseColor(C_BORDE));
+        spBg.setStroke(dp(1), ContextCompat.getColor(requireContext(), R.color.app_borde));
         spinner.setBackground(spBg);
         spinner.setPadding(dp(10), dp(8), dp(10), dp(8));
         LinearLayout.LayoutParams spLP = new LinearLayout.LayoutParams(
@@ -331,7 +316,7 @@ public class UsuarioDialogFragment extends DialogFragment {
         // Estado de confirmación
         TextView tvEstado = new TextView(requireContext());
         tvEstado.setTextSize(12);
-        tvEstado.setTextColor(Color.parseColor(C_SUBTEXTO));
+        tvEstado.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_subtexto));
         tvEstado.setText("Selecciona un tipo para cambiar.");
         tvEstado.setGravity(Gravity.CENTER);
 
@@ -344,7 +329,7 @@ public class UsuarioDialogFragment extends DialogFragment {
                 if (nuevo == usuario.getTipoUsuario()) return;
 
                 tvEstado.setText("Actualizando…");
-                tvEstado.setTextColor(Color.parseColor(C_SUBTEXTO));
+                tvEstado.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_subtexto));
 
                 String token = GestorSesion.obtenerToken(requireContext());
                 repositorio.actualizarEstado(usuario.getEmail(), nuevo.name(),
@@ -360,7 +345,7 @@ public class UsuarioDialogFragment extends DialogFragment {
                                         if (listener != null) listener.onUsuarioModificado();
                                     } else {
                                         tvEstado.setText("❌ Error al actualizar (" + r.code() + ")");
-                                        tvEstado.setTextColor(Color.parseColor(C_BLOQ));
+                                        tvEstado.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_peligro));
                                         spinner.setSelection(usuario.getTipoUsuario().ordinal());
                                     }
                                 });
@@ -370,7 +355,7 @@ public class UsuarioDialogFragment extends DialogFragment {
                                 if (!isAdded()) return;
                                 requireActivity().runOnUiThread(() -> {
                                     tvEstado.setText("❌ Error de red");
-                                    tvEstado.setTextColor(Color.parseColor(C_BLOQ));
+                                    tvEstado.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_peligro));
                                     spinner.setSelection(usuario.getTipoUsuario().ordinal());
                                 });
                             }
@@ -400,9 +385,9 @@ public class UsuarioDialogFragment extends DialogFragment {
         cardLP.bottomMargin = dp(4);
         card.setLayoutParams(cardLP);
         GradientDrawable bg = new GradientDrawable();
-        bg.setColor(Color.parseColor(C_PELIGRO_BG));
+        bg.setColor(ContextCompat.getColor(requireContext(), R.color.app_peligro_bg));
         bg.setCornerRadius(dp(14));
-        bg.setStroke(dp(1), Color.parseColor(C_PELIGRO_BD));
+        bg.setStroke(dp(1), ContextCompat.getColor(requireContext(), R.color.app_peligro_borde));
         card.setBackground(bg);
 
         TextView tvAviso = new TextView(requireContext());
@@ -427,7 +412,7 @@ public class UsuarioDialogFragment extends DialogFragment {
         btnEliminar.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
         GradientDrawable elimBg = new GradientDrawable();
-        elimBg.setColor(Color.parseColor(C_PELIGRO));
+        elimBg.setColor(ContextCompat.getColor(requireContext(), R.color.app_peligro));
         elimBg.setCornerRadius(dp(12));
         btnEliminar.setBackground(elimBg);
 
@@ -439,7 +424,7 @@ public class UsuarioDialogFragment extends DialogFragment {
                     "Eliminar usuario",
                     "¿Seguro que quieres eliminar a " + nombreUsuario + "?\nEsta acción no se puede deshacer.",
                     "Eliminar",
-                    C_PELIGRO,
+                    String.valueOf(ContextCompat.getColor(requireContext(), R.color.app_peligro)),
                     this::eliminarUsuario
             );
         });
@@ -494,8 +479,8 @@ public class UsuarioDialogFragment extends DialogFragment {
         GradientDrawable bg = new GradientDrawable();
         bg.setColor(Color.WHITE);
         bg.setCornerRadius(dp(14));
-        if (borde) bg.setStroke(dp(1), Color.parseColor(C_ADMIN));
-        else       bg.setStroke(dp(1), Color.parseColor(C_BORDE));
+        if (borde) bg.setStroke(dp(1), ContextCompat.getColor(requireContext(), R.color.app_admin_indigo));
+        else       bg.setStroke(dp(1), ContextCompat.getColor(requireContext(), R.color.app_borde));
         t.setBackground(bg);
         t.setElevation(dp(1));
         return t;
@@ -525,13 +510,13 @@ public class UsuarioDialogFragment extends DialogFragment {
         tvLabel.setText(etiqueta);
         tvLabel.setTextSize(11);
         tvLabel.setTypeface(null, Typeface.BOLD);
-        tvLabel.setTextColor(Color.parseColor(C_SUBTEXTO));
+        tvLabel.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_subtexto));
         tvLabel.setLetterSpacing(0.04f);
 
         TextView tvValor = new TextView(requireContext());
         tvValor.setText(valor);
         tvValor.setTextSize(14);
-        tvValor.setTextColor(Color.parseColor(C_TEXTO));
+        tvValor.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_texto));
         tvValor.setTypeface(null, Typeface.BOLD);
 
         col.addView(tvLabel);
@@ -547,7 +532,7 @@ public class UsuarioDialogFragment extends DialogFragment {
                 LinearLayout.LayoutParams.MATCH_PARENT, dp(1));
         lp.setMargins(dp(16), 0, dp(16), 0);
         d.setLayoutParams(lp);
-        d.setBackgroundColor(Color.parseColor(C_BORDE));
+        d.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.app_borde));
         return d;
     }
 
@@ -570,11 +555,11 @@ public class UsuarioDialogFragment extends DialogFragment {
 
     /** [color texto, color fondo] según tipo */
     private String[] colorPorTipo(Usuario.TipoUsuario tipo) {
-        if (tipo == null) return new String[]{C_USUARIO, C_USU_SOFT};
+        if (tipo == null) return new String[]{String.valueOf(ContextCompat.getColor(requireContext(), R.color.app_teal_dark)), String.valueOf(ContextCompat.getColor(requireContext(), R.color.app_teal_soft))};
         switch (tipo) {
-            case Admin:    return new String[]{C_ADMIN,   C_ADMIN_SOFT};
-            case Bloqueado:return new String[]{C_BLOQ,    C_BLOQ_SOFT};
-            default:       return new String[]{C_USUARIO, C_USU_SOFT};
+            case Admin:    return new String[]{String.valueOf(ContextCompat.getColor(requireContext(), R.color.app_admin_indigo)), String.valueOf(ContextCompat.getColor(requireContext(), R.color.app_admin_indigo_soft))};
+            case Bloqueado:return new String[]{String.valueOf(ContextCompat.getColor(requireContext(), R.color.app_peligro)), String.valueOf(ContextCompat.getColor(requireContext(), R.color.app_peligro_bg))};
+            default:       return new String[]{String.valueOf(ContextCompat.getColor(requireContext(), R.color.app_teal_dark)), String.valueOf(ContextCompat.getColor(requireContext(), R.color.app_teal_soft))};
         }
     }
 
