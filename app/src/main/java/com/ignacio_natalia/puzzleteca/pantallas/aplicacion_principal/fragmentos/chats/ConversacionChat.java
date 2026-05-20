@@ -10,30 +10,17 @@ import android.widget.*;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.ignacio_natalia.puzzleteca.R;
 import com.ignacio_natalia.puzzleteca.modelos.chat.MensajeChat;
 import com.ignacio_natalia.puzzleteca.utilidades.GestorSesion;
 
 import java.util.List;
 
 public class ConversacionChat extends Fragment {
-
-    // ─────────────────────────────────────────────────────────────
-    // COLORES
-    // ─────────────────────────────────────────────────────────────
-
-    private static final int COLOR_ROSA = Color.parseColor("#F06292");
-    private static final int COLOR_ROSA_OSCURO = Color.parseColor("#7BD8EF");
-
-    private static final int COLOR_TEAL = Color.parseColor("#26A69A");
-    private static final int COLOR_TEAL_OSCURO = Color.parseColor("#00897B");
-
-    private static final int COLOR_TEXTO = Color.parseColor("#37474F");
-    private static final int COLOR_TEXTO_SUAVE = Color.parseColor("#78909C");
-
-    private static final int COLOR_BORDE = Color.parseColor("#A5D6A7");
 
     // ─────────────────────────────────────────────────────────────
     // ESTADO
@@ -108,7 +95,7 @@ public class ConversacionChat extends Fragment {
 
         View sep = new View(getContext());
 
-        sep.setBackgroundColor(COLOR_BORDE);
+        sep.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.app_green_border));
         sep.setAlpha(0.7f);
 
         sep.setLayoutParams(new LinearLayout.LayoutParams(
@@ -146,7 +133,7 @@ public class ConversacionChat extends Fragment {
 
         View sep2 = new View(getContext());
 
-        sep2.setBackgroundColor(COLOR_BORDE);
+        sep2.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.app_green_border));
         sep2.setAlpha(0.7f);
 
         sep2.setLayoutParams(new LinearLayout.LayoutParams(
@@ -244,7 +231,7 @@ public class ConversacionChat extends Fragment {
 
         btnAtras.setTypeface(null, Typeface.BOLD);
 
-        btnAtras.setTextColor(COLOR_TEAL);
+        btnAtras.setTextColor(ContextCompat.getColor(requireContext(), R.color.jungle_green));
 
         LinearLayout.LayoutParams atrasParams =
                 new LinearLayout.LayoutParams(
@@ -287,7 +274,7 @@ public class ConversacionChat extends Fragment {
 
         avatarBg.setShape(GradientDrawable.OVAL);
 
-        avatarBg.setColor(COLOR_ROSA);
+        avatarBg.setColor(ContextCompat.getColor(requireContext(), R.color.dark_pink));
 
         avatar.setBackground(avatarBg);
 
@@ -301,7 +288,7 @@ public class ConversacionChat extends Fragment {
 
         nombreTv.setTypeface(null, Typeface.BOLD);
 
-        nombreTv.setTextColor(COLOR_TEXTO);
+        nombreTv.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_texto));
 
         nombreTv.setLayoutParams(new LinearLayout.LayoutParams(
                 0,
@@ -346,9 +333,9 @@ public class ConversacionChat extends Fragment {
 
         input.setHint("Escribe un mensaje…");
 
-        input.setHintTextColor(COLOR_TEXTO_SUAVE);
+        input.setHintTextColor(ContextCompat.getColor(requireContext(), R.color.app_subtexto));
 
-        input.setTextColor(COLOR_TEXTO);
+        input.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_texto));
 
         input.setTextSize(15);
 
@@ -368,7 +355,7 @@ public class ConversacionChat extends Fragment {
 
         bgInput.setCornerRadius(dp(30));
 
-        bgInput.setStroke(dp(1), COLOR_BORDE);
+        bgInput.setStroke(dp(1), ContextCompat.getColor(requireContext(), R.color.app_green_border));
 
         input.setBackground(bgInput);
 
@@ -408,7 +395,7 @@ public class ConversacionChat extends Fragment {
 
         bgBtn.setShape(GradientDrawable.OVAL);
 
-        bgBtn.setColor(COLOR_ROSA);
+        bgBtn.setColor(ContextCompat.getColor(requireContext(), R.color.dark_pink));
 
         btnEnviar.setBackground(bgBtn);
 
@@ -435,7 +422,7 @@ public class ConversacionChat extends Fragment {
 
             vacio.setTextSize(14);
 
-            vacio.setTextColor(COLOR_TEXTO_SUAVE);
+            vacio.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_subtexto));
 
             vacio.setGravity(Gravity.CENTER);
 
@@ -490,7 +477,7 @@ public class ConversacionChat extends Fragment {
 
             nombreTv.setTypeface(null, Typeface.BOLD);
 
-            nombreTv.setTextColor(COLOR_TEAL_OSCURO);
+            nombreTv.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_teal_chat));
 
             LinearLayout.LayoutParams np =
                     new LinearLayout.LayoutParams(
@@ -515,7 +502,7 @@ public class ConversacionChat extends Fragment {
         burbuja.setPadding(dp(14), dp(10), dp(14), dp(10));
 
         burbuja.setTextColor(
-                esPropio ? Color.WHITE : COLOR_TEXTO);
+                esPropio ? Color.WHITE : ContextCompat.getColor(requireContext(), R.color.app_texto));
 
         LinearLayout.LayoutParams burbujaParams =
                 new LinearLayout.LayoutParams(
@@ -537,8 +524,8 @@ public class ConversacionChat extends Fragment {
             bg = new GradientDrawable(
                     GradientDrawable.Orientation.TL_BR,
                     new int[]{
-                            COLOR_ROSA,
-                            COLOR_ROSA_OSCURO
+                            ContextCompat.getColor(requireContext(), R.color.dark_pink),
+                            ContextCompat.getColor(requireContext(), R.color.app_cyan_claro)
                     });
 
             bg.setCornerRadii(new float[]{
@@ -554,7 +541,7 @@ public class ConversacionChat extends Fragment {
 
             bg.setColor(Color.WHITE);
 
-            bg.setStroke(dp(1), COLOR_BORDE);
+            bg.setStroke(dp(1), ContextCompat.getColor(requireContext(), R.color.app_green_border));
 
             bg.setCornerRadii(new float[]{
                     dp(4), dp(4),
@@ -579,7 +566,7 @@ public class ConversacionChat extends Fragment {
 
             horaTv.setTextSize(10);
 
-            horaTv.setTextColor(COLOR_TEXTO_SUAVE);
+            horaTv.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_subtexto));
 
             LinearLayout.LayoutParams hp =
                     new LinearLayout.LayoutParams(
