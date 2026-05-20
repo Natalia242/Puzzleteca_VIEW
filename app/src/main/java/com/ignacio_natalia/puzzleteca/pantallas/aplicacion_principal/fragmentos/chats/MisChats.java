@@ -9,9 +9,11 @@ import android.widget.*;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.ignacio_natalia.puzzleteca.R;
 import com.ignacio_natalia.puzzleteca.modelos.clases.Usuario;
 import com.ignacio_natalia.puzzleteca.modelos.chat.CrearConversacionRequest;
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.AppPrincipal;
@@ -21,13 +23,6 @@ import java.util.Arrays;
 import java.util.List;
 
 public class MisChats extends Fragment {
-
-    // ── Paleta de la app ────────────────────────────────────────────────
-    private static final String C_ROSA        = "#F06292";
-    private static final String C_TEAL        = "#26A69A";
-    private static final String C_TEXTO       = "#37474F";
-    private static final String C_TEXTO_LEVE  = "#78909C";
-    private static final String C_BORDE_CARD  = "#A5D6A7";
 
     private ChatViewModel viewModel;
     private LinearLayout contenedor;
@@ -141,7 +136,7 @@ public class MisChats extends Fragment {
         titulo.setText("Mis Chats");
         titulo.setTextSize(22);
         titulo.setTypeface(null, Typeface.BOLD);
-        titulo.setTextColor(Color.parseColor(C_TEAL));
+        titulo.setTextColor(ContextCompat.getColor(requireContext(), R.color.jungle_green));
 
         tituloFila.addView(icono);
         tituloFila.addView(titulo);
@@ -154,7 +149,7 @@ public class MisChats extends Fragment {
         TextView sub = new TextView(getContext());
         sub.setText("Selecciona un usuario para chatear");
         sub.setTextSize(12);
-        sub.setTextColor(Color.parseColor(C_TEXTO_LEVE));
+        sub.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_subtexto));
         sub.setGravity(Gravity.CENTER_HORIZONTAL);
         LinearLayout.LayoutParams sp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -169,7 +164,7 @@ public class MisChats extends Fragment {
 
     private View lineaDecorativa() {
         View v = new View(getContext());
-        v.setBackgroundColor(Color.parseColor(C_TEAL));
+        v.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.jungle_green));
         v.setAlpha(0.45f);
         v.setLayoutParams(new LinearLayout.LayoutParams(0, dp(1), 1f));
         return v;
@@ -193,7 +188,7 @@ public class MisChats extends Fragment {
         if (!hayUsuarios) {
             TextView vacio = new TextView(getContext());
             vacio.setText("No hay otros usuarios disponibles");
-            vacio.setTextColor(Color.parseColor(C_TEXTO_LEVE));
+            vacio.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_subtexto));
             vacio.setTextSize(15);
             vacio.setGravity(Gravity.CENTER);
             vacio.setPadding(0, dp(40), 0, 0);
@@ -222,7 +217,7 @@ public class MisChats extends Fragment {
         GradientDrawable bg = new GradientDrawable();
         bg.setColor(Color.WHITE);
         bg.setCornerRadius(dp(40));
-        bg.setStroke(dp(2), Color.parseColor(C_BORDE_CARD));
+        bg.setStroke(dp(2), ContextCompat.getColor(requireContext(), R.color.app_green_border));
         card.setBackground(bg);
 
         // ── Avatar circular con inicial ────────────────────────────────
@@ -243,14 +238,14 @@ public class MisChats extends Fragment {
 
         // Colores del avatar alineados con la paleta rosa/teal de la app
         int[] colores = {
-                Color.parseColor(C_ROSA),
-                Color.parseColor(C_TEAL),
-                Color.parseColor("#AB47BC"),  // violeta suave
-                Color.parseColor("#FF7043"),  // naranja
-                Color.parseColor("#42A5F5"),  // azul claro
-                Color.parseColor("#66BB6A"),  // verde
-                Color.parseColor("#EC407A"),  // rosa oscuro
-                Color.parseColor("#26C6DA"),  // cyan
+                ContextCompat.getColor(requireContext(), R.color.app_rosa),
+                ContextCompat.getColor(requireContext(), R.color.jungle_green),
+                ContextCompat.getColor(requireContext(), R.color.app_admin_violet),  // violeta suave
+                ContextCompat.getColor(requireContext(), R.color.app_naranja_dark), // naranja
+                ContextCompat.getColor(requireContext(), R.color.app_avatar_blue),  // azul claro
+                ContextCompat.getColor(requireContext(), R.color.app_avatar_green),  // verde
+                ContextCompat.getColor(requireContext(), R.color.app_rosa_dark),  // rosa oscuro
+                ContextCompat.getColor(requireContext(), R.color.app_avatar_cyan),  // cyan
         };
         int colorIdx = Math.abs(u.getNombre() != null ? u.getNombre().hashCode() : 0) % colores.length;
         GradientDrawable avatarBg = new GradientDrawable();
@@ -272,7 +267,7 @@ public class MisChats extends Fragment {
         nombre.setText(nombreCompleto.trim());
         nombre.setTextSize(16);
         nombre.setTypeface(null, Typeface.BOLD);
-        nombre.setTextColor(Color.parseColor(C_TEXTO));
+        nombre.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_texto));
 
         // Badge con ID del usuario (en lugar del email)
         LinearLayout filaBadge = new LinearLayout(getContext());
@@ -287,16 +282,16 @@ public class MisChats extends Fragment {
         TextView labelId = new TextView(getContext());
         labelId.setText("ID ");
         labelId.setTextSize(12);
-        labelId.setTextColor(Color.parseColor(C_TEXTO_LEVE));
+        labelId.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_subtexto));
 
         TextView valorId = new TextView(getContext());
         valorId.setText(u.getId() != null ? String.valueOf(u.getId()) : "–");
         valorId.setTextSize(12);
         valorId.setTypeface(null, Typeface.BOLD);
-        valorId.setTextColor(Color.parseColor(C_TEAL));
+        valorId.setTextColor(ContextCompat.getColor(requireContext(), R.color.jungle_green));
         valorId.setPadding(dp(6), dp(2), dp(6), dp(2));
         GradientDrawable badgeId = new GradientDrawable();
-        badgeId.setColor(Color.parseColor("#E0F2F1"));   // fondo teal muy suave
+        badgeId.setColor(ContextCompat.getColor(requireContext(), R.color.app_teal_soft));   // fondo teal muy suave
         badgeId.setCornerRadius(dp(20));
         valorId.setBackground(badgeId);
 
@@ -310,7 +305,7 @@ public class MisChats extends Fragment {
         TextView flecha = new TextView(getContext());
         flecha.setText("\u203A");
         flecha.setTextSize(28);
-        flecha.setTextColor(Color.parseColor(C_ROSA));
+        flecha.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_rosa));
         flecha.setTypeface(null, Typeface.BOLD);
         flecha.setPadding(dp(8), 0, 0, 0);
 
@@ -324,9 +319,9 @@ public class MisChats extends Fragment {
 
         // Estado presionado con fondo teal suave
         GradientDrawable bgPressed = new GradientDrawable();
-        bgPressed.setColor(Color.parseColor("#E0F2F1"));
+        bgPressed.setColor(ContextCompat.getColor(requireContext(), R.color.app_teal_soft));
         bgPressed.setCornerRadius(dp(40));
-        bgPressed.setStroke(dp(2), Color.parseColor(C_TEAL));
+        bgPressed.setStroke(dp(2), ContextCompat.getColor(requireContext(), R.color.jungle_green));
 
         card.setOnClickListener(v -> {
             card.setBackground(bgPressed);
