@@ -34,7 +34,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText emailEditText;
     private EditText contrasenaEditText;
 
-    // ✅ Campo de instancia para que el observer pueda leerlo
+    // Campo de instancia para que el observer pueda leerlo
     private String emailPendiente = "";
 
     @SuppressLint({"ClickableViewAccessibility", "SetTextI18n"})

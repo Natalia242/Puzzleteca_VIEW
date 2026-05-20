@@ -24,15 +24,6 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-/**
- * ViewModel exclusivo del Foro de Posts.
- *
- * Incluye:
- * - Feed paginado
- * - Crear/eliminar post
- * - Likes
- * - Comentarios por post
- */
 public class ForoViewModel extends AndroidViewModel {
 
     // =========================================================================
@@ -116,20 +107,12 @@ public class ForoViewModel extends AndroidViewModel {
     // =========================================================================
     // POSTS
     // =========================================================================
-
-    /**
-     * Recarga el feed desde cero.
-     */
     public void cargarPosts(String token) {
         paginaActual = 0;
         posts.setValue(new ArrayList<>());
         hayMasPaginas.setValue(true);
         fetchPagina(token, 0);
     }
-
-    /**
-     * Scroll infinito.
-     */
     public void cargarMasPosts(String token) {
 
         Boolean hayMas = hayMasPaginas.getValue();
@@ -401,10 +384,6 @@ public class ForoViewModel extends AndroidViewModel {
     // =========================================================================
     // COMENTARIOS
     // =========================================================================
-
-    /**
-     * Carga comentarios de un post.
-     */
     public void cargarComentarios(
             String token,
             Integer idPost
@@ -461,10 +440,6 @@ public class ForoViewModel extends AndroidViewModel {
                 }
         );
     }
-
-    /**
-     * Crear comentario.
-     */
     public void crearComentario(
             String token,
             Comentario comentario
@@ -530,9 +505,6 @@ public class ForoViewModel extends AndroidViewModel {
         );
     }
 
-    /**
-     * Eliminar comentario.
-     */
     public void eliminarComentario(
             String token,
             Integer idComentario,

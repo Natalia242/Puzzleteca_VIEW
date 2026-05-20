@@ -14,10 +14,6 @@ public class Comentario {
 
     private String fechaCreacion;
 
-    // =========================================================================
-    // GETTERS & SETTERS
-    // =========================================================================
-
     public Integer getId() {
         return id;
     }

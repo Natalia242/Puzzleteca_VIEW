@@ -39,13 +39,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Fragment del Foro.
- *
- * NUEVO: al crear un post el usuario puede vincular uno de sus puzzles.
- * Esto muestra un spinner con los puzzles propios y añade la info del puzzle
- * seleccionado al contenido del post.
- */
 public class Foro extends Fragment {
 
 
@@ -238,10 +231,6 @@ public class Foro extends Fragment {
     // Carga puzzles del usuario y abre el dialog
     // =========================================================================
 
-    /**
-     * Carga los puzzles del usuario en segundo plano y luego abre el dialog de post.
-     * Si la carga falla o no hay puzzles, abre el dialog igualmente (sin selector).
-     */
     private void cargarMisPuzzlesYMostrarDialog() {
         imagenSeleccionada = null;
         int idUsuario = GestorSesion.obtenerId_usuario(requireContext());
@@ -629,9 +618,9 @@ public class Foro extends Fragment {
 
         acciones.addView(crearBotonLikes(post));
 
-// =========================================================================
-// BOTÓN COMENTARIOS
-// =========================================================================
+        // =========================================================================
+        // BOTÓN COMENTARIOS
+        // =========================================================================
 
         LinearLayout btnComentarios = new LinearLayout(requireContext());
         btnComentarios.setOrientation(LinearLayout.HORIZONTAL);
@@ -673,9 +662,9 @@ public class Foro extends Fragment {
 
         tarjeta.addView(acciones);
 
-// =========================================================================
-// CONTENEDOR COMENTARIOS
-// =========================================================================
+        // =========================================================================
+        // CONTENEDOR COMENTARIOS
+        // =========================================================================
 
         LinearLayout comentariosContainer = new LinearLayout(requireContext());
         comentariosContainer.setOrientation(LinearLayout.VERTICAL);
@@ -684,9 +673,9 @@ public class Foro extends Fragment {
 
         tarjeta.addView(comentariosContainer);
 
-// =========================================================================
-// INPUT COMENTARIO
-// =========================================================================
+        // =========================================================================
+        // INPUT COMENTARIO
+        // =========================================================================
 
         LinearLayout escribirLayout = new LinearLayout(requireContext());
         escribirLayout.setOrientation(LinearLayout.HORIZONTAL);
@@ -740,9 +729,9 @@ public class Foro extends Fragment {
 
         comentariosContainer.addView(escribirLayout);
 
-// =========================================================================
-// LISTA COMENTARIOS
-// =========================================================================
+        // =========================================================================
+        // LISTA COMENTARIOS
+        // =========================================================================
 
         LinearLayout listaComentarios = new LinearLayout(requireContext());
         listaComentarios.setOrientation(LinearLayout.VERTICAL);
@@ -759,9 +748,9 @@ public class Foro extends Fragment {
 
         comentariosContainer.addView(listaComentarios);
 
-// =========================================================================
-// OBSERVER COMENTARIOS
-// =========================================================================
+        // =========================================================================
+        // OBSERVER COMENTARIOS
+        // =========================================================================
 
         viewModel.getComentariosPorPost().observe(getViewLifecycleOwner(), mapa -> {
 
@@ -844,9 +833,9 @@ public class Foro extends Fragment {
             }
         });
 
-// =========================================================================
-// MOSTRAR / OCULTAR COMENTARIOS
-// =========================================================================
+        // =========================================================================
+        // MOSTRAR / OCULTAR COMENTARIOS
+        // =========================================================================
 
         final boolean[] comentariosVisibles = {false};
 
@@ -869,9 +858,9 @@ public class Foro extends Fragment {
             }
         });
 
-// =========================================================================
-// ENVIAR COMENTARIO
-// =========================================================================
+        // =========================================================================
+        // ENVIAR COMENTARIO
+        // =========================================================================
 
         btnEnviarComentario.setOnClickListener(v -> {
 
@@ -990,7 +979,7 @@ public class Foro extends Fragment {
                 "Eliminar post",
                 "¿Seguro que quieres eliminar este post?\nEsta acción no se puede deshacer.",
                 "Eliminar",
-                String.valueOf(ContextCompat.getColor(requireContext(), R.color.app_peligro)),
+                "#E53935",
                 () -> viewModel.eliminarPost(obtenerToken(), idPost, idUsuario)
         );
     }
@@ -1008,7 +997,6 @@ public class Foro extends Fragment {
         }
     }
 
-    /** Descarga una URL de imagen a un File temporal en caché (ejecutar en hilo secundario) */
     private ImagenDescargada descargarImagenComoFile(String url) {
         try {
             java.net.URL urlObj = new java.net.URL(url);
@@ -1050,49 +1038,6 @@ public class Foro extends Fragment {
         } catch (Exception e) {
             return null;
         }
-    }
-
-    private File uriAFile(Uri uri) {
-        try {
-            InputStream is = requireContext().getContentResolver().openInputStream(uri);
-            if (is == null) return null;
-            File temp = File.createTempFile("post_img_", ".jpg", requireContext().getCacheDir());
-            FileOutputStream fos = new FileOutputStream(temp);
-            byte[] buf = new byte[4096];
-            int n;
-            while ((n = is.read(buf)) != -1) fos.write(buf, 0, n);
-            is.close();
-            fos.close();
-            return temp;
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    private String obtenerMimeType(Uri uri) {
-        return requireContext().getContentResolver().getType(uri);
-    }
-
-    private Button crearBotonImagen(String texto) {
-        Button btn = new Button(requireContext());
-        btn.setText(texto);
-        btn.setAllCaps(false);
-        btn.setTextSize(13);
-        btn.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_texto));
-        GradientDrawable fondo = new GradientDrawable();
-        fondo.setColor(Color.WHITE);
-        fondo.setCornerRadius(dp(12));
-        fondo.setStroke(dp(1), ContextCompat.getColor(requireContext(), R.color.app_rosa_light));
-        btn.setBackground(fondo);
-        btn.setPadding(dp(8), dp(8), dp(8), dp(8));
-        return btn;
-    }
-
-    private void espacio(LinearLayout parent, int alturaPx) {
-        View v = new View(requireContext());
-        v.setLayoutParams(new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, alturaPx));
-        parent.addView(v);
     }
 
     private void mostrarError(String msg) {

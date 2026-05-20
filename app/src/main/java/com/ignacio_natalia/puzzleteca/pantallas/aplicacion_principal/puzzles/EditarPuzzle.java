@@ -237,7 +237,7 @@ public class EditarPuzzle extends Fragment {
         sliderDificultad.setValueTo(3);
         sliderDificultad.setStepSize(1);
         sliderDificultad.setValue(dificultadAInt(puzzle.getDificultad()));
-        sliderDificultad.setTrackInactiveTintList(ColorStateList.valueOf(Color.parseColor("#ECEFF1")));
+        sliderDificultad.setTrackInactiveTintList(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.app_borde)));
         sliderDificultad.setLabelBehavior(LabelFormatter.LABEL_GONE);
         sliderDificultad.setEnabled(false);
 
@@ -586,7 +586,7 @@ public class EditarPuzzle extends Fragment {
                 LinearLayout.LayoutParams.MATCH_PARENT, dp(1));
         p.setMargins(0, dp(2), 0, dp(2));
         v.setLayoutParams(p);
-        v.setBackgroundColor(Color.parseColor("#E8F5E9"));
+        v.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.app_green_success));
         v.setAlpha(0.45f);
         return v;
     }

@@ -1,11 +1,6 @@
 package com.ignacio_natalia.puzzleteca.modelos.comentarios;
 
 import com.google.gson.annotations.SerializedName;
-
-/**
- * Comentario de un Post del foro.
- * Distinto de {@link Comentario}, que es comentario de un Puzzle.
- */
 public class ComentarioPost {
 
     @SerializedName("id")
@@ -26,7 +21,6 @@ public class ComentarioPost {
     @SerializedName("idPost")
     private Integer idPost;
 
-    // ---------- GETTERS ----------
     public Integer getId()           { return id; }
     public String getContenido()     { return contenido; }
     public String getFechaCreacion() { return fechaCreacion; }
@@ -34,7 +28,6 @@ public class ComentarioPost {
     public String getNombreUsuario() { return nombreUsuario; }
     public Integer getIdPost()       { return idPost; }
 
-    // ---------- SETTERS ----------
     public void setId(Integer id)                       { this.id = id; }
     public void setContenido(String contenido)          { this.contenido = contenido; }
     public void setFechaCreacion(String fechaCreacion)  { this.fechaCreacion = fechaCreacion; }

@@ -50,7 +50,7 @@ public class AppPrincipal extends AppCompatActivity {
     private FrameLayout contenedorFragmento;
     private ImageView tituloPantalla;
 
-    // Tabs (ahora LinearLayout en lugar de TextView)
+    // Tabs
     private LinearLayout botonInicio, botonPuzzles, botonRanking, botonForo, botonPerfil;
     // Indicador deslizante
     private View indicadorActivo;
@@ -106,12 +106,12 @@ public class AppPrincipal extends AppCompatActivity {
                                        int oldScrollX, int oldScrollY) {
 
                 if (scrollY > oldScrollY + 10 && !oculta) {
-                    // 👉 scroll hacia abajo → ocultar
+                    // scroll hacia abajo → ocultar
                     ocultarBarra();
                     oculta = true;
 
                 } else if (scrollY < oldScrollY - 10 && oculta) {
-                    // 👈 scroll hacia arriba → mostrar
+                    // scroll hacia arriba → mostrar
                     mostrarBarra();
                     oculta = false;
                 }
@@ -560,7 +560,7 @@ public class AppPrincipal extends AppCompatActivity {
 
         colInfo.setLayoutParams(infoLP);
 
-        // ⚠️ Es nombre de usuario
+        // Es nombre de usuario
         String nombreUsuario;
         if (puzzle.getUsuario() != null && puzzle.getUsuario().getNombre() != null
                 && !puzzle.getUsuario().getNombre().isEmpty()) {
@@ -729,91 +729,6 @@ public class AppPrincipal extends AppCompatActivity {
         );
 
         return tarjeta;
-    }
-
-    // ── Vista de estrellas mini (solo visual, sin interacción) ────────────────
-
-    private static class MiniStarsView extends View {
-
-        private static final int   NUM   = 5;
-        private static final float SIZE  = 13f;   // dp
-        private static final float GAP   = 3f;    // dp
-        private static final float CR    = 1.8f;  // corner radius dp
-
-        private final Paint pFill   = new Paint(Paint.ANTI_ALIAS_FLAG);
-        private final Paint pEmpty  = new Paint(Paint.ANTI_ALIAS_FLAG);
-        private final float sizePx, gapPx, crPx;
-        private final int   rating;
-
-        MiniStarsView(android.content.Context ctx, Integer rating) {
-            super(ctx);
-            float d = ctx.getResources().getDisplayMetrics().density;
-            sizePx = SIZE * d;
-            gapPx  = GAP  * d;
-            crPx   = CR   * d;
-            this.rating = (rating != null) ? Math.max(0, Math.min(NUM, rating)) : 0;
-
-            pFill.setStyle(Paint.Style.FILL);
-            pEmpty.setStyle(Paint.Style.FILL);
-            pEmpty.setColor(ContextCompat.getColor(ctx, R.color.app_borde_gris_light));
-        }
-
-        @Override
-        protected void onMeasure(int wSpec, int hSpec) {
-            int w = (int)(NUM * sizePx + (NUM - 1) * gapPx);
-            setMeasuredDimension(resolveSize(w, wSpec), resolveSize((int) sizePx, hSpec));
-        }
-
-        @SuppressLint("DrawAllocation")
-        @Override
-        protected void onDraw(Canvas canvas) {
-            float cx = sizePx / 2f, cy = sizePx / 2f;
-            for (int i = 0; i < NUM; i++) {
-                float ox = i * (sizePx + gapPx);
-                if (i < rating) {
-                    pFill.setShader(new LinearGradient(
-                            ox, 0, ox, sizePx,
-                            ContextCompat.getColor(getContext(), R.color.app_estrella_light),
-                            ContextCompat.getColor(getContext(), R.color.app_estrella_dark),
-                            Shader.TileMode.CLAMP));
-                    canvas.drawPath(roundedStar(cx + ox, cy, sizePx * 0.45f,
-                            sizePx * 0.18f, crPx), pFill);
-                } else {
-                    canvas.drawPath(roundedStar(cx + ox, cy, sizePx * 0.45f,
-                            sizePx * 0.18f, crPx), pEmpty);
-                }
-            }
-        }
-
-        private Path roundedStar(float cx, float cy, float outer, float inner, float cr) {
-            Path path = new Path();
-            int pts = 5;
-            double step = Math.PI * 2 / pts;
-            double start = -Math.PI / 2;
-            float[] vx = new float[pts * 2], vy = new float[pts * 2];
-            for (int i = 0; i < pts; i++) {
-                double ao = start + i * step, ai = ao + step / 2.0;
-                vx[i*2]   = cx + (float)(outer * Math.cos(ao));
-                vy[i*2]   = cy + (float)(outer * Math.sin(ao));
-                vx[i*2+1] = cx + (float)(inner * Math.cos(ai));
-                vy[i*2+1] = cy + (float)(inner * Math.sin(ai));
-            }
-            int n = vx.length;
-            for (int i = 0; i < n; i++) {
-                int prev = (i - 1 + n) % n, next = (i + 1) % n;
-                float inDx = vx[i]-vx[prev], inDy = vy[i]-vy[prev];
-                float outDx = vx[next]-vx[i], outDy = vy[next]-vy[i];
-                float inL = (float)Math.hypot(inDx,inDy), outL = (float)Math.hypot(outDx,outDy);
-                float r = ((i%2==0) ? cr*2f : cr*0.8f);
-                r = Math.min(r, Math.min(inL, outL) * 0.35f);
-                float t1x = vx[i]-inDx/inL*r,  t1y = vy[i]-inDy/inL*r;
-                float t2x = vx[i]+outDx/outL*r, t2y = vy[i]+outDy/outL*r;
-                if (i == 0) path.moveTo(t1x, t1y); else path.lineTo(t1x, t1y);
-                path.quadTo(vx[i], vy[i], t2x, t2y);
-            }
-            path.close();
-            return path;
-        }
     }
 
     // ── Utilidades ────────────────────────────────────────────────────────────

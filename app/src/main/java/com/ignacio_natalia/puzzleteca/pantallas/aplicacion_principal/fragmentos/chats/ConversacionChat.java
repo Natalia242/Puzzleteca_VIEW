@@ -81,8 +81,8 @@ public class ConversacionChat extends Fragment {
         GradientDrawable fondo = new GradientDrawable(
                 GradientDrawable.Orientation.TL_BR,
                 new int[]{
-                        Color.parseColor("#FBC7DF"),
-                        Color.parseColor("#F0FAFA")
+                        ContextCompat.getColor(requireContext(), R.color.app_rosa_burbuja),
+                        ContextCompat.getColor(requireContext(), R.color.app_teal_fondo)
                 });
 
         root.setBackground(fondo);
@@ -351,7 +351,7 @@ public class ConversacionChat extends Fragment {
 
         GradientDrawable bgInput = new GradientDrawable();
 
-        bgInput.setColor(Color.parseColor("#F5F7FA"));
+        bgInput.setColor(ContextCompat.getColor(requireContext(), R.color.app_fondo_input_alt));
 
         bgInput.setCornerRadius(dp(30));
 
@@ -443,7 +443,6 @@ public class ConversacionChat extends Fragment {
 
     private View crearBurbuja(MensajeChat m) {
 
-        // ← PROTECCIÓN NULL
         boolean esPropio =
                 m.getIdUsuario() != null
                         && m.getIdUsuario() == idUsuarioPropio;
