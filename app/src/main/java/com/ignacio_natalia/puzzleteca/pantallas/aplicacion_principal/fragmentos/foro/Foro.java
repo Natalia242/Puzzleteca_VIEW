@@ -990,7 +990,7 @@ public class Foro extends Fragment {
                 "Eliminar post",
                 "¿Seguro que quieres eliminar este post?\nEsta acción no se puede deshacer.",
                 "Eliminar",
-                "#E53935",
+                String.valueOf(ContextCompat.getColor(requireContext(), R.color.app_peligro)),
                 () -> viewModel.eliminarPost(obtenerToken(), idPost, idUsuario)
         );
     }

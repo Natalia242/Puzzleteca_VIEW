@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 
 import com.ignacio_natalia.puzzleteca.modelos.clases.Usuario;
@@ -36,8 +37,7 @@ public class UsuarioDialogFragment extends DialogFragment {
     private static final String ARG_USUARIO = "usuario";
 
     // ── Paleta ────────────────────────────────────────────────────────────────
-    private static final String C_TEAL       = "#2E7D6E";
-    private static final String C_TEAL_SOFT  = "#E0F2F1";
+//    private static final int C_TEAL_SOFT  = ContextCompat.getColor(requireContext(), R.color.app_peligro);
     private static final String C_ADMIN      = "#5C6BC0";
     private static final String C_ADMIN_SOFT = "#E8EAF6";
     private static final String C_BLOQ       = "#E53935";

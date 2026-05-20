@@ -23,9 +23,11 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
+import com.ignacio_natalia.puzzleteca.R;
 import com.ignacio_natalia.puzzleteca.modelos.clases.Puzzle;
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.AppPrincipal;
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.puzzles.EditarPuzzle;
@@ -37,18 +39,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MisPuzzles extends Fragment {
-
-    // ── Paleta ────────────────────────────────────────────────────────────────
-    private static final String C_TEAL        = "#2E7D6E";
-    private static final String C_TEAL_SOFT   = "#E0F2F1";
-    private static final String C_ROSA        = "#F06292";
-    private static final String C_ROSA_SOFT   = "#FCE4EC";
-    private static final String C_TEXTO       = "#37474F";
-    private static final String C_SUBTEXTO    = "#78909C";
-    private static final String C_GRIS_SOFT   = "#F5F7F8";
-    private static final String C_BORDE       = "#ECEFF1";
-    private static final String C_NARANJA     = "#FF8F00";
-    private static final String C_NARANJA_SOFT= "#FFF8E1";
 
     // ── Estado de la pantalla ─────────────────────────────────────────────────
     private LinearLayout contenedor;
@@ -69,7 +59,6 @@ public class MisPuzzles extends Fragment {
                              @Nullable Bundle savedInstanceState) {
 
         root = new FrameLayout(requireContext());
-//        root.setBackgroundColor(Color.parseColor(C_GRIS_SOFT));
 
         // ── ScrollView principal ──────────────────────────────────────────────
         scroll = new ScrollView(requireContext());
@@ -195,7 +184,7 @@ public class MisPuzzles extends Fragment {
         tvContador.setText("Cargando…");
         tvContador.setTextSize(24);
         tvContador.setTypeface(null, Typeface.BOLD);
-        tvContador.setTextColor(Color.parseColor(C_TEXTO));
+        tvContador.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_texto));
 
         textos.addView(tvContador);
         cab.addView(textos);
@@ -342,7 +331,7 @@ public class MisPuzzles extends Fragment {
             TextView tvDesc = new TextView(getContext());
             tvDesc.setText(puzzle.getDescripcion());
             tvDesc.setTextSize(13);
-            tvDesc.setTextColor(Color.parseColor(C_SUBTEXTO));
+            tvDesc.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_subtexto));
             tvDesc.setMaxLines(2);
             tvDesc.setEllipsize(android.text.TextUtils.TruncateAt.END);
             LinearLayout.LayoutParams descLP = new LinearLayout.LayoutParams(
@@ -365,15 +354,15 @@ public class MisPuzzles extends Fragment {
         if (puzzle.getDificultad() != null) {
             filaChips.addView(crearChipInfo(
                     emojiDificultad(puzzle.getDificultad()) + " " + puzzle.getDificultad().name(),
-                    C_TEAL, C_TEAL_SOFT));
+                    ContextCompat.getColor(requireContext(), R.color.app_teal_dark), ContextCompat.getColor(requireContext(), R.color.app_teal_soft)));
         }
         if (puzzle.getPiezas() != null) {
             filaChips.addView(crearChipInfo("🧩 " + puzzle.getPiezas() + " piezas",
-                    "#5C6BC0", "#E8EAF6"));
+                    ContextCompat.getColor(requireContext(), R.color.app_admin_indigo), ContextCompat.getColor(requireContext(), R.color.app_admin_indigo_soft)));
         }
         if (puzzle.getTiempo() != null) {
             filaChips.addView(crearChipInfo("⏱ " + puzzle.getTiempo() + " h",
-                    C_NARANJA, C_NARANJA_SOFT));
+                    ContextCompat.getColor(requireContext(), R.color.app_naranja), ContextCompat.getColor(requireContext(), R.color.app_naranja_soft)));
         }
         cuerpo.addView(filaChips);
 
@@ -405,7 +394,7 @@ public class MisPuzzles extends Fragment {
                 : "Sin valorar";
         tvVal.setText(valTxt);
         tvVal.setTextSize(12);
-        tvVal.setTextColor(Color.parseColor(C_SUBTEXTO));
+        tvVal.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_subtexto));
 
         filaVal.addView(stars);
         filaVal.addView(tvVal);
@@ -416,7 +405,7 @@ public class MisPuzzles extends Fragment {
         btnEditar.setGravity(Gravity.CENTER);
         btnEditar.setPadding(dp(14), dp(8), dp(14), dp(8));
         GradientDrawable btnBg = new GradientDrawable();
-        btnBg.setColor(Color.parseColor(C_TEAL_SOFT));
+        btnBg.setColor(ContextCompat.getColor(requireContext(), R.color.app_teal_soft));
         btnBg.setCornerRadius(dp(20));
         btnEditar.setBackground(btnBg);
 
@@ -428,7 +417,7 @@ public class MisPuzzles extends Fragment {
         tvEditarTexto.setText(" Editar");
         tvEditarTexto.setTextSize(13);
         tvEditarTexto.setTypeface(null, Typeface.BOLD);
-        tvEditarTexto.setTextColor(Color.parseColor(C_TEAL));
+        tvEditarTexto.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_teal_dark));
 
         btnEditar.addView(tvEditarEmoji);
         btnEditar.addView(tvEditarTexto);
@@ -474,14 +463,14 @@ public class MisPuzzles extends Fragment {
         tvEmoji.setLayoutParams(emojiLP);
         GradientDrawable circleBg = new GradientDrawable();
         circleBg.setShape(GradientDrawable.OVAL);
-        circleBg.setColor(Color.parseColor(C_ROSA_SOFT));
+        circleBg.setColor(ContextCompat.getColor(requireContext(), R.color.app_rosa_soft));
         tvEmoji.setBackground(circleBg);
 
         TextView tvTitulo = new TextView(getContext());
         tvTitulo.setText("Aún no tienes puzzles");
         tvTitulo.setTextSize(20);
         tvTitulo.setTypeface(null, Typeface.BOLD);
-        tvTitulo.setTextColor(Color.parseColor(C_TEXTO));
+        tvTitulo.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_texto));
         tvTitulo.setGravity(Gravity.CENTER);
         LinearLayout.LayoutParams titLP = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
@@ -492,7 +481,7 @@ public class MisPuzzles extends Fragment {
         TextView tvSub = new TextView(getContext());
         tvSub.setText("Crea tu primer puzzle y compártelo\ncon la comunidad");
         tvSub.setTextSize(14);
-        tvSub.setTextColor(Color.parseColor(C_SUBTEXTO));
+        tvSub.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_subtexto));
         tvSub.setGravity(Gravity.CENTER);
         LinearLayout.LayoutParams subLP = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
@@ -506,7 +495,7 @@ public class MisPuzzles extends Fragment {
         btnCrear.setGravity(Gravity.CENTER);
         btnCrear.setPadding(dp(28), dp(14), dp(28), dp(14));
         GradientDrawable btnBg = new GradientDrawable();
-        btnBg.setColor(Color.parseColor(C_ROSA));
+        btnBg.setColor(ContextCompat.getColor(requireContext(), R.color.dark_pink));
         btnBg.setCornerRadius(dp(14));
         btnCrear.setBackground(btnBg);
         btnCrear.setElevation(dp(4));
@@ -552,7 +541,7 @@ public class MisPuzzles extends Fragment {
         fab.setLayoutParams(fabLP);
 
         GradientDrawable fabBg = new GradientDrawable();
-        fabBg.setColor(Color.parseColor(C_ROSA));
+        fabBg.setColor(ContextCompat.getColor(requireContext(), R.color.dark_pink));
         fabBg.setCornerRadius(dp(26));
         fab.setBackground(fabBg);
         fab.setElevation(dp(8));
@@ -597,12 +586,12 @@ public class MisPuzzles extends Fragment {
     }
 
     /** Chip de información (dificultad, piezas, tiempo) */
-    private TextView crearChipInfo(String texto, String colorTexto, String colorFondo) {
+    private TextView crearChipInfo(String texto, int colorTexto, int colorFondo) {
         TextView chip = new TextView(getContext());
         chip.setText(texto);
         chip.setTextSize(11);
         chip.setTypeface(null, Typeface.BOLD);
-        chip.setTextColor(Color.parseColor(colorTexto));
+        chip.setTextColor(colorTexto);
         chip.setPadding(dp(10), dp(5), dp(10), dp(5));
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -610,7 +599,7 @@ public class MisPuzzles extends Fragment {
         lp.setMargins(0, 0, dp(8), 0);
         chip.setLayoutParams(lp);
         GradientDrawable bg = new GradientDrawable();
-        bg.setColor(Color.parseColor(colorFondo));
+        bg.setColor(colorFondo);
         bg.setCornerRadius(dp(20));
         chip.setBackground(bg);
         return chip;
