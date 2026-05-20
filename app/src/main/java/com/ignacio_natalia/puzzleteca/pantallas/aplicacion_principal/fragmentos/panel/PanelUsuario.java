@@ -13,8 +13,10 @@ import android.widget.*;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import com.ignacio_natalia.puzzleteca.R;
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.AppPrincipal;
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos.chats.MisChats;
 import com.ignacio_natalia.puzzleteca.pantallas.aplicacion_principal.fragmentos.misPuzzles.MisPuzzles;
@@ -65,12 +67,12 @@ public class PanelUsuario extends Fragment {
         textoSaludo.setText("¡Hola, " + nombre + "! 👋");
         textoSaludo.setTextSize(22);
         textoSaludo.setTypeface(null, Typeface.BOLD);
-        textoSaludo.setTextColor(Color.parseColor("#37474F"));
+        textoSaludo.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_texto));
 
         TextView textoBienvenida = new TextView(requireContext());
         textoBienvenida.setText("¿Qué puzzle resolvemos hoy?");
         textoBienvenida.setTextSize(13);
-        textoBienvenida.setTextColor(Color.parseColor("#90A4AE"));
+        textoBienvenida.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_subtexto_label));
 
         textosCabecera.addView(textoSaludo);
         textosCabecera.addView(textoBienvenida);
@@ -88,7 +90,7 @@ public class PanelUsuario extends Fragment {
         avatar.setLayoutParams(paramsAv);
         GradientDrawable fondoAvatar = new GradientDrawable();
         fondoAvatar.setShape(GradientDrawable.OVAL);
-        fondoAvatar.setColor(Color.parseColor("#26A69A"));
+        fondoAvatar.setColor(ContextCompat.getColor(requireContext(), R.color.jungle_green));
         avatar.setBackground(fondoAvatar);
 
         cabecera.addView(textosCabecera);
@@ -105,7 +107,7 @@ public class PanelUsuario extends Fragment {
         paramsRk.setMargins(0, 0, 0, 20);
         tarjetaRanking.setLayoutParams(paramsRk);
         GradientDrawable fondoRanking = new GradientDrawable();
-        fondoRanking.setColor(Color.parseColor("#00796B"));
+        fondoRanking.setColor(ContextCompat.getColor(requireContext(), R.color.app_teal_darker));
         fondoRanking.setCornerRadius(40);
         tarjetaRanking.setBackground(fondoRanking);
 
@@ -118,7 +120,7 @@ public class PanelUsuario extends Fragment {
         labelRanking.setText("🏆  TU POSICIÓN HOY");
         labelRanking.setTextSize(10);
         labelRanking.setTypeface(null, Typeface.BOLD);
-        labelRanking.setTextColor(Color.parseColor("#B2DFDB"));
+        labelRanking.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_teal_borde));
         labelRanking.setLetterSpacing(0.1f);
 
         TextView textoPosicion = new TextView(requireContext());
@@ -130,7 +132,7 @@ public class PanelUsuario extends Fragment {
         TextView textoDetalleRanking = new TextView(requireContext());
         textoDetalleRanking.setText("Cargando...");
         textoDetalleRanking.setTextSize(12);
-        textoDetalleRanking.setTextColor(Color.parseColor("#B2DFDB"));
+        textoDetalleRanking.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_teal_borde));
 
         infoRanking.addView(labelRanking);
         infoRanking.addView(textoPosicion);
@@ -231,7 +233,7 @@ public class PanelUsuario extends Fragment {
         View divisor = new View(requireContext());
         divisor.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, 1));
-        divisor.setBackgroundColor(Color.parseColor("#ECEFF1"));
+        divisor.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.app_borde));
         layout.addView(divisor);
         espacio(layout, 20);
 
@@ -260,7 +262,6 @@ public class PanelUsuario extends Fragment {
                 .commit();
     }
 
-    /** Tarjeta pequeña con emoji, texto y borde de color */
     private LinearLayout crearCardAccion(String emoji, String texto,
                                          String colorFondo, String colorBorde) {
         LinearLayout card = new LinearLayout(requireContext());
@@ -283,7 +284,7 @@ public class PanelUsuario extends Fragment {
         textoLabel.setText(texto);
         textoLabel.setTextSize(13);
         textoLabel.setTypeface(null, Typeface.BOLD);
-        textoLabel.setTextColor(Color.parseColor("#37474F"));
+        textoLabel.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_texto));
         textoLabel.setGravity(Gravity.CENTER);
         LinearLayout.LayoutParams pl = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -315,7 +316,7 @@ public class PanelUsuario extends Fragment {
     private Button crearBotonCerrarSesion(String texto) {
         Button boton = new Button(requireContext());
         boton.setText(texto);
-        boton.setTextColor(Color.parseColor("#C62828"));
+        boton.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_peligro_dark));
         boton.setTextSize(15);
         boton.setTypeface(null, Typeface.BOLD);
         boton.setAllCaps(false);
@@ -325,9 +326,9 @@ public class PanelUsuario extends Fragment {
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         boton.setLayoutParams(params);
         GradientDrawable forma = new GradientDrawable();
-        forma.setColor(Color.parseColor("#FFEBEE"));
+        forma.setColor(ContextCompat.getColor(requireContext(), R.color.app_peligro_bg));
         forma.setCornerRadius(dpToPx(14));
-        forma.setStroke(dpToPx(1), Color.parseColor("#EF9A9A"));
+        forma.setStroke(dpToPx(1), ContextCompat.getColor(requireContext(), R.color.app_peligro_borde));
         boton.setBackground(forma);
         return boton;
     }

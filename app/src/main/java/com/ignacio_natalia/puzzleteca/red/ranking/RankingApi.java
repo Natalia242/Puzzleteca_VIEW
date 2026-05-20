@@ -6,7 +6,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RankingApi {
 
-    // Mismo host que los demás clientes del proyecto
     private static final String BASE_URL = BuildConfig.BASE_URL;
     private static Retrofit retrofit = null;
 

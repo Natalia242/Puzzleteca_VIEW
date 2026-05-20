@@ -125,7 +125,7 @@ public class UsuarioDialogFragment extends DialogFragment {
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         btnCerrar.setLayoutParams(cerrarLP);
         GradientDrawable cerrarBg = new GradientDrawable();
-        cerrarBg.setColor(Color.parseColor("#F0F0F0"));
+        cerrarBg.setColor(ContextCompat.getColor(requireContext(), R.color.app_fondo_cancelar));
         cerrarBg.setCornerRadius(dp(12));
         btnCerrar.setBackground(cerrarBg);
         btnCerrar.setOnClickListener(v -> dismiss());
@@ -177,7 +177,7 @@ public class UsuarioDialogFragment extends DialogFragment {
         tvNombre.setText(nombreCompleto.trim());
         tvNombre.setTextSize(20);
         tvNombre.setTypeface(null, Typeface.BOLD);
-        tvNombre.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_texto));
+        tvNombre.setTextColor(ContextCompat.getColor(requireContext(), R.color.white));
         tvNombre.setGravity(Gravity.CENTER);
         LinearLayout.LayoutParams nomLP = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -341,7 +341,7 @@ public class UsuarioDialogFragment extends DialogFragment {
                                     if (r.isSuccessful()) {
                                         usuario.setTipoUsuario(nuevo);
                                         tvEstado.setText("✅ Tipo actualizado a " + nuevo.name());
-                                        tvEstado.setTextColor(Color.parseColor("#2E7D32"));
+                                        tvEstado.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_green_success_text));
                                         if (listener != null) listener.onUsuarioModificado();
                                     } else {
                                         tvEstado.setText("❌ Error al actualizar (" + r.code() + ")");
@@ -393,7 +393,7 @@ public class UsuarioDialogFragment extends DialogFragment {
         TextView tvAviso = new TextView(requireContext());
         tvAviso.setText("⚠️  Eliminar este usuario borrará todos sus datos permanentemente.");
         tvAviso.setTextSize(13);
-        tvAviso.setTextColor(Color.parseColor("#B71C1C"));
+        tvAviso.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_peligro_darker));
         LinearLayout.LayoutParams avisoLP = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         avisoLP.bottomMargin = dp(12);
@@ -555,11 +555,29 @@ public class UsuarioDialogFragment extends DialogFragment {
 
     /** [color texto, color fondo] según tipo */
     private String[] colorPorTipo(Usuario.TipoUsuario tipo) {
-        if (tipo == null) return new String[]{String.valueOf(ContextCompat.getColor(requireContext(), R.color.app_teal_dark)), String.valueOf(ContextCompat.getColor(requireContext(), R.color.app_teal_soft))};
+        if (tipo == null) return new String[]{
+                "#2E7D6E",
+                "#E0F2F1"
+        };
+
         switch (tipo) {
-            case Admin:    return new String[]{String.valueOf(ContextCompat.getColor(requireContext(), R.color.app_admin_indigo)), String.valueOf(ContextCompat.getColor(requireContext(), R.color.app_admin_indigo_soft))};
-            case Bloqueado:return new String[]{String.valueOf(ContextCompat.getColor(requireContext(), R.color.app_peligro)), String.valueOf(ContextCompat.getColor(requireContext(), R.color.app_peligro_bg))};
-            default:       return new String[]{String.valueOf(ContextCompat.getColor(requireContext(), R.color.app_teal_dark)), String.valueOf(ContextCompat.getColor(requireContext(), R.color.app_teal_soft))};
+            case Admin:
+                return new String[]{
+                        "#5C6BC0",
+                        "#E8EAF6"
+                };
+
+            case Bloqueado:
+                return new String[]{
+                        "#E53935",
+                        "#FFEBEE"
+                };
+
+            default:
+                return new String[]{
+                        "#2E7D6E",
+                        "#E0F2F1"
+                };
         }
     }
 

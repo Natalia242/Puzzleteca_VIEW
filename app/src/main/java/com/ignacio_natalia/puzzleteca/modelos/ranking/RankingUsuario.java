@@ -1,10 +1,6 @@
 package com.ignacio_natalia.puzzleteca.modelos.ranking;
 
 import com.google.gson.annotations.SerializedName;
-
-/**
- * Mapea la respuesta JSON de GET /ranking/diario
- */
 public class RankingUsuario {
 
     @SerializedName("idUsuario")

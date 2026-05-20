@@ -1,5 +1,7 @@
 package com.ignacio_natalia.puzzleteca.pantallas.registro;
 
+import static androidx.core.content.ContentProviderCompat.requireContext;
+
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Color;
@@ -52,7 +54,10 @@ public class RegistroActivity extends AppCompatActivity {
         // Fondo degradado
         GradientDrawable fondo = new GradientDrawable(
                 GradientDrawable.Orientation.TOP_BOTTOM,
-                new int[]{Color.parseColor("#DFF5C9"), Color.parseColor("#B8E6A5")}
+                new int[]{
+                        ContextCompat.getColor(getApplicationContext(), R.color.app_green_light),
+                        ContextCompat.getColor(getApplicationContext(), R.color.app_green_medium)
+                }
         );
 
         FrameLayout layout = new FrameLayout(this);
@@ -110,7 +115,7 @@ public class RegistroActivity extends AppCompatActivity {
         botonRegistro = crearBoton();
         botonRegistro.setLayoutParams(parametrosCampos);
 
-        // 🔴 DESHABILITADO DESDE EL INICIO
+        // DESHABILITADO DESDE EL INICIO
         botonRegistro.setEnabled(false);
         botonRegistro.setAlpha(0.5f);
 
@@ -133,7 +138,7 @@ public class RegistroActivity extends AppCompatActivity {
         // ---------- LOGIN TEXTO ----------
         TextView textoLogin = new TextView(this);
         textoLogin.setText("¿Ya tienes cuenta? Iniciar sesión");
-        textoLogin.setTextColor(Color.parseColor("#455A64"));
+        textoLogin.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.app_texto_link));
         textoLogin.setTextSize(16);
         textoLogin.setGravity(Gravity.CENTER);
         textoLogin.setPadding(20, 20, 20, 10);
@@ -160,10 +165,10 @@ public class RegistroActivity extends AppCompatActivity {
 
         // ---------- VIEWMODELS ----------
         registroViewModel = new ViewModelProvider(this).get(RegistroViewModel.class);
-        // ✅ LoginViewModel se inicializa aquí, una sola vez, no dentro del onClick
+        // LoginViewModel se inicializa aquí, una sola vez, no dentro del onClick
         loginViewModel = new ViewModelProvider(this).get(LoginViewModel.class);
 
-        // ✅ Observers registrados una sola vez en onCreate, no dentro del onClick
+        // Observers registrados una sola vez en onCreate, no dentro del onClick
         registroViewModel.getUsuarioCreado().observe(this, exito -> {
             if (exito) {
                 // El registro fue exitoso: lanzamos el login automático
@@ -177,7 +182,7 @@ public class RegistroActivity extends AppCompatActivity {
         });
 
         loginViewModel.getLoginExitoso().observe(this, loginRespuesta -> {
-            // ✅ Se guardan TODOS los datos de sesión, igual que en LoginActivity
+            // Se guardan TODOS los datos de sesión, igual que en LoginActivity
             GestorSesion.guardarToken(this, loginRespuesta.getToken());
             GestorSesion.guardarRol(this, loginRespuesta.getTipoUsuario());
             GestorSesion.guardarEmail(this, emailEditText.getText().toString().trim());
@@ -231,7 +236,7 @@ public class RegistroActivity extends AppCompatActivity {
 
         GradientDrawable forma = new GradientDrawable();
         forma.setCornerRadius(60);
-        forma.setColor(Color.parseColor("#26A69A"));
+        forma.setColor(ContextCompat.getColor(getApplicationContext(), R.color.jungle_green));
 
         boton.setBackground(forma);
         return boton;
@@ -251,7 +256,7 @@ public class RegistroActivity extends AppCompatActivity {
 
         GradientDrawable forma = new GradientDrawable();
         forma.setCornerRadius(55);
-        forma.setColor(Color.parseColor("#EAF8E0"));
+        forma.setColor(ContextCompat.getColor(getApplicationContext(), R.color.app_green_soft));
         texto.setBackground(forma);
 
         return texto;
@@ -493,7 +498,6 @@ public class RegistroActivity extends AppCompatActivity {
         }
     }
 
-    /** Bloque visual de una sección de la política */
     private LinearLayout crearSeccionPolitica(String emoji, String titulo, String texto) {
         LinearLayout sec = new LinearLayout(this);
         sec.setOrientation(LinearLayout.VERTICAL);

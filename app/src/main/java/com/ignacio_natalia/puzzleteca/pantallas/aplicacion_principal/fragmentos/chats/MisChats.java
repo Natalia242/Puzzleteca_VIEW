@@ -213,7 +213,6 @@ public class MisChats extends Fragment {
         card.setGravity(Gravity.CENTER_VERTICAL);
         card.setPadding(dp(16), dp(16), dp(16), dp(16));
 
-        // Fondo blanco con borde verde-claro (igual que crearTarjeta() del resto de la app)
         GradientDrawable bg = new GradientDrawable();
         bg.setColor(Color.WHITE);
         bg.setCornerRadius(dp(40));
@@ -236,7 +235,7 @@ public class MisChats extends Fragment {
         avatarParams.setMargins(0, 0, dp(14), 0);
         avatar.setLayoutParams(avatarParams);
 
-        // Colores del avatar alineados con la paleta rosa/teal de la app
+        // Colores del avatar
         int[] colores = {
                 ContextCompat.getColor(requireContext(), R.color.app_rosa),
                 ContextCompat.getColor(requireContext(), R.color.jungle_green),

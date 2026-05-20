@@ -18,14 +18,6 @@ import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface ServiciosApiPost {
-
-    /**
-     * Crea un post con imagen opcional.
-     * El backend espera multipart/form-data con:
-     *  - idUsuario  (part de texto)
-     *  - contenido  (part de texto, opcional)
-     *  - imagen     (part de fichero, opcional)
-     */
     @Multipart
     @POST("posts/crearPost")
     Call<Post> crearPost(

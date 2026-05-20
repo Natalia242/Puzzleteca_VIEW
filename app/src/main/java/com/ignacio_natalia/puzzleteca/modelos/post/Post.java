@@ -2,11 +2,6 @@ package com.ignacio_natalia.puzzleteca.modelos.post;
 
 import com.google.gson.annotations.SerializedName;
 import com.ignacio_natalia.puzzleteca.modelos.clases.Puzzle;
-
-/**
- * Modelo de Post del foro.
- * Mapea la respuesta del endpoint GET /posts/feed y POST /posts/crearPost.
- */
 public class Post {
 
     @SerializedName("id")
@@ -40,7 +35,6 @@ public class Post {
     private Puzzle puzzle;
 
 
-    // ---------- GETTERS ----------
     public Integer getId()             { return id; }
     public String getContenido()       { return contenido; }
     public String getImagenUrl()       { return imagenUrl; }
@@ -53,7 +47,6 @@ public class Post {
     public Puzzle getPuzzle() { return puzzle; }
 
 
-    // ---------- SETTERS ----------
     public void setId(Integer id)                        { this.id = id; }
     public void setContenido(String contenido)           { this.contenido = contenido; }
     public void setImagenUrl(String imagenUrl)           { this.imagenUrl = imagenUrl; }

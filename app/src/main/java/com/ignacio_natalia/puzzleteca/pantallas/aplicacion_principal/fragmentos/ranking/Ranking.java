@@ -618,7 +618,7 @@ public class Ranking extends Fragment {
             GradientDrawable fondoCard = new GradientDrawable();
             fondoCard.setColor(Color.WHITE);
             fondoCard.setCornerRadius(dp(100));
-            fondoCard.setStroke(dp(1), Color.parseColor("#E8EDF2"));
+            fondoCard.setStroke(dp(1), ContextCompat.getColor(requireContext(), R.color.app_borde_light));
             card.setBackground(fondoCard);
 
             // ── Badge circular con número de posición ───────────────────
@@ -799,7 +799,7 @@ public class Ranking extends Fragment {
             super(ctx);
             float grosor = 13f * ctx.getResources().getDisplayMetrics().density;
 
-            pistaPaint.setColor(Color.parseColor("#E8ECF0"));
+            pistaPaint.setColor(ContextCompat.getColor(getContext(), R.color.app_borde_card));
             pistaPaint.setStyle(android.graphics.Paint.Style.STROKE);
             pistaPaint.setStrokeWidth(grosor);
             pistaPaint.setStrokeCap(android.graphics.Paint.Cap.ROUND);

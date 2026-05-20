@@ -3,11 +3,6 @@ package com.ignacio_natalia.puzzleteca.modelos.paginacion;
 import com.google.gson.annotations.SerializedName;
 import com.ignacio_natalia.puzzleteca.modelos.post.Post;
 import java.util.List;
-
-/**
- * Wrapper que mapea la respuesta paginada de Spring Boot (Page<Post>).
- * Spring devuelve un JSON con un campo "content" que contiene la lista real.
- */
 public class PaginacionPost {
 
     @SerializedName("content")

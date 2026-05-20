@@ -260,7 +260,7 @@ public class MisPuzzles extends Fragment {
                 FrameLayout.LayoutParams.MATCH_PARENT,
                 FrameLayout.LayoutParams.MATCH_PARENT));
         imagen.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        imagen.setBackgroundColor(Color.parseColor("app_fondo_gris_light"));
+        imagen.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.app_fondo_gris_light));
 
         String url = puzzle.getImagenUrl();
         if (url != null && !url.isEmpty()) {
@@ -569,7 +569,6 @@ public class MisPuzzles extends Fragment {
     //  Helpers de UI
     // ══════════════════════════════════════════════════════════════════════════
 
-    /** Chip de estado (Público / Privado) sobre la imagen */
     private TextView crearChipEstado(Puzzle.Estados estado) {
         TextView chip = new TextView(getContext());
         boolean esPublico = (estado == Puzzle.Estados.Publico);
@@ -585,7 +584,6 @@ public class MisPuzzles extends Fragment {
         return chip;
     }
 
-    /** Chip de información (dificultad, piezas, tiempo) */
     private TextView crearChipInfo(String texto, int colorTexto, int colorFondo) {
         TextView chip = new TextView(getContext());
         chip.setText(texto);

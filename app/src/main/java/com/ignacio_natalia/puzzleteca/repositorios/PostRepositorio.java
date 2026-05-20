@@ -24,6 +24,7 @@ public class PostRepositorio {
 
     // -------------------------------------------------------------------------
     // Crear post — con imagen
+    // -------------------------------------------------------------------------
     public void crearPost(String token, Integer idUsuario, String contenido,
                           File imagenFile, String mimeType, Callback<Post> callback) {
 

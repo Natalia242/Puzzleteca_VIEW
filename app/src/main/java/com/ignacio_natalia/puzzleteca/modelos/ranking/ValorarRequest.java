@@ -1,9 +1,4 @@
 package com.ignacio_natalia.puzzleteca.modelos.ranking;
-
-/**
- * Body JSON para POST /ranking/valorar
- * El idUsuario ya NO se envía: el servidor lo extrae del token JWT.
- */
 public class ValorarRequest {
 
     private Integer idPuzzle;
